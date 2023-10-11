@@ -1,19 +1,22 @@
-//
-//  ViewController.swift
-//  TILApp
-//
-//  Created by Jinyong Park on 10/11/23.
-//
-
 import UIKit
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
+    private lazy var label = {
+        let label = UILabel()
+        label.text = "Hello, World!"
+        label.sizeToFit()
+        return label
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .systemBackground
+
+        view.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        ])
     }
-
-
 }
-
