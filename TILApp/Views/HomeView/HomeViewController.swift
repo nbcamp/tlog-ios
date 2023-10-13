@@ -1,3 +1,5 @@
+import FlexLayout
+import PinLayout
 import UIKit
 
 final class HomeViewController: UIViewController {
@@ -13,10 +15,6 @@ final class HomeViewController: UIViewController {
         view.backgroundColor = .systemBackground
 
         view.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-        ])
+        label.pin.center()
     }
 }
