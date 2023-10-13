@@ -1,6 +1,6 @@
 import UIKit
 
-final class ViewController: UIViewController {
+final class RootViewController: UIViewController {
     private lazy var label = {
         let label = UILabel()
         label.text = "Hello, World!"

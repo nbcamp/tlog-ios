@@ -8,7 +8,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = .init(windowScene: windowScene)
         window?.makeKeyAndVisible()
 
-        window?.rootViewController = ViewController()
+        window?.rootViewController = RootViewController()
     }
 
     func sceneDidDisconnect(_: UIScene) {}
