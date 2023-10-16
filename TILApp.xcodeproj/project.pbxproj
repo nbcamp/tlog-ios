@@ -29,6 +29,7 @@
 		3334E1F42AD91DCB00D853D7 /* FlexLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F32AD91DCB00D853D7 /* FlexLayout */; };
 		3334E1F62AD91DCB00D853D7 /* FlexLayoutYoga in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F52AD91DCB00D853D7 /* FlexLayoutYoga */; };
 		3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F72AD91DCB00D853D7 /* FlexLayoutYogaKit */; };
+		9BB876352ADD1E430060E236 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB876342ADD1E430060E236 /* RegisterViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		3334E1E72AD919A200D853D7 /* CommunityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityViewController.swift; sourceTree = "<group>"; };
 		3334E1EA2AD919D700D853D7 /* MyProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileViewController.swift; sourceTree = "<group>"; };
 		3334E1ED2AD919F500D853D7 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		9BB876342ADD1E430060E236 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				3334E1DD2AD918CB00D853D7 /* HomeViewController.swift */,
+				9BB876342ADD1E430060E236 /* RegisterViewController.swift */,
 			);
 			path = HomeView;
 			sourceTree = "<group>";
@@ -331,6 +334,7 @@
 				3334E1D12AD9129600D853D7 /* APIService.swift in Sources */,
 				3334E1DE2AD918CB00D853D7 /* HomeViewController.swift in Sources */,
 				3334E1EE2AD919F500D853D7 /* SignInViewController.swift in Sources */,
+				9BB876352ADD1E430060E236 /* RegisterViewController.swift in Sources */,
 				3334E1AA2AD6BC1800D853D7 /* SceneDelegate.swift in Sources */,
 				3334E1D52AD913FE00D853D7 /* Date+Ext.swift in Sources */,
 				3334E1D72AD914EF00D853D7 /* User.swift in Sources */,
