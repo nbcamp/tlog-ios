@@ -1,27 +1,77 @@
 import UIKit
+import AuthenticationServices
 
 final class SignInViewController: UIViewController {
-    private lazy var button = {
-        let button = UIButton()
-        button.setTitle("SIGN IN", for: .normal)
-        button.addTarget(self, action: #selector(signInButtonTapped), for: .touchUpInside)
-        return button
-    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
 
-        view.addSubview(button)
-        button.translatesAutoresizingMaskIntoConstraints = false
+        setAppleLoginButton()
+    }
+
+    func setAppleLoginButton() {
+        let authorizationButton = ASAuthorizationAppleIDButton(type: .signIn, style: .whiteOutline)
+        authorizationButton
+            .addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
+
+        view.addSubview(authorizationButton)
+        authorizationButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            authorizationButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            authorizationButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
     }
 
-    @objc private func signInButtonTapped() {
-        let homeVC = HomeViewController()
-        navigationController?.pushViewController(homeVC, animated: true)
+    @objc func handleAuthorizationAppleIDButtonPress() {
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+    }
+}
+
+extension SignInViewController: ASAuthorizationControllerDelegate {
+    // 로그인 성공 후 동작
+    func authorizationController
+    (controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        switch authorization.credential {
+        case let appleIDCredential as ASAuthorizationAppleIDCredential:
+            let userIdentifier = appleIDCredential.user
+            let fullName = appleIDCredential.fullName
+            let email = appleIDCredential.email
+
+            if  let authorizationCode = appleIDCredential.authorizationCode,
+                let identityToken = appleIDCredential.identityToken,
+                let authCodeString = String(data: authorizationCode, encoding: .utf8),
+                let identifyTokenString = String(data: identityToken, encoding: .utf8) {
+                print("authorizationCode: \(authorizationCode)")
+                print("identityToken: \(identityToken)")
+                print("authCodeString: \(authCodeString)")
+                print("identifyTokenString: \(identifyTokenString)")
+            }
+
+            print("User ID : \(userIdentifier)")
+            print("User Email : \(email)")
+            print("User Name : \(fullName)")
+
+        default:
+            break
+        }
+    }
+
+    // 로그인 실패 후 동작
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        // Handle Error
+    }
+}
+
+extension SignInViewController: ASAuthorizationControllerPresentationContextProviding {
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
     }
 }

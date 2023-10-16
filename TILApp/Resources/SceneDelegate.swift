@@ -15,7 +15,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidBecomeActive(_: UIScene) {
         // TODO: 로그인 여부에 따라 페이지 보여주지 말지 결정
-//        window?.rootViewController?.present(SignInViewController(), animated: false)
+        window?.rootViewController?.present(SignInViewController(), animated: false)
     }
 
     func sceneWillResignActive(_: UIScene) {}

@@ -91,6 +91,7 @@
 		D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListViewController.swift; sourceTree = "<group>"; };
 		D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListTableViewCell.swift; sourceTree = "<group>"; };
 		D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityTableViewCell.swift; sourceTree = "<group>"; };
+		D20AD8D02ADC5ECA00CDEB2C /* TILApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TILApp.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +131,7 @@
 		3334E1A62AD6BC1800D853D7 /* TILApp */ = {
 			isa = PBXGroup;
 			children = (
+				D20AD8D02ADC5ECA00CDEB2C /* TILApp.entitlements */,
 				3334E1C42AD9110000D853D7 /* Resources */,
 				3334E1C22AD910EB00D853D7 /* Services */,
 				3334E1C12AD910E400D853D7 /* Models */,
@@ -568,9 +570,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TILApp/TILApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = V94RHZNH5T;
+				DEVELOPMENT_TEAM = 7TH7TS2438;
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "FLEXLAYOUT_SWIFT_PACKAGE=1";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TILApp/Info.plist;
@@ -585,7 +588,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = "-Wl,-ld_classic";
-				PRODUCT_BUNDLE_IDENTIFIER = dev.jinyongp.TILApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.team2.TILApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -601,9 +604,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TILApp/TILApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = V94RHZNH5T;
+				DEVELOPMENT_TEAM = 7TH7TS2438;
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "FLEXLAYOUT_SWIFT_PACKAGE=1";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TILApp/Info.plist;
@@ -618,7 +622,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = "-Wl,-ld_classic";
-				PRODUCT_BUNDLE_IDENTIFIER = dev.jinyongp.TILApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.team2.TILApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
