@@ -77,9 +77,24 @@ final class MyProfileViewController: UIViewController {
 
     private let rootFlexContainer = {
         let view = UIView()
-
         return view
     }()
+
+//    init() {
+//        super.init(frame: .zero)
+//        addSubview(rootFlexContainer)
+//
+//        rootFlexContainer.flex.direction(.row).justifyContent(.spaceEvenly).padding(10)
+//            .alignSelf(.auto).define { flex in
+//                flex.addItem(postButton).marginRight(20)
+//                flex.addItem(followersButton).marginRight(20)
+//                flex.addItem(followingButton)
+//            }
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
 
     private let myProfileTableView = {
         let tableView = UITableView()
@@ -99,7 +114,10 @@ final class MyProfileViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        view.backgroundColor = .systemBackground
+
         setUpUI()
+        rootFlexContainer.flex.layout()
     }
 
     private func setUpUI() {
@@ -107,20 +125,20 @@ final class MyProfileViewController: UIViewController {
         view.addSubview(nicknameLabel)
         view.addSubview(moreButton)
         view.addSubview(editBlogButton)
-        view.addSubview(rootFlexContainer)
         view.addSubview(myProfileTableView)
+        view.addSubview(rootFlexContainer)
 
-        rootFlexContainer.flex.direction(.row).justifyContent(.spaceEvenly).padding(10)
-            .alignSelf(.auto).define { flex in
-                flex.addItem(postButton).marginRight(20)
-                flex.addItem(followersButton).marginRight(20)
-                flex.addItem(followingButton)
-            }
+        rootFlexContainer.flex.direction(.row).justifyContent(.center).define { flex in
+            flex.addItem(postButton).width(60).marginLeft(10)
+            flex.addItem(followersButton).width(60)
+            flex.addItem(followingButton).width(60).marginLeft(10)
+        }
 
         profileImageView.pin.top(view.pin.safeArea + 5).left(7.5%).height(100).width(100).margin(10)
-        nicknameLabel.pin.top(view.pin.safeArea + 25).after(of: profileImageView).before(of: moreButton).marginLeft(10)
+        nicknameLabel.pin.top(view.pin.safeArea + 25).after(of: profileImageView).before(of: moreButton).marginLeft(15)
         moreButton.pin.top(view.pin.safeArea).right(view.pin.safeArea + 10)
-        rootFlexContainer.pin.below(of: nicknameLabel).after(of: profileImageView).right().marginLeft(20)
+        rootFlexContainer.pin.below(of: nicknameLabel).after(of: profileImageView)
+            .marginLeft(90).marginTop(25)
         editBlogButton.pin.below(of: profileImageView).left(3%).right(3%).margin(20)
         myProfileTableView.pin.below(of: editBlogButton).marginTop(30)
             .bottom(view.pin.safeArea).left().right()
