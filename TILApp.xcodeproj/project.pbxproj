@@ -29,6 +29,7 @@
 		3334E1F42AD91DCB00D853D7 /* FlexLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F32AD91DCB00D853D7 /* FlexLayout */; };
 		3334E1F62AD91DCB00D853D7 /* FlexLayoutYoga in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F52AD91DCB00D853D7 /* FlexLayoutYoga */; };
 		3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F72AD91DCB00D853D7 /* FlexLayoutYogaKit */; };
+		33DC8E002ADF84CC00580FA0 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8DFF2ADF84CC00580FA0 /* Then */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33DC8E002ADF84CC00580FA0 /* Then in Frameworks */,
 				3334E1F12AD91DA100D853D7 /* PinLayout in Frameworks */,
 				3334E1F42AD91DCB00D853D7 /* FlexLayout in Frameworks */,
 				3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */,
@@ -237,6 +239,7 @@
 				3334E1F32AD91DCB00D853D7 /* FlexLayout */,
 				3334E1F52AD91DCB00D853D7 /* FlexLayoutYoga */,
 				3334E1F72AD91DCB00D853D7 /* FlexLayoutYogaKit */,
+				33DC8DFF2ADF84CC00580FA0 /* Then */,
 			);
 			productName = TILApp;
 			productReference = 3334E1A42AD6BC1800D853D7 /* TILApp.app */;
@@ -269,6 +272,7 @@
 			packageReferences = (
 				3334E1EF2AD91DA100D853D7 /* XCRemoteSwiftPackageReference "PinLayout" */,
 				3334E1F22AD91DCB00D853D7 /* XCRemoteSwiftPackageReference "FlexLayout" */,
+				33DC8DFE2ADF84CC00580FA0 /* XCRemoteSwiftPackageReference "Then" */,
 			);
 			productRefGroup = 3334E1A52AD6BC1800D853D7 /* Products */;
 			projectDirPath = "";
@@ -578,6 +582,14 @@
 				minimumVersion = 2.0.2;
 			};
 		};
+		33DC8DFE2ADF84CC00580FA0 /* XCRemoteSwiftPackageReference "Then" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devxoul/Then";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -600,6 +612,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3334E1F22AD91DCB00D853D7 /* XCRemoteSwiftPackageReference "FlexLayout" */;
 			productName = FlexLayoutYogaKit;
+		};
+		33DC8DFF2ADF84CC00580FA0 /* Then */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 33DC8DFE2ADF84CC00580FA0 /* XCRemoteSwiftPackageReference "Then" */;
+			productName = Then;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
