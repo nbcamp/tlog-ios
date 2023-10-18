@@ -3,15 +3,15 @@ import PinLayout
 import UIKit
 
 final class HomeViewController: UIViewController {
-    private var userDidRegisterBlog: Bool = false // 로그인상태
+    private var TILPost = [1, 2, 3, 4]
+    private var userDidRegisterBlog: Bool = true // 로그인상태
     private var TILComplete: Bool = false // TIL 작성 상태
-    private let goodJobLabel = {
+    private let countTILLabel = {
         let label = UILabel()
-        label.text = "대단해요!! 연속 x일 달성"
         label.textAlignment = .center
+        label.text = "대단해요!! 연속 x일 달성"
         label.font = UIFont.boldSystemFont(ofSize: 30)
         label.sizeToFit()
-        label.layer.cornerRadius = 8
         return label
     }()
 
@@ -21,12 +21,11 @@ final class HomeViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 18)
         label.textAlignment = .center
         label.sizeToFit()
-        label.layer.cornerRadius = 8
         return label
     }()
 
     private let growthImage = {
-        let imageView = UIImageView(image: UIImage(systemName: "pencil")) // 임시 이미지
+        let imageView = UIImageView(image: UIImage(named: "1"))
         imageView.tintColor = .systemTeal
         imageView.layer.borderWidth = 1
         imageView.layer.cornerRadius = 8
@@ -78,6 +77,8 @@ final class HomeViewController: UIViewController {
         view.backgroundColor = .systemBackground
         registerBlogButton.addTarget(self, action: #selector(registerBlogButtonTapped), for: .touchUpInside)
         configureUI()
+        updateCountTILLabel()
+        updateGrowthImage()
     }
 
     private func configureUI() {
@@ -90,17 +91,17 @@ final class HomeViewController: UIViewController {
 
     private func setUpUIForRegisteredUser() {
         navigationItem.hidesBackButton = true
-        view.addSubview(goodJobLabel)
+        view.addSubview(countTILLabel)
         view.addSubview(completedTILLabel)
         view.addSubview(growthImage)
         view.addSubview(isCompleteImageView)
 
-        goodJobLabel.pin.top(15%).hCenter()
-        completedTILLabel.pin.top(21%).hCenter(-5%)
+        countTILLabel.pin.top(15%).left().right().hCenter()
+        completedTILLabel.pin.below(of: countTILLabel).hCenter().marginTop(15).marginRight(25)
         growthImage.pin.top(30%).bottom(20%).left(7.5%).right(7.5%)
         isCompleteImageView.pin.top(20.5%).right(23%).after(of: completedTILLabel).height(30)
 
-        if TILComplete == true {
+        if TILComplete {
             isCompleteImageView.image = UIImage(systemName: "checkmark.square.fill")
         } else {
             isCompleteImageView.image = UIImage(systemName: "x.square")
@@ -108,13 +109,13 @@ final class HomeViewController: UIViewController {
     }
 
     private func setUpUIForUnregisteredUser() {
-        view.addSubview(hiLabel)
-        view.addSubview(registerBlogLabel)
         view.addSubview(registerBlogButton)
+        view.addSubview(registerBlogLabel)
+        view.addSubview(hiLabel)
 
-        hiLabel.pin.hCenter().vCenter(-15%)
-        registerBlogLabel.pin.hCenter().vCenter(-10%)
-        registerBlogButton.pin.left(7.5%).right(7.5%).center()
+        registerBlogButton.pin.left().right().center().marginLeft(20).marginRight(20)
+        registerBlogLabel.pin.above(of: registerBlogButton).hCenter().marginBottom(40)
+        hiLabel.pin.above(of: registerBlogLabel).hCenter()
     }
 
     @objc private func registerBlogButtonTapped() {
@@ -123,5 +124,22 @@ final class HomeViewController: UIViewController {
 //        let homeViewController = HomeViewController()
 //
 //        navigationController?.pushViewController(homeViewController, animated: true)
+    }
+
+    private func updateCountTILLabel() {
+        countTILLabel.text = "대단해요!! 연속 \(TILPost.count)일 달성"
+    }
+    private func updateGrowthImage() {
+        if TILPost.count >= 1 && TILPost.count <= 50 {
+            let imageName = "\(TILPost.count / 5 + 1)"
+            if let image = UIImage(named: imageName) {
+                growthImage.image = image
+                print("생성된 이미지 이름은 \(imageName)입니다")
+            } else {
+                print("Image named '\(imageName)' not found.")
+            }
+        } else {
+            print("TIL count out of range (1 to 10)")
+        }
     }
 }
