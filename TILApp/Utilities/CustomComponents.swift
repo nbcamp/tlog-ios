@@ -228,23 +228,23 @@ class CustomTextFieldView: UIView {
         $0.font = UIFont.systemFont(ofSize: 15, weight: .regular)
     }
 
-    public var titleText: String {
-        get { return titleLabel.text ?? "" }
+    var titleText: String {
+        get { titleLabel.text ?? "" }
         set { titleLabel.text = newValue }
     }
 
-    public var validationText: String {
-        get { return validationLabel.text ?? "" }
+    var validationText: String {
+        get { validationLabel.text ?? "" }
         set { validationLabel.text = newValue }
     }
 
-    public var placeholder: String {
-        get { return textField.placeholder ?? "" }
+    var placeholder: String {
+        get { textField.placeholder ?? "" }
         set { textField.placeholder = newValue }
     }
 
-    public var mainText: String {
-        get { return textField.text ?? "" }
+    var mainText: String {
+        get { textField.text ?? "" }
         set { textField.text = newValue }
     }
 
@@ -287,13 +287,13 @@ class CustomLabelView: UIView {
         $0.textColor = .systemGray2
     }
 
-    public var nicknameText: String {
-        get { return nicknameLabel.text ?? "" }
+    var nicknameText: String {
+        get { nicknameLabel.text ?? "" }
         set { nicknameLabel.text = newValue }
     }
 
-    public var dateText: String {
-        get { return dateLabel.text ?? "" }
+    var dateText: String {
+        get { dateLabel.text ?? "" }
         set { dateLabel.text = newValue }
     }
 
@@ -334,23 +334,23 @@ class CustomUserView: UIView {
         $0.clipsToBounds = true
     }
 
-    public var buttonTitle: String {
-        get { return button.titleLabel?.text ?? "" }
+    var buttonTitle: String {
+        get { button.titleLabel?.text ?? "" }
         set { button.setTitle(newValue, for: .normal) }
     }
 
-    public var nicknameText: String {
-        get { return customLabelView.nicknameText }
+    var nicknameText: String {
+        get { customLabelView.nicknameText }
         set { customLabelView.nicknameText = newValue }
     }
 
-    public var dateText: String {
-        get { return customLabelView.dateText }
+    var dateText: String {
+        get { customLabelView.dateText }
         set { customLabelView.dateText = newValue }
     }
 
-    public var image: UIImage? {
-        get { return imageView.image }
+    var image: UIImage? {
+        get { imageView.image }
         set { imageView.image = newValue }
     }
 
@@ -394,7 +394,7 @@ class CustomUserView: UIView {
         imageView.layer.cornerRadius = imageView.bounds.size.width / 2.0
     }
 
-    public func setup(image: UIImage, nicknameText: String, contentText: String, buttonTitle: String) {
+    func setup(image: UIImage, nicknameText: String, contentText: String, buttonTitle: String) {
         imageView.image = image
         customLabelView.nicknameText = nicknameText
         customLabelView.dateText = contentText
@@ -462,13 +462,13 @@ class CustomTILView: UIView {
             .height(20)
     }
 
-    public func setup(withTitle title: String, content: String, date: String) {
+    func setup(withTitle title: String, content: String, date: String) {
         titleLabel.text = title
         contentLabel.text = content
         dateLabel.text = date
     }
 
-    public func resizeText() {
+    func resizeText() {
         titleLabel.font = UIFont.systemFont(ofSize: 15)
         dateLabel.font = UIFont.systemFont(ofSize: 14)
     }
@@ -513,13 +513,13 @@ class CustomBlogView: UIView {
         withConfiguration: UIImage.SymbolConfiguration(pointSize: 30, weight: .light)
     ))
 
-    public var blogNameText: String {
-        get { return customLabelView.nicknameText }
+    var blogNameText: String {
+        get { customLabelView.nicknameText }
         set { customLabelView.nicknameText = newValue }
     }
 
-    public var blogURLText: String {
-        get { return customLabelView.dateText }
+    var blogURLText: String {
+        get { customLabelView.dateText }
         set { customLabelView.dateText = newValue }
     }
 
