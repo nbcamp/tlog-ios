@@ -3,6 +3,7 @@ import Moya
 
 enum APIService {
     case ping
+    case signIn(SignInInput)
 }
 
 extension APIService: TargetType {
@@ -12,6 +13,8 @@ extension APIService: TargetType {
         switch self {
         case .ping:
             return "/"
+        case .signIn(_:):
+            return "/auth/sign-in"
         }
     }
 
@@ -19,6 +22,8 @@ extension APIService: TargetType {
         switch self {
         case .ping:
             return .get
+        case .signIn(_:):
+            return .post
         }
     }
 
@@ -26,10 +31,19 @@ extension APIService: TargetType {
         switch self {
         case .ping:
             return .requestPlain
+        case .signIn(let payload):
+            return .requestJSONEncodable(payload)
         }
     }
 
     var headers: [String: String]? {
-        return ["Content-type": "application/json"]
+        var headers: [String: String] = [:]
+        headers.updateValue("application/json", forKey: "Content-type")
+
+        if let accessToken = AuthService.shared.accessToken {
+            headers.updateValue(accessToken, forKey: "Authorization")
+        }
+
+        return headers
     }
 }
