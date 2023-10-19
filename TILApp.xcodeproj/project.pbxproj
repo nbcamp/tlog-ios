@@ -30,6 +30,7 @@
 		3334E1F62AD91DCB00D853D7 /* FlexLayoutYoga in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F52AD91DCB00D853D7 /* FlexLayoutYoga */; };
 		3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F72AD91DCB00D853D7 /* FlexLayoutYogaKit */; };
 		33DC8E002ADF84CC00580FA0 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8DFF2ADF84CC00580FA0 /* Then */; };
+		D20AD9022AE0AEF800CDEB2C /* CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,7 @@
 		3334E1E72AD919A200D853D7 /* CommunityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityViewController.swift; sourceTree = "<group>"; };
 		3334E1EA2AD919D700D853D7 /* MyProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileViewController.swift; sourceTree = "<group>"; };
 		3334E1ED2AD919F500D853D7 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponents.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				3334E1C52AD9112B00D853D7 /* Extensions */,
+				D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -337,6 +340,7 @@
 				3334E1EE2AD919F500D853D7 /* SignInViewController.swift in Sources */,
 				3334E1AA2AD6BC1800D853D7 /* SceneDelegate.swift in Sources */,
 				3334E1D52AD913FE00D853D7 /* Date+Ext.swift in Sources */,
+				D20AD9022AE0AEF800CDEB2C /* CustomComponents.swift in Sources */,
 				3334E1D72AD914EF00D853D7 /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
