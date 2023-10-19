@@ -74,9 +74,9 @@ final class BlogEditViewController: UIViewController {
 
         mainBlogButton.pin.top(view.pin.safeArea).marginTop(10)
         blogNameTextField.pin.top(to: mainBlogButton.edge.bottom).marginTop(10)
-        blogURLTextField.pin.top(to: blogNameTextField.edge.bottom).marginTop(-5)
-        blogRSSTextField.pin.top(to: blogURLTextField.edge.bottom).marginTop(-5)
-        deleteDescriotionLabel.pin.top(to: blogRSSTextField.edge.bottom).horizontally(20).height(25)
+        blogURLTextField.pin.top(to: blogNameTextField.edge.bottom).marginTop(10)
+        blogRSSTextField.pin.top(to: blogURLTextField.edge.bottom).marginTop(10)
+        deleteDescriotionLabel.pin.top(to: blogRSSTextField.edge.bottom).horizontally(20).height(25).marginTop(10)
         deleteBlogButton.pin.top(to: deleteDescriotionLabel.edge.bottom)
     }
 }

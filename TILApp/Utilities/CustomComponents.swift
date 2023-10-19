@@ -21,7 +21,7 @@ class CustomComponentsViewController: UIViewController {
         view.addSubview($0)
     }
 
-    private lazy var customTextFieldView = CustomTextFieldView().then {
+    private lazy var customTextFieldView = CustomTextFieldViewWithValidation().then {
         $0.titleText = "하이하이하이"
         $0.placeholder = "뭐뭐를 입력해주세요."
         $0.validationText = "유효한 값입니다."
@@ -192,9 +192,9 @@ class CustomUnfollowButton: UIButton {
         setupButton()
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupButton()
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     private func setupButton() {
@@ -212,30 +212,49 @@ class CustomUnfollowButton: UIButton {
     }
 }
 
+class CustomTitleLabel: UILabel {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        textColor = UIColor.systemGray
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        pin.horizontally(20).height(24)
+    }
+}
+
+class CustomTextField: UITextField {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        borderStyle = .roundedRect
+        font = UIFont.systemFont(ofSize: 15, weight: .regular)
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        pin.horizontally(20).height(40)
+    }
+}
+
 class CustomTextFieldView: UIView {
-    private let titleLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        $0.textColor = UIColor.systemGray
-    }
-
-    private let validationLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 11, weight: .light)
-        $0.textColor = UIColor.systemGreen
-    }
-
-    private let textField = UITextField().then {
-        $0.borderStyle = .roundedRect
-        $0.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-    }
+    private let titleLabel = CustomTitleLabel()
+    private let textField = CustomTextField()
 
     var titleText: String {
         get { titleLabel.text ?? "" }
         set { titleLabel.text = newValue }
-    }
-
-    var validationText: String {
-        get { validationLabel.text ?? "" }
-        set { validationLabel.text = newValue }
     }
 
     var placeholder: String {
@@ -265,6 +284,61 @@ class CustomTextFieldView: UIView {
         flex.define {
             $0.addItem(titleLabel).margin(0, 20).height(24)
             $0.addItem(textField).margin(0, 20).height(40)
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        pin.width(100%).height(64)
+        flex.layout()
+    }
+}
+
+class CustomTextFieldViewWithValidation: UIView {
+    private let customTextFieldView = CustomTextFieldView()
+
+    private let validationLabel = UILabel().then {
+        $0.font = UIFont.systemFont(ofSize: 11, weight: .light)
+        $0.textColor = UIColor.systemGreen
+    }
+
+    var titleText: String {
+        get { customTextFieldView.titleText }
+        set { customTextFieldView.titleText = newValue }
+    }
+
+    var placeholder: String {
+        get { customTextFieldView.placeholder }
+        set { customTextFieldView.placeholder = newValue }
+    }
+
+    var mainText: String {
+        get { customTextFieldView.mainText }
+        set { customTextFieldView.mainText = newValue }
+    }
+
+    var validationText: String {
+        get { validationLabel.text ?? "" }
+        set { validationLabel.text = newValue }
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        setupView()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupView() {
+        // backgroundColor = .systemBackground
+
+        flex.define {
+            $0.addItem(customTextFieldView)
             $0.addItem(validationLabel).margin(0, 25, 0, 20).height(20)
         }
     }
