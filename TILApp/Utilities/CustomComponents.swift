@@ -62,6 +62,16 @@ class CustomComponentsViewController: UIViewController {
         view.addSubview($0)
     }
 
+    private lazy var customTagView = CustomTagView().then {
+        $0.labelText = "[TIL/Swift]"
+        $0.tags = ["TIL", "iOS", "Swift", "내배캠", "으으으", "iOS", "Swift", "내배캠", "으으으"]
+        view.addSubview($0)
+    }
+
+    private lazy var customTagHeaderView = CustomTagHeaderView().then {
+        view.addSubview($0)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -97,18 +107,26 @@ class CustomComponentsViewController: UIViewController {
             .top(to: customUserView.edge.bottom)
             .marginTop(15)
 
-        customCommunityTILView.pin
+//        customCommunityTILView.pin
+//            .top(to: customTILView.edge.bottom)
+//            .marginTop(15)
+//
+//        customBlogView.pin
+//            .top(to: customCommunityTILView.edge.bottom)
+//            .marginTop(15)
+
+//        customSegmentedControl.pin
+//            .hCenter()
+//            .top(to: customBlogView.edge.bottom)
+//            .marginTop(15)
+
+        customTagView.pin
             .top(to: customTILView.edge.bottom)
-            .marginTop(15)
+            .margin(15)
 
-        customBlogView.pin
-            .top(to: customCommunityTILView.edge.bottom)
-            .marginTop(15)
-
-        customSegmentedControl.pin
-            .hCenter()
-            .top(to: customBlogView.edge.bottom)
-            .marginTop(15)
+        customTagHeaderView.pin
+            .top(to: customTagView.edge.bottom)
+            .margin(15)
     }
 }
 
@@ -674,5 +692,123 @@ class CustomSegmentedControl: UISegmentedControl {
         super.layoutSubviews()
         pin.width(100%).height(60)
         updateBottomBorder()
+    }
+}
+
+class CustomTagHeaderView: UIView {
+    private let label = CustomTitleLabel().then {
+        $0.text = "블로그 게시물 자동 태그 설정"
+    }
+
+    // TODO: +버튼 추가하기
+
+    private let line = UIView().then {
+        $0.backgroundColor = .systemGray
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        setupView()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupView() {
+        // backgroundColor = .systemBackground
+
+        addSubview(label)
+        addSubview(line)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        pin.width(100%).height(30)
+        line.pin.bottom(to: edge.bottom).horizontally(20).height(0.5)
+    }
+}
+
+class CustomTagView: UIView {
+    private let titleLabel = UILabel().then {
+        $0.text = "제목"
+        $0.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        $0.textColor = UIColor.systemGray
+        $0.sizeToFit()
+    }
+
+    private let tagLabel = UILabel().then {
+        $0.text = "태그"
+        $0.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        $0.textColor = UIColor.systemGray
+        $0.sizeToFit()
+    }
+
+    private let titleContentLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 14)
+    }
+
+    private let tagContentLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 14)
+    }
+
+    private let deleteButton = UIButton().then {
+        $0.setTitle("삭제", for: .normal)
+        $0.setTitleColor(.systemGray, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 13)
+    }
+
+    var labelText: String {
+        get { titleContentLabel.text ?? "" }
+        set { titleContentLabel.text = newValue }
+    }
+
+    var tags: [String] = [] {
+        didSet {
+            tagContentLabel.text = tags.joined(separator: " | ")
+        }
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        setupView()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupView() {
+        // backgroundColor = .systemBackground
+
+        flex.direction(.column).justifyContent(.spaceBetween).padding(10).define { flex in
+            flex.addItem().direction(.row).define {
+                $0.addItem(titleLabel).height(20).marginRight(10)
+                $0.addItem(titleContentLabel).maxWidth(80%).height(20)
+            }
+            flex.addItem().direction(.row).define {
+                $0.addItem(tagLabel).height(20).marginRight(10)
+                $0.addItem(tagContentLabel).maxWidth(80%).height(20)
+            }
+        }
+
+        addSubview(deleteButton)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        pin.horizontally(20).height(67)
+        flex.layout()
+        deleteButton.pin.width(30).height(30).vCenter().right(10)
+
+        layer.cornerRadius = 12
+        layer.borderWidth = 0.5
+        layer.borderColor = UIColor.systemGray3.cgColor
     }
 }
