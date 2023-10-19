@@ -16,12 +16,9 @@ struct Pong: Codable {
 }
 
 final class TestNetworkViewController: UIViewController {
-    private let provider = MoyaProvider<APIService>()
-
     private lazy var label = UILabel().then { label in
         label.text = "Network Test!"
-        label.sizeToFit()
-        view.addSubview(label)
+        label.textAlignment = .center
     }
 
     private lazy var signButton = UIButton().then { button in
@@ -29,7 +26,22 @@ final class TestNetworkViewController: UIViewController {
         button.setTitleColor(.systemBackground, for: .normal)
         button.backgroundColor = .systemTeal
         button.layer.cornerRadius = 8
-        view.addSubview(button)
+        button.contentEdgeInsets = .init(top: 6, left: 10, bottom: 6, right: 10)
+        button.addTarget(self, action: #selector(signIn), for: .touchUpInside)
+    }
+
+    private lazy var requestButton = UIButton().then { button in
+        button.setTitle("Request!", for: .normal)
+        button.setTitleColor(.systemBackground, for: .normal)
+        button.backgroundColor = .systemTeal
+        button.layer.cornerRadius = 8
+        button.contentEdgeInsets = .init(top: 6, left: 10, bottom: 6, right: 10)
+        button.addTarget(self, action: #selector(requestButtonTapped), for: .touchUpInside)
+    }
+
+    private lazy var statusLabel = UILabel().then { label in
+        label.text = "Click Button to Authenticate!"
+        label.textAlignment = .center
     }
 
     // Combine을 사용하려면 필수! 반드시 클래스 속성으로 작성해야 합니다.
@@ -37,7 +49,7 @@ final class TestNetworkViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        configureUI()
 
 //        moya1()
 //        moya2()
@@ -47,24 +59,77 @@ final class TestNetworkViewController: UIViewController {
         // https://github.com/Moya/Moya/issues/2247
         // Swift의 Task와 Moya의 Task가 충돌하면서 발생한 문제인데 아직도 안 고쳐줬네요...
         // Swift의 Task를 사용하시려면 _Concurrency.Task를 대신 사용하시면 됩니다.
-        _Concurrency.Task {
-            await moya5()
-        }
+//        _Concurrency.Task {
+//            await moya5()
+//        }
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        view.flex.layout()
+    }
 
+    private func configureUI() {
         view
             .flex
+            .backgroundColor(.systemBackground)
             .direction(.column)
             .justifyContent(.center)
-            .alignItems(.center)
+            .padding(40)
             .define { flex in
                 flex.addItem(label)
-                flex.addItem(signButton)
+                flex.addItem(requestButton).marginTop(20)
+                flex.addItem(signButton).marginTop(40)
+                flex.addItem(statusLabel).marginTop(10)
             }
+
+        AuthService.shared.$isAuthenticated.sink { [weak self] authenticated in
+            guard let self else { return }
+            self.signButton.removeTarget(nil, action: nil, for: .allEvents)
+            if authenticated {
+                self.signButton.setTitle("Sign Out", for: .normal)
+                self.signButton.addTarget(self, action: #selector(signOut), for: .touchUpInside)
+                self.statusLabel.text = "Authenticated Successfully!"
+            } else {
+                self.signButton.setTitle("Sign In", for: .normal)
+                self.signButton.addTarget(self, action: #selector(signIn), for: .touchUpInside)
+                self.statusLabel.text = "Click Button to Authenticate!"
+            }
+            self.statusLabel.sizeToFit()
+        }.store(in: &cancellables)
     }
+
+    // MARK: - APIService (NetworkLayer) 작성방법
+
+    @objc private func requestButtonTapped() {
+        APIService.shared.request(.profile) { response in
+            _ = response
+        }
+
+        APIService.shared.request(.profile) { response in
+            _ = response
+            print(response)
+        } onError: { error in
+            _ = error
+            print(error)
+        }
+
+        APIService.shared.request(.profile, model: AuthUser.self) { model in
+            _ = model
+        }
+
+        APIService.shared.request(.profile, model: AuthUser.self) { model in
+            _ = model
+            print(model)
+        } onError: { error in
+            _ = error
+            print(error)
+        }
+    }
+
+    // MARK: - Using Custom APIService with Moya
+
+    private let provider = MoyaProvider<APIRequest>()
 
     // MARK: - #1 Moya
 
@@ -156,6 +221,29 @@ final class TestNetworkViewController: UIViewController {
         case .failure(let error):
             print(error)
         }
+    }
+
+    // MARK: - Authentication
+
+    @objc private func signIn() {
+        provider
+            .requestPublisher(.signIn(.init(
+                username: "Username",
+                avatarUrl: "http://url.com",
+                provider: "APPLE",
+                providerId: "1234"
+            )))
+            .map(SignInOutput.self)
+            .sink { completion in
+                guard case .failure(let error) = completion else { return }
+                print(error)
+            } receiveValue: { output in
+                AuthService.shared.signIn(accessToken: output.accessToken)
+            }.store(in: &cancellables)
+    }
+
+    @objc private func signOut() {
+        AuthService.shared.signOut()
     }
 }
 
