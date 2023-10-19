@@ -3,7 +3,18 @@ import PinLayout
 import UIKit
 
 final class MyProfileViewController: UIViewController {
-    private let profileImageView = {
+    private lazy var fullScreenView = {
+        let full = UIView()
+        view.addSubview(full)
+        return full
+    }()
+
+    private lazy var countView = {
+        let flexView = UIView()
+        return flexView
+    }()
+
+    private lazy var profileImageView = {
         let imageView = UIImageView(image: UIImage(systemName: ""))
         imageView.tintColor = .systemTeal
         imageView.layer.borderWidth = 1
@@ -13,7 +24,7 @@ final class MyProfileViewController: UIViewController {
         return imageView
     }()
 
-    private let nicknameLabel = {
+    private lazy var nicknameLabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.text = "nickname"
@@ -21,17 +32,19 @@ final class MyProfileViewController: UIViewController {
         return label
     }()
 
-    private let moreButton = {
+    private lazy var moreButton = {
         let button = UIButton()
         button.sizeToFit()
         button.tintColor = .systemTeal
         button.setImage(UIImage(systemName: "list.bullet"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         button.imageEdgeInsets = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 25)
+        button.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
+        view.addSubview(button)
         return button
     }()
 
-    private let postButton = {
+    private lazy var postButton = {
         let button = UIButton()
         button.sizeToFit()
         button.setTitle("39\npost", for: .normal)
@@ -42,7 +55,7 @@ final class MyProfileViewController: UIViewController {
         return button
     }()
 
-    private let followersButton = {
+    private lazy var followersButton = {
         let button = UIButton()
         button.sizeToFit()
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
@@ -50,10 +63,11 @@ final class MyProfileViewController: UIViewController {
         button.titleLabel?.textAlignment = .center
         button.setTitle("107\nfollowers", for: .normal)
         button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
         return button
     }()
 
-    private let followingButton = {
+    private lazy var followingButton = {
         let button = UIButton()
         button.sizeToFit()
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
@@ -61,29 +75,29 @@ final class MyProfileViewController: UIViewController {
         button.titleLabel?.numberOfLines = 2
         button.titleLabel?.textAlignment = .center
         button.setTitleColor(.black, for: .normal)
+        view.addSubview(button)
+        button.addTarget(self, action: #selector(followingButtonTapped), for: .touchUpInside)
+
         return button
     }()
 
-    private let editBlogButton = {
+    private lazy var editBlogButton = {
         let button = UIButton()
         button.sizeToFit()
         button.backgroundColor = .systemTeal
         button.setTitle("블로그 관리", for: .normal)
         button.tintColor = .systemTeal
         button.layer.cornerRadius = 8
+        view.addSubview(button)
+        button.addTarget(self, action: #selector(editBlogButtonTapped), for: .touchUpInside)
 
         return button
     }()
 
-    private let rootFlexContainer = {
-        let view = UIView()
-        return view
-    }()
-
-    private let myProfileTableView = {
+    private lazy var myProfileTableView = {
         let tableView = UITableView()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-
+        view.addSubview(tableView)
         return tableView
     }()
 
@@ -91,10 +105,7 @@ final class MyProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         navigationController?.setNavigationBarHidden(true, animated: false)
-        moreButton.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
-        followersButton.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
-        followingButton.addTarget(self, action: #selector(followingButtonTapped), for: .touchUpInside)
-        editBlogButton.addTarget(self, action: #selector(editBlogButtonTapped), for: .touchUpInside)
+
         myProfileTableView.delegate = self
         myProfileTableView.dataSource = self
     }
@@ -103,58 +114,47 @@ final class MyProfileViewController: UIViewController {
         super.viewDidLayoutSubviews()
         view.backgroundColor = .systemBackground
         setUpUI()
-        rootFlexContainer.flex.layout()
+        fullScreenView.flex.layout()
+        countView.flex.layout()
     }
 
     private func setUpUI() {
-        view.addSubview(profileImageView)
-        view.addSubview(nicknameLabel)
-        view.addSubview(moreButton)
-        view.addSubview(editBlogButton)
-        view.addSubview(myProfileTableView)
-        view.addSubview(rootFlexContainer)
-//        rootFlexContainer.addSubview(followersButton)
-//        rootFlexContainer.addSubview(followingButton)
-        view.addSubview(postButton)
-        view.addSubview(followersButton)
-        view.addSubview(followingButton)
-
-//        rootFlexContainer.flex.direction(.row).justifyContent(.center).define { flex in
-//            flex.addItem(postButton).width(60).marginLeft(10)
-//            flex.addItem(followersButton).width(60)
-//            flex.addItem(followingButton).width(60).marginLeft(10)
-//        }
-
-        profileImageView.pin.top(view.pin.safeArea + 5).left(7.5%).height(100).width(100).margin(10)
-        nicknameLabel.pin.top(view.pin.safeArea + 25).after(of: profileImageView).before(of: moreButton).marginLeft(15)
-        moreButton.pin.top(view.pin.safeArea).right(view.pin.safeArea + 10)
-//        rootFlexContainer.pin.below(of: nicknameLabel).after(of: profileImageView)
-//            .marginLeft(90).marginTop(25)
-        postButton.pin.below(of: nicknameLabel).after(of: profileImageView)
-            .width(60).marginTop(10)
-        followersButton.pin.below(of: nicknameLabel).after(of: postButton)
-            .width(60).marginTop(10)
-        followingButton.pin.below(of: nicknameLabel).after(of: followersButton)
-            .width(60).marginLeft(10).marginTop(10)
-        editBlogButton.pin.below(of: profileImageView).left(3%).right(3%).margin(20)
-        myProfileTableView.pin.below(of: editBlogButton).marginTop(30)
-            .bottom(view.pin.safeArea).left().right()
+        fullScreenView.flex.direction(.column).padding(20).define { flex in
+            flex.addItem().direction(.row).define { flex in
+                flex.addItem(profileImageView).width(100).height(100)
+                flex.addItem().direction(.column).define { flex in
+                    flex.addItem(nicknameLabel).marginLeft(15)
+                    flex.addItem(countView).marginLeft(5)
+                    countView.flex.direction(.row)
+                        .width(200).height(75).define { flex in
+                            flex.addItem(postButton).grow(1)
+                            flex.addItem(followersButton).grow(1)
+                            flex.addItem(followingButton).grow(1).marginLeft(5)
+                        }
+                }
+            }
+            flex.addItem(editBlogButton).marginTop(15)
+        }
+        fullScreenView.pin.top(view.pin.safeArea).bottom(70%).left().right()
+        moreButton.pin.top(view.pin.safeArea).right()
+        myProfileTableView.pin.below(of: fullScreenView).bottom(view.pin.safeArea)
+            .left().right()
     }
 
     @objc private func moreButtonTapped() {
-        print("test")
+        print("moreButtonTappedTest")
     }
 
     @objc private func followersButtonTapped() {
-        print("test")
+        print("followersButtonTappedTest")
     }
 
     @objc private func followingButtonTapped() {
-        print("test")
+        print("followingButtonTappedTest")
     }
 
     @objc private func editBlogButtonTapped() {
-        print("test")
+        print("editBlogTappedTest")
     }
 }
 
