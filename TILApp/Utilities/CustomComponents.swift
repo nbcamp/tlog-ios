@@ -137,6 +137,32 @@ class CustomLargeButton: UIButton {
     }
 }
 
+class CustomLargeBorderButton: UIButton {
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupButton()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupButton() {
+        backgroundColor = UIColor.white
+        layer.borderWidth = 0.5
+        layer.borderColor = UIColor(named: "AccentColor")?.cgColor
+        layer.cornerRadius = 12
+        setTitleColor(UIColor(named: "AccentColor"), for: .normal)
+        titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        pin.horizontally(20).height(40)
+    }
+}
+
 class CustomFollowButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -218,6 +244,11 @@ class CustomTextFieldView: UIView {
         get { return textField.placeholder ?? "" }
         set { textField.placeholder = newValue }
     }
+    
+    public var mainText: String {
+        get { return textField.text ?? "" }
+        set { textField.text = newValue }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -230,7 +261,7 @@ class CustomTextFieldView: UIView {
     }
 
     private func setupView() {
-        backgroundColor = .systemBackground
+        //backgroundColor = .systemBackground
 
         self.flex.define {
             $0.addItem(titleLabel).margin(0,20).height(24)
@@ -336,7 +367,7 @@ class CustomUserView: UIView {
     }
 
     private func setupView() {
-        backgroundColor = .systemBackground
+        //backgroundColor = .systemBackground
 
         addSubview(imageView)
         addSubview(customLabelView)
@@ -401,7 +432,7 @@ class CustomTILView: UIView {
     }
 
     private func setupView() {
-        backgroundColor = .systemBackground
+        //backgroundColor = .systemBackground
 
         addSubview(titleLabel)
         addSubview(contentLabel)
@@ -460,7 +491,7 @@ class CustomCommunityTILView: UIView {
     }
 
     private func setupView() {
-        backgroundColor = .systemBackground
+        //backgroundColor = .systemBackground
 
         TILView.resizeText()
 
@@ -505,7 +536,7 @@ class CustomBlogView: UIView {
     }
 
     private func setupView() {
-        backgroundColor = .systemBackground
+        //backgroundColor = .systemBackground
 
         chevronImage.tintColor = UIColor(named: "AccentColor")
         chevronImage.contentMode = .scaleAspectFit
