@@ -15,7 +15,7 @@ final class APIService {
         provider.request(target) { result in
             switch result {
             case .success(let response):
-                guard let response = try? response.filterSuccessfulStatusCodes() else {
+                guard let response = try? response.filterSuccessfulStatusAndRedirectCodes() else {
                     onError?(.statusCode(response)); return
                 }
                 onSuccess(response)

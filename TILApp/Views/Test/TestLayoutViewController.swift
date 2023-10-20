@@ -115,9 +115,9 @@ final class TestLayoutViewController: UIViewController {
         view.backgroundColor = .white
 
         view.addSubview(rootFlexContainer)
-        rootFlexContainer.flex.justifyContent(.center).padding(10).define { flex in
+        rootFlexContainer.flex.padding(10).define { flex in
             flex.addItem(view1).grow(1)
-            flex.addItem(view2).grow(0.5).marginTop(20)
+            flex.addItem(view2).grow(0.5).marginTop(10)
             flex.addItem(view3).grow(1).marginTop(10)
         }
 
