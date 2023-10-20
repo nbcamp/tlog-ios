@@ -1,12 +1,11 @@
-import UIKit
-import Then
-import PinLayout
 import FlexLayout
+import PinLayout
+import Then
+import UIKit
 
 // TODO: 테이블뷰 탭 만들기!
 
 class CustomComponentsViewController: UIViewController {
-
     private lazy var customLargeButton = CustomLargeButton().then {
         $0.setTitle("하이하이", for: .normal)
         view.addSubview($0)
@@ -22,7 +21,7 @@ class CustomComponentsViewController: UIViewController {
         view.addSubview($0)
     }
 
-    private lazy var customTextFieldView = CustomTextFieldView().then {
+    private lazy var customTextFieldView = CustomTextFieldViewWithValidation().then {
         $0.titleText = "하이하이하이"
         $0.placeholder = "뭐뭐를 입력해주세요."
         $0.validationText = "유효한 값입니다."
@@ -63,6 +62,16 @@ class CustomComponentsViewController: UIViewController {
         view.addSubview($0)
     }
 
+    private lazy var customTagView = CustomTagView().then {
+        $0.labelText = "[TIL/Swift]"
+        $0.tags = ["TIL", "iOS", "Swift", "내배캠", "으으으", "iOS", "Swift", "내배캠", "으으으"]
+        view.addSubview($0)
+    }
+
+    private lazy var customTagHeaderView = CustomTagHeaderView().then {
+        view.addSubview($0)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -98,29 +107,37 @@ class CustomComponentsViewController: UIViewController {
             .top(to: customUserView.edge.bottom)
             .marginTop(15)
 
-        customCommunityTILView.pin
+//        customCommunityTILView.pin
+//            .top(to: customTILView.edge.bottom)
+//            .marginTop(15)
+//
+//        customBlogView.pin
+//            .top(to: customCommunityTILView.edge.bottom)
+//            .marginTop(15)
+
+//        customSegmentedControl.pin
+//            .hCenter()
+//            .top(to: customBlogView.edge.bottom)
+//            .marginTop(15)
+
+        customTagView.pin
             .top(to: customTILView.edge.bottom)
-            .marginTop(15)
+            .margin(15)
 
-        customBlogView.pin
-            .top(to: customCommunityTILView.edge.bottom)
-            .marginTop(15)
-
-        customSegmentedControl.pin
-            .hCenter()
-            .top(to: customBlogView.edge.bottom)
-            .marginTop(15)
+        customTagHeaderView.pin
+            .top(to: customTagView.edge.bottom)
+            .margin(15)
     }
 }
 
 class CustomLargeButton: UIButton {
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupButton()
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -138,13 +155,13 @@ class CustomLargeButton: UIButton {
 }
 
 class CustomLargeBorderButton: UIButton {
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupButton()
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -193,9 +210,9 @@ class CustomUnfollowButton: UIButton {
         setupButton()
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupButton()
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     private func setupButton() {
@@ -213,40 +230,58 @@ class CustomUnfollowButton: UIButton {
     }
 }
 
+class CustomTitleLabel: UILabel {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        textColor = UIColor.systemGray
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        pin.horizontally(20).height(24)
+    }
+}
+
+class CustomTextField: UITextField {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        borderStyle = .roundedRect
+        font = UIFont.systemFont(ofSize: 15, weight: .regular)
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        pin.horizontally(20).height(40)
+    }
+}
+
 class CustomTextFieldView: UIView {
+    private let titleLabel = CustomTitleLabel()
+    private let textField = CustomTextField()
 
-    private let titleLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        $0.textColor = UIColor.systemGray
-    }
-
-    private let validationLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 11, weight: .light)
-        $0.textColor = UIColor.systemGreen
-    }
-
-    private let textField = UITextField().then {
-        $0.borderStyle = .roundedRect
-        $0.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-    }
-
-    public var titleText: String {
-        get { return titleLabel.text ?? "" }
+    var titleText: String {
+        get { titleLabel.text ?? "" }
         set { titleLabel.text = newValue }
     }
 
-    public var validationText: String {
-        get { return validationLabel.text ?? "" }
-        set { validationLabel.text = newValue }
-    }
-
-    public var placeholder: String {
-        get { return textField.placeholder ?? "" }
+    var placeholder: String {
+        get { textField.placeholder ?? "" }
         set { textField.placeholder = newValue }
     }
-    
-    public var mainText: String {
-        get { return textField.text ?? "" }
+
+    var mainText: String {
+        get { textField.text ?? "" }
         set { textField.text = newValue }
     }
 
@@ -256,31 +291,85 @@ class CustomTextFieldView: UIView {
         setupView()
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     private func setupView() {
-        //backgroundColor = .systemBackground
+        // backgroundColor = .systemBackground
 
-        self.flex.define {
-            $0.addItem(titleLabel).margin(0,20).height(24)
-            $0.addItem(textField).margin(0,20).height(40)
-            $0.addItem(validationLabel).margin(0,25,0,20).height(20)
+        flex.define {
+            $0.addItem(titleLabel).margin(0, 20).height(24)
+            $0.addItem(textField).margin(0, 20).height(40)
         }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        self.pin.width(100%).height(84)
-        self.flex.layout()
+        pin.width(100%).height(64)
+        flex.layout()
+    }
+}
+
+class CustomTextFieldViewWithValidation: UIView {
+    private let customTextFieldView = CustomTextFieldView()
+
+    private let validationLabel = UILabel().then {
+        $0.font = UIFont.systemFont(ofSize: 11, weight: .light)
+        $0.textColor = UIColor.systemGreen
     }
 
+    var titleText: String {
+        get { customTextFieldView.titleText }
+        set { customTextFieldView.titleText = newValue }
+    }
+
+    var placeholder: String {
+        get { customTextFieldView.placeholder }
+        set { customTextFieldView.placeholder = newValue }
+    }
+
+    var mainText: String {
+        get { customTextFieldView.mainText }
+        set { customTextFieldView.mainText = newValue }
+    }
+
+    var validationText: String {
+        get { validationLabel.text ?? "" }
+        set { validationLabel.text = newValue }
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        setupView()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupView() {
+        // backgroundColor = .systemBackground
+
+        flex.define {
+            $0.addItem(customTextFieldView)
+            $0.addItem(validationLabel).margin(0, 25, 0, 20).height(20)
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        pin.width(100%).height(84)
+        flex.layout()
+    }
 }
 
 class CustomLabelView: UIView {
-
     private let nicknameLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
     }
@@ -290,13 +379,13 @@ class CustomLabelView: UIView {
         $0.textColor = .systemGray2
     }
 
-    public var nicknameText: String {
-        get { return nicknameLabel.text ?? "" }
+    var nicknameText: String {
+        get { nicknameLabel.text ?? "" }
         set { nicknameLabel.text = newValue }
     }
 
-    public var dateText: String {
-        get { return dateLabel.text ?? "" }
+    var dateText: String {
+        get { dateLabel.text ?? "" }
         set { dateLabel.text = newValue }
     }
 
@@ -306,12 +395,13 @@ class CustomLabelView: UIView {
         setupView()
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     private func setupView() {
-        self.flex.justifyContent(.center).define {
+        flex.justifyContent(.center).define {
             $0.addItem(nicknameLabel)
             $0.addItem(dateLabel).marginTop(2)
         }
@@ -320,8 +410,8 @@ class CustomLabelView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        self.pin.width(200).height(67)
-        self.flex.layout()
+        pin.width(200).height(67)
+        flex.layout()
     }
 }
 
@@ -336,23 +426,23 @@ class CustomUserView: UIView {
         $0.clipsToBounds = true
     }
 
-    public var buttonTitle: String {
-        get { return button.titleLabel?.text ?? "" }
+    var buttonTitle: String {
+        get { button.titleLabel?.text ?? "" }
         set { button.setTitle(newValue, for: .normal) }
     }
 
-    public var nicknameText: String {
-        get { return customLabelView.nicknameText }
+    var nicknameText: String {
+        get { customLabelView.nicknameText }
         set { customLabelView.nicknameText = newValue }
     }
 
-    public var dateText: String {
-        get { return customLabelView.dateText }
+    var dateText: String {
+        get { customLabelView.dateText }
         set { customLabelView.dateText = newValue }
     }
 
-    public var image: UIImage? {
-        get { return imageView.image }
+    var image: UIImage? {
+        get { imageView.image }
         set { imageView.image = newValue }
     }
 
@@ -362,22 +452,22 @@ class CustomUserView: UIView {
         setupView()
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     private func setupView() {
-        //backgroundColor = .systemBackground
+        // backgroundColor = .systemBackground
 
         addSubview(imageView)
         addSubview(customLabelView)
         addSubview(button)
-
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.pin.width(100%).height(67)
+        pin.width(100%).height(67)
 
         imageView.pin
             .vCenter()
@@ -396,7 +486,7 @@ class CustomUserView: UIView {
         imageView.layer.cornerRadius = imageView.bounds.size.width / 2.0
     }
 
-    public func setup(image: UIImage, nicknameText: String, contentText: String, buttonTitle: String) {
+    func setup(image: UIImage, nicknameText: String, contentText: String, buttonTitle: String) {
         imageView.image = image
         customLabelView.nicknameText = nicknameText
         customLabelView.dateText = contentText
@@ -427,23 +517,23 @@ class CustomTILView: UIView {
         setupView()
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     private func setupView() {
-        //backgroundColor = .systemBackground
+        // backgroundColor = .systemBackground
 
         addSubview(titleLabel)
         addSubview(contentLabel)
         addSubview(dateLabel)
-
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        self.pin.width(100%).height(85)
+        pin.width(100%).height(85)
 
         titleLabel.pin
             .top(15)
@@ -464,21 +554,21 @@ class CustomTILView: UIView {
             .height(20)
     }
 
-    public func setup(withTitle title: String, content: String, date: String) {
+    func setup(withTitle title: String, content: String, date: String) {
         titleLabel.text = title
         contentLabel.text = content
         dateLabel.text = date
     }
 
-    public func resizeText() {
+    func resizeText() {
         titleLabel.font = UIFont.systemFont(ofSize: 15)
         dateLabel.font = UIFont.systemFont(ofSize: 14)
     }
 }
 
 class CustomCommunityTILView: UIView {
-    internal let userView = CustomUserView()
-    internal let TILView = CustomTILView()
+    let userView = CustomUserView()
+    let TILView = CustomTILView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -486,12 +576,13 @@ class CustomCommunityTILView: UIView {
         setupView()
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     private func setupView() {
-        //backgroundColor = .systemBackground
+        // backgroundColor = .systemBackground
 
         TILView.resizeText()
 
@@ -502,26 +593,25 @@ class CustomCommunityTILView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        self.pin.width(100%).height(141)
+        pin.width(100%).height(141)
         TILView.pin.top(54)
     }
-
 }
 
 class CustomBlogView: UIView {
-
     private let customLabelView = CustomLabelView()
     private let chevronImage = UIImageView(image: UIImage(
         systemName: "chevron.right",
-        withConfiguration: UIImage.SymbolConfiguration(pointSize: 30, weight: .light)))
+        withConfiguration: UIImage.SymbolConfiguration(pointSize: 30, weight: .light)
+    ))
 
-    public var blogNameText: String {
-        get { return customLabelView.nicknameText }
+    var blogNameText: String {
+        get { customLabelView.nicknameText }
         set { customLabelView.nicknameText = newValue }
     }
 
-    public var blogURLText: String {
-        get { return customLabelView.dateText }
+    var blogURLText: String {
+        get { customLabelView.dateText }
         set { customLabelView.dateText = newValue }
     }
 
@@ -531,30 +621,29 @@ class CustomBlogView: UIView {
         setupView()
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     private func setupView() {
-        //backgroundColor = .systemBackground
+        // backgroundColor = .systemBackground
 
         chevronImage.tintColor = UIColor(named: "AccentColor")
         chevronImage.contentMode = .scaleAspectFit
 
         addSubview(customLabelView)
         addSubview(chevronImage)
-
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        self.pin.width(100%).height(67)
+        pin.width(100%).height(67)
 
         customLabelView.pin.left(20)
         chevronImage.pin.width(20).height(20).centerRight(20)
     }
-
 }
 
 // TODO: 테두리, 배경색, 폰트 등등 수정하기
@@ -574,7 +663,8 @@ class CustomSegmentedControl: UISegmentedControl {
         updateBottomBorder()
     }
 
-    required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -591,7 +681,8 @@ class CustomSegmentedControl: UISegmentedControl {
             bottomBorder.backgroundColor = UIColor.black.cgColor
             bottomBorder.frame = CGRect(
                 x: selectedSegment.frame.minX,
-                y: frame.size.height - 2, width: selectedSegment.frame.width, height: 2)
+                y: frame.size.height - 2, width: selectedSegment.frame.width, height: 2
+            )
             bottomBorder.name = "bottomBorder"
             layer.addSublayer(bottomBorder)
         }
@@ -599,7 +690,125 @@ class CustomSegmentedControl: UISegmentedControl {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.pin.width(100%).height(60)
+        pin.width(100%).height(60)
         updateBottomBorder()
+    }
+}
+
+class CustomTagHeaderView: UIView {
+    private let label = CustomTitleLabel().then {
+        $0.text = "블로그 게시물 자동 태그 설정"
+    }
+
+    // TODO: +버튼 추가하기
+
+    private let line = UIView().then {
+        $0.backgroundColor = .systemGray
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        setupView()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupView() {
+        // backgroundColor = .systemBackground
+
+        addSubview(label)
+        addSubview(line)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        pin.width(100%).height(30)
+        line.pin.bottom(to: edge.bottom).horizontally(20).height(0.5)
+    }
+}
+
+class CustomTagView: UIView {
+    private let titleLabel = UILabel().then {
+        $0.text = "제목"
+        $0.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        $0.textColor = UIColor.systemGray
+        $0.sizeToFit()
+    }
+
+    private let tagLabel = UILabel().then {
+        $0.text = "태그"
+        $0.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        $0.textColor = UIColor.systemGray
+        $0.sizeToFit()
+    }
+
+    private let titleContentLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 14)
+    }
+
+    private let tagContentLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 14)
+    }
+
+    private let deleteButton = UIButton().then {
+        $0.setTitle("삭제", for: .normal)
+        $0.setTitleColor(.systemGray, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 13)
+    }
+
+    var labelText: String {
+        get { titleContentLabel.text ?? "" }
+        set { titleContentLabel.text = newValue }
+    }
+
+    var tags: [String] = [] {
+        didSet {
+            tagContentLabel.text = tags.joined(separator: " | ")
+        }
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        setupView()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupView() {
+        // backgroundColor = .systemBackground
+
+        flex.direction(.column).justifyContent(.spaceBetween).padding(10).define { flex in
+            flex.addItem().direction(.row).define {
+                $0.addItem(titleLabel).height(20).marginRight(10)
+                $0.addItem(titleContentLabel).maxWidth(80%).height(20)
+            }
+            flex.addItem().direction(.row).define {
+                $0.addItem(tagLabel).height(20).marginRight(10)
+                $0.addItem(tagContentLabel).maxWidth(80%).height(20)
+            }
+        }
+
+        addSubview(deleteButton)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        pin.horizontally(20).height(67)
+        flex.layout()
+        deleteButton.pin.width(30).height(30).vCenter().right(10)
+
+        layer.cornerRadius = 12
+        layer.borderWidth = 0.5
+        layer.borderColor = UIColor.systemGray3.cgColor
     }
 }
