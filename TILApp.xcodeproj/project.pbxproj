@@ -40,6 +40,7 @@
 		33DC8E0A2ADFDAFF00580FA0 /* TestNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */; };
 		33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */; };
 		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
+		D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28DC8062AE21E9D00D00EC6 /* BlogRegisterViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkViewController.swift; sourceTree = "<group>"; };
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
+		D28DC8062AE21E9D00D00EC6 /* BlogRegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogRegisterViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,6 +234,7 @@
 				D24BB9902AE106F000ED7028 /* BlogListViewController.swift */,
 				D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */,
 				D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */,
+				D28DC8062AE21E9D00D00EC6 /* BlogRegisterViewController.swift */,
 			);
 			path = MyProfileViewController;
 			sourceTree = "<group>";
@@ -388,6 +391,7 @@
 				D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */,
 				3334E1CB2AD9121700D853D7 /* AuthUser.swift in Sources */,
 				33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */,
+				D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */,
 				3334E1C92AD911ED00D853D7 /* Blog.swift in Sources */,
 				3334E1C72AD9113900D853D7 /* UIViewController+Ext.swift in Sources */,
 				33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */,
