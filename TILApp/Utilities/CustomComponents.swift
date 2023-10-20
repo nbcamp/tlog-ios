@@ -787,13 +787,13 @@ class CustomTagView: UIView {
         // backgroundColor = .systemBackground
 
         flex.direction(.column).justifyContent(.spaceBetween).padding(10).define { flex in
-            flex.addItem().direction(.row).define {
-                $0.addItem(titleLabel).height(20).marginRight(10)
-                $0.addItem(titleContentLabel).maxWidth(80%).height(20)
+            flex.addItem().direction(.row).grow(1).define {
+                $0.addItem(titleLabel).marginRight(10)
+                $0.addItem(titleContentLabel).maxWidth(80%)
             }
-            flex.addItem().direction(.row).define {
-                $0.addItem(tagLabel).height(20).marginRight(10)
-                $0.addItem(tagContentLabel).maxWidth(80%).height(20)
+            flex.addItem().direction(.row).grow(1).define {
+                $0.addItem(tagLabel).marginRight(10)
+                $0.addItem(tagContentLabel).maxWidth(80%)
             }
         }
 

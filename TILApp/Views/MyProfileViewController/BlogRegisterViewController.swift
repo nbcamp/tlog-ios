@@ -54,7 +54,7 @@ class BlogRegisterViewController: UIViewController {
                 let customTagView = CustomTagView()
                 customTagView.labelText = name
                 customTagView.tags = tags
-                $0.addItem(customTagView)
+                $0.addItem(customTagView).marginTop(10)
             }
         }
         view.addSubview(root)
@@ -74,8 +74,11 @@ class BlogRegisterViewController: UIViewController {
         blogRSSTextField.pin.top(to: blogURLTextField.edge.bottom).marginTop(5)
         tagHeader.pin.top(to: blogRSSTextField.edge.bottom).marginTop(5)
 
+        rootFlexContainer.pin.top(to: tagHeader.edge.bottom).bottom().width(100%)
+        for view in rootFlexContainer.subviews {
+            print(view)
+        }
         rootFlexContainer.flex.layout()
-        rootFlexContainer.pin.top(to: tagHeader.edge.bottom).bottom().width(100%).marginTop(10)
-        rootFlexContainer.backgroundColor = .blue
+
     }
 }
