@@ -1,105 +1,87 @@
+
 import FlexLayout
 import PinLayout
+import Then
 import UIKit
 
 final class MyProfileViewController: UIViewController {
-    private lazy var fullScreenView = {
-        let full = UIView()
-        view.addSubview(full)
-        return full
-    }()
+    private let accentColor = UIColor(named: "AccentColor")
+    private lazy var screenView = UIView().then {
+        view.addSubview($0)
+    }
 
-    private lazy var countView = {
-        let flexView = UIView()
-        return flexView
-    }()
+    private lazy var countView = UIView().then { _ in
+    }
 
-    private lazy var profileImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: ""))
-        imageView.tintColor = .systemTeal
-        imageView.layer.borderWidth = 1
-        imageView.layer.cornerRadius = 50
-        imageView.layer.borderColor = UIColor.systemTeal.cgColor
-        imageView.backgroundColor = .systemGray4
-        return imageView
-    }()
+    private lazy var profileImageView = UIImageView(image: UIImage(systemName: "")).then {
+        $0.layer.borderWidth = 1
+        $0.layer.cornerRadius = 50
+        $0.layer.borderColor = accentColor?.cgColor
+        $0.backgroundColor = .systemGray4
+    }
 
-    private lazy var nicknameLabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 20)
-        label.text = "nickname"
-        label.sizeToFit()
-        return label
-    }()
+    private lazy var nicknameLabel = UILabel().then {
+        $0.font = UIFont.boldSystemFont(ofSize: 20)
+        $0.text = "nickname"
+        $0.sizeToFit()
+    }
 
-    private lazy var moreButton = {
-        let button = UIButton()
-        button.sizeToFit()
-        button.tintColor = .systemTeal
-        button.setImage(UIImage(systemName: "list.bullet"), for: .normal)
-        button.imageView?.contentMode = .scaleAspectFit
-        button.imageEdgeInsets = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 25)
-        button.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
-        view.addSubview(button)
-        return button
-    }()
+    private lazy var moreButton = UIButton().then {
+        $0.sizeToFit()
+        $0.tintColor = accentColor
+        $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        $0.imageView?.contentMode = .scaleAspectFit
+        $0.imageEdgeInsets = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 25)
+        $0.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
+        view.addSubview($0)
+    }
 
-    private lazy var postButton = {
-        let button = UIButton()
-        button.sizeToFit()
-        button.setTitle("39\npost", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        button.titleLabel?.numberOfLines = 2
-        button.titleLabel?.textAlignment = .center
-        button.setTitleColor(.black, for: .normal)
-        return button
-    }()
+    private lazy var postButton = UIButton().then {
+        $0.sizeToFit()
+        $0.setTitle("39\npost", for: .normal)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        $0.titleLabel?.numberOfLines = 2
+        $0.titleLabel?.textAlignment = .center
+        $0.setTitleColor(.black, for: .normal)
+    }
 
-    private lazy var followersButton = {
-        let button = UIButton()
-        button.sizeToFit()
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        button.titleLabel?.numberOfLines = 2
-        button.titleLabel?.textAlignment = .center
-        button.setTitle("107\nfollowers", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
-        return button
-    }()
+    private lazy var followersButton = UIButton().then {
+        $0.sizeToFit()
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        $0.titleLabel?.numberOfLines = 2
+        $0.titleLabel?.textAlignment = .center
+        $0.setTitle("107\nfollowers", for: .normal)
+        $0.setTitleColor(.black, for: .normal)
+        $0.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
+    }
 
-    private lazy var followingButton = {
-        let button = UIButton()
-        button.sizeToFit()
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        button.setTitle("64\nfollowing", for: .normal)
-        button.titleLabel?.numberOfLines = 2
-        button.titleLabel?.textAlignment = .center
-        button.setTitleColor(.black, for: .normal)
-        view.addSubview(button)
-        button.addTarget(self, action: #selector(followingButtonTapped), for: .touchUpInside)
+    private lazy var followingButton = UIButton().then {
+        $0.sizeToFit()
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        $0.setTitle("64\nfollowing", for: .normal)
+        $0.titleLabel?.numberOfLines = 2
+        $0.titleLabel?.textAlignment = .center
+        $0.setTitleColor(.black, for: .normal)
+        $0.addTarget(self, action: #selector(followingButtonTapped), for: .touchUpInside)
+    }
 
-        return button
-    }()
+    private lazy var editBlogButton = CustomLargeButton().then {
+        $0.sizeToFit()
+        $0.backgroundColor = accentColor
+        $0.setTitle("블로그 관리", for: .normal)
+        $0.layer.cornerRadius = 8
+        view.addSubview($0)
+        $0.addTarget(self, action: #selector(editBlogButtonTapped), for: .touchUpInside)
+    }
 
-    private lazy var editBlogButton = {
-        let button = UIButton()
-        button.sizeToFit()
-        button.backgroundColor = .systemTeal
-        button.setTitle("블로그 관리", for: .normal)
-        button.tintColor = .systemTeal
-        button.layer.cornerRadius = 8
-        view.addSubview(button)
-        button.addTarget(self, action: #selector(editBlogButtonTapped), for: .touchUpInside)
+    private lazy var postAndLikeButton = CustomSegmentedControl(items: ["작성한 글", "좋아요 목록"]).then {
+        view.addSubview($0)
+    }
 
-        return button
-    }()
-
-    private lazy var myProfileTableView = {
-        let tableView = UITableView()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        view.addSubview(tableView)
-        return tableView
-    }()
+    private lazy var myProfileTableView = UITableView().then {
+        $0.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        view.addSubview($0)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -114,12 +96,12 @@ final class MyProfileViewController: UIViewController {
         super.viewDidLayoutSubviews()
         view.backgroundColor = .systemBackground
         setUpUI()
-        fullScreenView.flex.layout()
+        screenView.flex.layout()
         countView.flex.layout()
     }
 
     private func setUpUI() {
-        fullScreenView.flex.direction(.column).padding(20).define { flex in
+        screenView.flex.direction(.column).padding(20).define { flex in
             flex.addItem().direction(.row).define { flex in
                 flex.addItem(profileImageView).width(100).height(100)
                 flex.addItem().direction(.column).define { flex in
@@ -135,30 +117,31 @@ final class MyProfileViewController: UIViewController {
             }
             flex.addItem(editBlogButton).marginTop(15)
         }
-        fullScreenView.pin.top(view.pin.safeArea).bottom(70%).left().right()
-        moreButton.pin.top(view.pin.safeArea).right()
-        myProfileTableView.pin.below(of: fullScreenView).bottom(view.pin.safeArea)
-            .left().right()
+        screenView.pin.top(view.pin.safeArea).bottom(70%).left().right()
+        moreButton.pin.top(view.pin.safeArea).right(20)
+        postAndLikeButton.pin.below(of: screenView)
+        myProfileTableView.pin.below(of: postAndLikeButton).bottom(view.pin.safeArea).left().right()
     }
 
     @objc private func moreButtonTapped() {
-        print("moreButtonTappedTest")
+        // TODO: 더보기 페이지(사이드바, 바텀시트) 뷰 전환
     }
 
     @objc private func followersButtonTapped() {
-        print("followersButtonTappedTest")
+        // TODO: 팔로워 / 팔로윙 관리 페이지 뷰 전환 구현
     }
 
     @objc private func followingButtonTapped() {
-        print("followingButtonTappedTest")
+        // TODO: 팔로워 / 팔로윙 관리 페이지 뷰 전환 구현
     }
 
     @objc private func editBlogButtonTapped() {
-        print("editBlogTappedTest")
+        // TODO: 블로그 수정 뷰 전환
     }
 }
 
 extension MyProfileViewController: UITableViewDataSource, UITableViewDelegate {
+    // TODO: 작성한 글 / 좋아요 목록 테이블뷰
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
     }
