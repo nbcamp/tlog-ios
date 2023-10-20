@@ -1,76 +1,67 @@
 import FlexLayout
 import PinLayout
+import Then
 import UIKit
 
 final class HomeViewController: UIViewController {
     private var TILPost = [1, 2, 3, 4]
-    private var userDidRegisterBlog: Bool = true // 로그인상태
-    private var TILComplete: Bool = false // TIL 작성 상태
-    private let countTILLabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.text = "대단해요!! 연속 x일 달성"
-        label.font = UIFont.boldSystemFont(ofSize: 30)
-        label.sizeToFit()
-        return label
-    }()
+    // TODO: 모델 추가후 변경하기
+    private var userDidRegisterBlog: Bool = false // 로그인상태
+    private var todayTILComplete: Bool = false // TIL 작성 상태
+    private let countTILLabel = UILabel().then {
+        $0.textAlignment = .center
+        $0.text = "대단해요!! 연속 x일 달성"
+        $0.font = UIFont.boldSystemFont(ofSize: 30)
+        $0.sizeToFit()
+    }
 
-    private let completedTILLabel = {
-        let label = UILabel()
-        label.text = "오늘의 TIL 작성 완료  "
-        label.font = UIFont.systemFont(ofSize: 18)
-        label.textAlignment = .center
-        label.sizeToFit()
-        return label
-    }()
+    private let completedTILLabel = UILabel().then {
+        $0.text = "오늘의 TIL 작성 완료  "
+        $0.font = UIFont.systemFont(ofSize: 18)
+        $0.textAlignment = .center
+        $0.sizeToFit()
+    }
 
-    private let growthImage = {
-        let imageView = UIImageView(image: UIImage(named: "1"))
-        imageView.tintColor = .systemTeal
-        imageView.layer.borderWidth = 1
-        imageView.layer.cornerRadius = 8
-        imageView.layer.borderColor = UIColor.systemTeal.cgColor
-        return imageView
-    }()
+    private let growthImage = UIImageView(image: UIImage(named: "1")).then {
+        if let accentColor = UIColor(named: "AccentColor") {
+            $0.tintColor = accentColor
+            $0.layer.borderColor = accentColor.cgColor
+        }
+        $0.layer.borderWidth = 1
+        $0.layer.cornerRadius = 8
+    }
 
-    private let hiLabel = {
-        let label = UILabel()
-        label.text = "ooo님, 안녕하세요!"
-        label.textAlignment = .center
-        label.font = UIFont.boldSystemFont(ofSize: 24)
-        label.sizeToFit()
-        return label
-    }()
+    private let hiLabel = UILabel().then {
+        $0.text = "ooo님, 안녕하세요!"
+        $0.textAlignment = .center
+        $0.font = UIFont.boldSystemFont(ofSize: 24)
+        $0.sizeToFit()
+    }
 
-    private let registerBlogLabel = {
-        let label = UILabel()
-        label.text = "블로그를 등록해주세요!"
-        label.textAlignment = .center
-        label.font = UIFont.boldSystemFont(ofSize: 24)
-        label.sizeToFit()
-        return label
-    }()
+    private let registerBlogLabel = UILabel().then {
+        $0.text = "블로그를 등록해주세요!"
+        $0.textAlignment = .center
+        $0.font = UIFont.boldSystemFont(ofSize: 24)
+        $0.sizeToFit()
+    }
 
-    private let isCompleteImageView: UIImageView = {
-        let imageView = UIImageView()
-//        imageView.layer.borderWidth = 1
-//        imageView.layer.borderColor = UIColor.clear.cgColor
-        imageView.tintColor = .systemTeal
+    private let isCompleteImageView = UIImageView().then {
+        if let accentColor = UIColor(named: "AccentColor") {
+            $0.tintColor = accentColor
+        }
+    }
 
-        return imageView
-    }()
-
-    private let registerBlogButton = {
-        let button = UIButton()
-        button.setTitleColor(.white, for: .normal)
-        button.setTitle("블로그 등록하기", for: .normal)
-        button.sizeToFit()
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-        button.layer.cornerRadius = 8
-        button.backgroundColor = .systemTeal
-        button.setBackgroundImage(UIImage(named: "pressedButtonImage"), for: .highlighted)
-        return button
-    }()
+    private let registerBlogButton = CustomLargeButton().then {
+        if let accentColor = UIColor(named: "AccentColor") {
+            $0.backgroundColor = accentColor
+        }
+        $0.setTitleColor(.white, for: .normal)
+        $0.setTitle("블로그 등록하기", for: .normal)
+        $0.sizeToFit()
+        $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        $0.layer.cornerRadius = 8
+        $0.setBackgroundImage(UIImage(named: "pressedButtonImage"), for: .highlighted)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,7 +92,7 @@ final class HomeViewController: UIViewController {
         growthImage.pin.top(30%).bottom(20%).left(7.5%).right(7.5%)
         isCompleteImageView.pin.top(20.5%).right(23%).after(of: completedTILLabel).height(30)
 
-        if TILComplete {
+        if todayTILComplete {
             isCompleteImageView.image = UIImage(systemName: "checkmark.square.fill")
         } else {
             isCompleteImageView.image = UIImage(systemName: "x.square")
@@ -113,14 +104,13 @@ final class HomeViewController: UIViewController {
         view.addSubview(registerBlogLabel)
         view.addSubview(hiLabel)
 
-        registerBlogButton.pin.left().right().center().marginLeft(20).marginRight(20)
+        registerBlogButton.pin.center()
         registerBlogLabel.pin.above(of: registerBlogButton).hCenter().marginBottom(40)
         hiLabel.pin.above(of: registerBlogLabel).hCenter()
     }
 
     @objc private func registerBlogButtonTapped() {
-        print("블로그등록 페이지 뷰전환")
-
+        // TODO: 블로그 등록 페이지 추가 후 수정하기
 //        let homeViewController = HomeViewController()
 //
 //        navigationController?.pushViewController(homeViewController, animated: true)
@@ -129,17 +119,13 @@ final class HomeViewController: UIViewController {
     private func updateCountTILLabel() {
         countTILLabel.text = "대단해요!! 연속 \(TILPost.count)일 달성"
     }
+
     private func updateGrowthImage() {
         if TILPost.count >= 1 && TILPost.count <= 50 {
             let imageName = "\(TILPost.count / 5 + 1)"
             if let image = UIImage(named: imageName) {
                 growthImage.image = image
-                print("생성된 이미지 이름은 \(imageName)입니다")
-            } else {
-                print("Image named '\(imageName)' not found.")
-            }
-        } else {
-            print("TIL count out of range (1 to 10)")
-        }
+            } else {}
+        } else {}
     }
 }
