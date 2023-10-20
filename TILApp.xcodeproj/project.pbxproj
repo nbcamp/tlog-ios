@@ -34,6 +34,12 @@
 		D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9902AE106F000ED7028 /* BlogListViewController.swift */; };
 		D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */; };
 		D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */; };
+		33DC8E032ADFC9CC00580FA0 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E022ADFC9CC00580FA0 /* CombineMoya */; };
+		33DC8E052ADFC9CC00580FA0 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E042ADFC9CC00580FA0 /* Moya */; };
+		33DC8E072ADFCF1300580FA0 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E062ADFCF1300580FA0 /* AuthService.swift */; };
+		33DC8E0A2ADFDAFF00580FA0 /* TestNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */; };
+		33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */; };
+		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +67,10 @@
 		D24BB9902AE106F000ED7028 /* BlogListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListViewController.swift; sourceTree = "<group>"; };
 		D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListTableViewCell.swift; sourceTree = "<group>"; };
 		D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogEditViewController.swift; sourceTree = "<group>"; };
+		33DC8E062ADFCF1300580FA0 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkViewController.swift; sourceTree = "<group>"; };
+		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
+		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,8 +80,10 @@
 			files = (
 				33DC8E002ADF84CC00580FA0 /* Then in Frameworks */,
 				3334E1F12AD91DA100D853D7 /* PinLayout in Frameworks */,
+				33DC8E032ADFC9CC00580FA0 /* CombineMoya in Frameworks */,
 				3334E1F42AD91DCB00D853D7 /* FlexLayout in Frameworks */,
 				3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */,
+				33DC8E052ADFC9CC00580FA0 /* Moya in Frameworks */,
 				3334E1F62AD91DCB00D853D7 /* FlexLayoutYoga in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -113,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				3334E1B22AD6BC1A00D853D7 /* LaunchScreen.storyboard */,
+				33DC8E082ADFDAEC00580FA0 /* Test */,
 				3334E1DA2AD9184B00D853D7 /* Shared */,
 				3334E1EC2AD919E600D853D7 /* AuthView */,
 				3334E1DC2AD918BD00D853D7 /* HomeView */,
@@ -146,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				3334E1D02AD9129600D853D7 /* APIService.swift */,
+				33DC8E062ADFCF1300580FA0 /* AuthService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -174,6 +188,7 @@
 			children = (
 				3334E1C62AD9113900D853D7 /* UIViewController+Ext.swift */,
 				3334E1D42AD913FE00D853D7 /* Date+Ext.swift */,
+				33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -229,6 +244,15 @@
 			path = AuthView;
 			sourceTree = "<group>";
 		};
+		33DC8E082ADFDAEC00580FA0 /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */,
+				33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */,
+			);
+			path = Test;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -253,6 +277,8 @@
 				3334E1F52AD91DCB00D853D7 /* FlexLayoutYoga */,
 				3334E1F72AD91DCB00D853D7 /* FlexLayoutYogaKit */,
 				33DC8DFF2ADF84CC00580FA0 /* Then */,
+				33DC8E022ADFC9CC00580FA0 /* CombineMoya */,
+				33DC8E042ADFC9CC00580FA0 /* Moya */,
 			);
 			productName = TILApp;
 			productReference = 3334E1A42AD6BC1800D853D7 /* TILApp.app */;
@@ -286,6 +312,7 @@
 				3334E1EF2AD91DA100D853D7 /* XCRemoteSwiftPackageReference "PinLayout" */,
 				3334E1F22AD91DCB00D853D7 /* XCRemoteSwiftPackageReference "FlexLayout" */,
 				33DC8DFE2ADF84CC00580FA0 /* XCRemoteSwiftPackageReference "Then" */,
+				33DC8E012ADFC9CC00580FA0 /* XCRemoteSwiftPackageReference "Moya" */,
 			);
 			productRefGroup = 3334E1A52AD6BC1800D853D7 /* Products */;
 			projectDirPath = "";
@@ -356,11 +383,14 @@
 				3334E1EB2AD919D700D853D7 /* MyProfileViewController.swift in Sources */,
 				3334E1AC2AD6BC1800D853D7 /* RootViewController.swift in Sources */,
 				3334E1A82AD6BC1800D853D7 /* AppDelegate.swift in Sources */,
+				33DC8E0A2ADFDAFF00580FA0 /* TestNetworkViewController.swift in Sources */,
 				3334E1E42AD9194500D853D7 /* CalendarViewController.swift in Sources */,
 				D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */,
 				3334E1CB2AD9121700D853D7 /* AuthUser.swift in Sources */,
+				33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */,
 				3334E1C92AD911ED00D853D7 /* Blog.swift in Sources */,
 				3334E1C72AD9113900D853D7 /* UIViewController+Ext.swift in Sources */,
+				33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */,
 				3334E1E82AD919A200D853D7 /* CommunityViewController.swift in Sources */,
 				3334E1D92AD9181F00D853D7 /* AuthUserViewModel.swift in Sources */,
 				3334E1CD2AD9126400D853D7 /* Post.swift in Sources */,
@@ -369,6 +399,7 @@
 				3334E1DE2AD918CB00D853D7 /* HomeViewController.swift in Sources */,
 				3334E1EE2AD919F500D853D7 /* SignInViewController.swift in Sources */,
 				3334E1AA2AD6BC1800D853D7 /* SceneDelegate.swift in Sources */,
+				33DC8E072ADFCF1300580FA0 /* AuthService.swift in Sources */,
 				3334E1D52AD913FE00D853D7 /* Date+Ext.swift in Sources */,
 				D20AD9022AE0AEF800CDEB2C /* CustomComponents.swift in Sources */,
 				3334E1D72AD914EF00D853D7 /* User.swift in Sources */,
@@ -625,6 +656,14 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		33DC8E012ADFC9CC00580FA0 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -652,6 +691,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 33DC8DFE2ADF84CC00580FA0 /* XCRemoteSwiftPackageReference "Then" */;
 			productName = Then;
+		};
+		33DC8E022ADFC9CC00580FA0 /* CombineMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 33DC8E012ADFC9CC00580FA0 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = CombineMoya;
+		};
+		33DC8E042ADFC9CC00580FA0 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 33DC8E012ADFC9CC00580FA0 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
