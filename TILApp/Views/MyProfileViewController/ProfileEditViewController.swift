@@ -24,7 +24,7 @@ class ProfileEditViewController: UIViewController {
     }
 
     private lazy var editProfileButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "camera.circle"), for: .normal)
+        $0.setImage(UIImage(systemName: "person.crop.circle"), for: .normal)
         $0.addTarget(self, action: #selector(editProfileButtonTapped), for: .touchUpInside)
         $0.backgroundColor = .white
     }
@@ -37,6 +37,7 @@ class ProfileEditViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))
     }
 
     override func viewDidLayoutSubviews() {
@@ -58,6 +59,16 @@ class ProfileEditViewController: UIViewController {
     }
 
     @objc func editProfileButtonTapped() {
-        // TODO: 이미지 선택 로직
+        // TODO: 프로필사진 선택 로직
+    }
+
+    @objc private func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
+        // TODO: 프로필사진 선택 로직
+    }
+
+    @objc private func completeButtonTapped() {
+        // TODO: 이미지,닉네임 저장 로직
+        let myProfileViewController = MyProfileViewController()
+        present(myProfileViewController, animated: true, completion: nil)
     }
 }
