@@ -270,6 +270,11 @@ class CustomTextFieldView: UIView {
     private let titleLabel = CustomTitleLabel()
     private let textField = CustomTextField()
 
+    private let height: CGFloat = 64
+    var componentSize: CGSize {
+        return CGSize(width: frame.width, height: height)
+    }
+
     var titleText: String {
         get { titleLabel.text ?? "" }
         set { titleLabel.text = newValue }
@@ -308,7 +313,7 @@ class CustomTextFieldView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.width(100%).height(64)
+        pin.width(100%).height(height)
         flex.layout()
     }
 }
@@ -319,6 +324,11 @@ class CustomTextFieldViewWithValidation: UIView {
     private let validationLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 11, weight: .light)
         $0.textColor = UIColor.systemGreen
+    }
+
+    private let height: CGFloat = 84
+    var componentSize: CGSize {
+        return CGSize(width: frame.width, height: height)
     }
 
     var titleText: String {
@@ -364,7 +374,7 @@ class CustomTextFieldViewWithValidation: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.width(100%).height(84)
+        pin.width(100%).height(height)
         flex.layout()
     }
 }
@@ -377,6 +387,11 @@ class CustomLabelView: UIView {
     private let dateLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 13)
         $0.textColor = .systemGray2
+    }
+
+    private let height: CGFloat = 67
+    var componentSize: CGSize {
+        return CGSize(width: frame.width, height: height)
     }
 
     var nicknameText: String {
@@ -410,7 +425,7 @@ class CustomLabelView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.width(200).height(67)
+        pin.width(100%).height(height)
         flex.layout()
     }
 }
@@ -696,6 +711,11 @@ class CustomSegmentedControl: UISegmentedControl {
 }
 
 class CustomTagHeaderView: UIView {
+    private let height: CGFloat = 30
+    var componentSize: CGSize {
+        return CGSize(width: frame.width, height: height)
+    }
+
     private let label = CustomTitleLabel().then {
         $0.text = "블로그 게시물 자동 태그 설정"
     }
@@ -727,12 +747,17 @@ class CustomTagHeaderView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.width(100%).height(30)
+        pin.width(100%).height(height)
         line.pin.bottom(to: edge.bottom).horizontally(20).height(0.5)
     }
 }
 
 class CustomTagView: UIView {
+    private let height: CGFloat = 67
+    var componentSize: CGSize {
+        return CGSize(width: frame.width, height: height)
+    }
+
     private let titleLabel = UILabel().then {
         $0.text = "제목"
         $0.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
@@ -803,7 +828,7 @@ class CustomTagView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.horizontally(20).height(67)
+        pin.horizontally(20).height(height)
         flex.layout()
         deleteButton.pin.width(30).height(30).vCenter().right(10)
 
