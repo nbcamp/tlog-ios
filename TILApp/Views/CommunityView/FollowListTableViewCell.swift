@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FollowListTableViewCell: UITableViewCell {
+final class FollowListTableViewCell: UITableViewCell {
     let customUserView = CustomUserView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

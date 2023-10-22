@@ -7,13 +7,20 @@
 
 import UIKit
 
-class FollowListViewController: UIViewController {
+final class FollowListViewController: UIViewController {
     private lazy var segmentedControl = CustomSegmentedControl(items: ["팔로워 6", "팔로잉 3"]).then {
         $0.addTarget(self, action: #selector(segmentedControlSelected(_:)), for: .valueChanged)
+        
         view.addSubview($0)
     }
 
-    private let tableView = UITableView()
+    private lazy var tableView = UITableView().then {
+        $0.dataSource = self
+        $0.delegate = self
+        $0.register(FollowListTableViewCell.self, forCellReuseIdentifier: "FollowListTableViewCell")
+
+        view.addSubview($0)
+    }
 
     let followerData: [(name: String, date: String)] = [
         ("Blog 1", "TIL 마지막 작성일 | 2023-10-12"),
@@ -33,13 +40,6 @@ class FollowListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(FollowListTableViewCell.self, forCellReuseIdentifier: "FollowListTableViewCell")
-
-        view.addSubview(tableView)
-        // tableView.pin.all()
     }
 
     override func viewDidLayoutSubviews() {
@@ -94,7 +94,5 @@ extension FollowListViewController: UITableViewDataSource {
 }
 
 extension FollowListViewController: UITableViewDelegate {
-    func tableView(_: UITableView, didSelectRowAt _: IndexPath) {
-
-    }
+    func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
 }
