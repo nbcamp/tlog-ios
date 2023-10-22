@@ -690,7 +690,7 @@ class CustomSegmentedControl: UISegmentedControl {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.width(100%).height(60)
+        pin.width(100%).height(30)
         updateBottomBorder()
     }
 }
