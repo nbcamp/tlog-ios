@@ -41,6 +41,7 @@
 		D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9902AE106F000ED7028 /* BlogListViewController.swift */; };
 		D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */; };
 		D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */; };
+		D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +74,7 @@
 		D24BB9902AE106F000ED7028 /* BlogListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListViewController.swift; sourceTree = "<group>"; };
 		D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListTableViewCell.swift; sourceTree = "<group>"; };
 		D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogEditViewController.swift; sourceTree = "<group>"; };
+		D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,6 +225,7 @@
 			isa = PBXGroup;
 			children = (
 				3334E1E72AD919A200D853D7 /* CommunityViewController.swift */,
+				D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */,
 			);
 			path = CommunityView;
 			sourceTree = "<group>";
@@ -373,6 +376,7 @@
 				3334E1CB2AD9121700D853D7 /* AuthUser.swift in Sources */,
 				33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */,
 				D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */,
+				D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */,
 				3334E1C92AD911ED00D853D7 /* Blog.swift in Sources */,
 				3334E1C72AD9113900D853D7 /* UIViewController+Ext.swift in Sources */,
 				33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */,
