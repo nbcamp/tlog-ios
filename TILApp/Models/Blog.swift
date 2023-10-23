@@ -1,22 +1,32 @@
-struct Pair: Codable {
+struct Keyword: Codable {
     let keyword: String
     let tags: [String]
 }
 
 struct Blog: Codable {
     let id: Int
-    let userId: Int
     let name: String
     let url: String
     let rss: String
-    let pairs: [Pair]
+    let primary: Bool
+    let keywords: [Keyword]
     let createdAt: Unixtime
-    let updatedAt: Unixtime
 
     enum CodingKeys: String, CodingKey {
-        case id, name, url, rss, pairs
-        case userId = "user_id"
+        case id, name, url, rss, primary, keywords
         case createdAt = "created_at"
-        case updatedAt = "updated_at"
     }
+}
+
+struct CreateBlogInput: Codable {
+    let name: String
+    let url: String
+    let rss: String
+    let keywords: [Keyword]
+}
+
+struct UpdateBlogInput: Codable {
+    let name: String?
+    let primary: Bool?
+    let keywords: [Keyword]?
 }
