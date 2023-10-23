@@ -13,11 +13,10 @@ final class MyProfileViewController: UIViewController {
     private lazy var countView = UIView().then { _ in
     }
 
-    private lazy var profileImageView = UIImageView(image: UIImage(systemName: "")).then {
-        $0.layer.borderWidth = 1
+    private lazy var profileImageView = UIImageView().then {
+        $0.image = UIImage(systemName: "person.circle.fill")
         $0.layer.cornerRadius = 50
         $0.layer.borderColor = accentColor?.cgColor
-        $0.backgroundColor = .systemGray4
     }
 
     private lazy var nicknameLabel = UILabel().then {
@@ -80,6 +79,8 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var myProfileTableView = UITableView().then {
         $0.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        $0.delegate = self
+        $0.dataSource = self
         view.addSubview($0)
     }
 
@@ -87,17 +88,11 @@ final class MyProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         navigationController?.setNavigationBarHidden(true, animated: false)
-
-        myProfileTableView.delegate = self
-        myProfileTableView.dataSource = self
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        view.backgroundColor = .systemBackground
         setUpUI()
-        screenView.flex.layout()
-        countView.flex.layout()
     }
 
     private func setUpUI() {
@@ -117,6 +112,9 @@ final class MyProfileViewController: UIViewController {
             }
             flex.addItem(editBlogButton).marginTop(15)
         }
+        screenView.flex.layout()
+        countView.flex.layout()
+
         screenView.pin.top(view.pin.safeArea).bottom(70%).left().right()
         moreButton.pin.top(view.pin.safeArea).right(20)
         postAndLikeButton.pin.below(of: screenView)
