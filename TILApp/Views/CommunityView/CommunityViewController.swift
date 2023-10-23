@@ -1,7 +1,11 @@
 import UIKit
 
 final class CommunityViewController: UIViewController {
-    private let tableView = UITableView()
+    private lazy var tableView = UITableView().then {
+        $0.dataSource = self
+        $0.delegate = self
+        $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: "CommunityTableViewCell")
+    }
 
     let communityData: [[String]] = [
         ["Blog 1", "팔로워 11", "팔로우", "제목제목", "내용\n내용내용", "2023-10-24"],
@@ -16,11 +20,6 @@ final class CommunityViewController: UIViewController {
         view.backgroundColor = .systemBackground
 
         view.addSubview(searchBar)
-
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(CommunityTableViewCell.self, forCellReuseIdentifier: "CommunityTableViewCell")
-
         view.addSubview(tableView)
     }
 
@@ -42,8 +41,9 @@ extension CommunityViewController: UITableViewDataSource {
 
         let info = communityData[indexPath.row]
 
+        // TODO: CommunityTableViewCell에 configure 함수 만들기
         cell.customCommunityTILView.userView.setup(image: UIImage(), nicknameText: info[0], contentText: info[1], buttonTitle: info[2])
-        cell.customCommunityTILView.TILView.setup(withTitle: info[3], content: info[4], date: info[5])
+        cell.customCommunityTILView.tilView.setup(withTitle: info[3], content: info[4], date: info[5])
         return cell
     }
 

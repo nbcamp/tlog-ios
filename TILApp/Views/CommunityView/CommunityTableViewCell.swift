@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CommunityTableViewCell: UITableViewCell {
+final class CommunityTableViewCell: UITableViewCell {
     let customCommunityTILView = CustomCommunityTILView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
