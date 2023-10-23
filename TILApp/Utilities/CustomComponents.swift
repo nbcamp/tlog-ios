@@ -48,7 +48,7 @@ class CustomComponentsViewController: UIViewController {
 
     private lazy var customCommunityTILView = CustomCommunityTILView().then {
         $0.userView.setup(image: UIImage(), nicknameText: "닉네임", contentText: "팔로워 11", buttonTitle: "팔로우")
-        $0.TILView.setup(withTitle: "제목제목", content: "내용\n내용내용내용내용", date: "2023-10-19")
+        $0.tilView.setup(withTitle: "제목제목", content: "내용\n내용내용내용내용", date: "2023-10-19")
         view.addSubview($0)
     }
 
@@ -568,7 +568,7 @@ class CustomTILView: UIView {
 
 class CustomCommunityTILView: UIView {
     let userView = CustomUserView()
-    let TILView = CustomTILView()
+    let tilView = CustomTILView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -584,9 +584,9 @@ class CustomCommunityTILView: UIView {
     private func setupView() {
         // backgroundColor = .systemBackground
 
-        TILView.resizeText()
+        tilView.resizeText()
 
-        addSubview(TILView)
+        addSubview(tilView)
         addSubview(userView)
     }
 
@@ -594,7 +594,7 @@ class CustomCommunityTILView: UIView {
         super.layoutSubviews()
 
         pin.width(100%).height(141)
-        TILView.pin.top(54)
+        tilView.pin.top(54)
     }
 }
 

@@ -42,6 +42,7 @@
 		D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */; };
 		D2A4D1F92AE5DD4000B510A3 /* FollowListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */; };
 		D2A4D1FB2AE5DF9000B510A3 /* FollowListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */; };
+		D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +76,7 @@
 		D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogEditViewController.swift; sourceTree = "<group>"; };
 		D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListViewController.swift; sourceTree = "<group>"; };
 		D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListTableViewCell.swift; sourceTree = "<group>"; };
+		D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -227,6 +229,7 @@
 				3334E1E72AD919A200D853D7 /* CommunityViewController.swift */,
 				D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */,
 				D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */,
+				D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */,
 			);
 			path = CommunityView;
 			sourceTree = "<group>";
@@ -270,7 +273,6 @@
 				3334E1A02AD6BC1800D853D7 /* Sources */,
 				3334E1A12AD6BC1800D853D7 /* Frameworks */,
 				3334E1A22AD6BC1800D853D7 /* Resources */,
-				D2CF8DBC2AE1A01600538E28 /* SwiftFormat */,
 			);
 			buildRules = (
 			);
@@ -361,24 +363,6 @@
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif type swiftlint > /dev/null; then\n    swiftlint\nelse\n    echo \"Warning: SwiftLint not installed. download using $ brew install swiftlint\"\nfi\n";
 		};
-		D2CF8DBC2AE1A01600538E28 /* SwiftFormat */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = SwiftFormat;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftformat > /dev/null; then\n  swiftformat .\nelse\n  echo \"warning: SwiftFormat not installed, download from https://github.com/nicklockwood/SwiftFormat\"\nfi\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -395,6 +379,7 @@
 				D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */,
 				3334E1CB2AD9121700D853D7 /* AuthUser.swift in Sources */,
 				33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */,
+				D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */,
 				3334E1C92AD911ED00D853D7 /* Blog.swift in Sources */,
 				D2A4D1FB2AE5DF9000B510A3 /* FollowListTableViewCell.swift in Sources */,
 				3334E1C72AD9113900D853D7 /* UIViewController+Ext.swift in Sources */,
