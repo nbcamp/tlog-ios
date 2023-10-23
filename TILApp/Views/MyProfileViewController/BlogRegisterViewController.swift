@@ -64,18 +64,7 @@ final class BlogRegisterViewController: UIViewController {
         $0.pin.size($0.componentSize)
     }
 
-    private lazy var rootFlexContainer = UIView().then { root in
-        root.flex.define {
-            for (name, tags) in tagData {
-                let customTagView = CustomTagView()
-                customTagView.labelText = name
-                customTagView.tags = tags
-                $0.addItem(customTagView).marginTop(10)
-                customTagView.pin.size(customTagView.componentSize)
-            }
-        }
-        contentView.addSubview(root)
-    }
+    private lazy var rootFlexContainer = UIView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,10 +73,25 @@ final class BlogRegisterViewController: UIViewController {
 
         view.addSubview(contentScrollView)
         contentScrollView.addSubview(contentView)
+        contentView.addSubview(rootFlexContainer)
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+
+        for view in rootFlexContainer.subviews {
+            view.removeFromSuperview()
+        }
+
+        rootFlexContainer.flex.define {
+            for (name, tags) in tagData {
+                let customTagView = CustomTagView()
+                customTagView.labelText = name
+                customTagView.tags = tags
+                $0.addItem(customTagView).marginTop(10)
+                customTagView.pin.size(customTagView.componentSize)
+            }
+        }
 
         contentScrollView.pin.top(view.pin.safeArea).horizontally().bottom()
         contentView.pin.top(to: contentScrollView.edge.top).horizontally()
@@ -99,22 +103,11 @@ final class BlogRegisterViewController: UIViewController {
 
         rootFlexContainer.pin.top(to: tagHeader.edge.bottom).bottom().width(100%)
         rootFlexContainer.flex.layout(mode: .adjustHeight)
-        for view in rootFlexContainer.subviews {
-            view.pin.size(CGSize(width: contentView.frame.width, height: 67))
-            print(view)
-        }
 
         contentView.pin.top(to: contentScrollView.edge.top).horizontally().above(of: rootFlexContainer)
 
         // TODO: 높이 조절하기, 앱 백그라운드로 가면 rootFlexContainer 높이 달라지는 문제 해결하기
         let contentHeight = contentView.frame.maxY + rootFlexContainer.frame.height
         contentScrollView.contentSize = CGSize(width: contentView.frame.width, height: contentHeight)
-
-        print(contentScrollView)
-        print(contentView)
-        print(blogRSSTextField)
-        print(tagHeader)
-        print(rootFlexContainer)
-        print(contentHeight)
     }
 }

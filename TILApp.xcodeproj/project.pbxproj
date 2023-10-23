@@ -36,11 +36,11 @@
 		33DC8E0A2ADFDAFF00580FA0 /* TestNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */; };
 		33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */; };
 		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
-		D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28DC8062AE21E9D00D00EC6 /* BlogRegisterViewController.swift */; };
 		D20AD9022AE0AEF800CDEB2C /* CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */; };
 		D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9902AE106F000ED7028 /* BlogListViewController.swift */; };
 		D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */; };
 		D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */; };
+		D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28DC8062AE21E9D00D00EC6 /* BlogRegisterViewController.swift */; };
 		D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -69,11 +69,11 @@
 		33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkViewController.swift; sourceTree = "<group>"; };
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
-		D28DC8062AE21E9D00D00EC6 /* BlogRegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogRegisterViewController.swift; sourceTree = "<group>"; };
 		D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponents.swift; sourceTree = "<group>"; };
 		D24BB9902AE106F000ED7028 /* BlogListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListViewController.swift; sourceTree = "<group>"; };
 		D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListTableViewCell.swift; sourceTree = "<group>"; };
 		D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogEditViewController.swift; sourceTree = "<group>"; };
+		D28DC8062AE21E9D00D00EC6 /* BlogRegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogRegisterViewController.swift; sourceTree = "<group>"; };
 		D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
