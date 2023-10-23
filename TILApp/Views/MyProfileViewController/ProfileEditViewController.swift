@@ -17,15 +17,10 @@ final class ProfileEditViewController: UIViewController {
     private lazy var editProfileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.circle.fill")
         $0.tintColor = UIColor(named: "AccentColor")
-//        $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor(named: "AccentColor")?.cgColor
         $0.layer.cornerRadius = 50
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
-
-        var tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped(_:)))
-        $0.isUserInteractionEnabled = true
-        $0.addGestureRecognizer(tapGesture)
     }
 
     private lazy var editProfileButton = UIButton().then {
@@ -44,6 +39,9 @@ final class ProfileEditViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))
+
+        editProfileImageView.isUserInteractionEnabled = true
+        editProfileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped(_:))))
     }
 
     override func viewDidLayoutSubviews() {
@@ -65,11 +63,11 @@ final class ProfileEditViewController: UIViewController {
     }
 
     @objc private func editProfileButtonTapped() {
-        // TODO: 프로필사진 선택 로직
+        // TODO: 버튼 액션 (프로필사진 선택 로직)
     }
 
     @objc private func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
-        // TODO: 프로필사진 선택 로직
+        // TODO: 이미지뷰 액션 (프로필사진 선택 로직)
     }
 
     @objc private func completeButtonTapped() {
