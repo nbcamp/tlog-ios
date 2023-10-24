@@ -285,6 +285,11 @@ class CustomTextFieldView: UIView {
         set { textField.text = newValue }
     }
 
+    var delegate: UITextFieldDelegate? {
+        get { textField.delegate }
+        set { textField.delegate = newValue }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
