@@ -62,6 +62,12 @@ final class BlogRegisterViewController: UIViewController {
     private lazy var tagHeader = CustomTagHeaderView().then {
         contentView.addSubview($0)
         $0.pin.size($0.componentSize)
+        $0.addTargetForButton(target: self, action: #selector(addTagButtonTapped), for: .touchUpInside)
+    }
+
+    // TODO: 이벤트 핸들러 어떻게 할지..
+    @objc func addTagButtonTapped() {
+        print("버튼 탭")
     }
 
     private lazy var rootFlexContainer = UIView()
@@ -101,12 +107,11 @@ final class BlogRegisterViewController: UIViewController {
         blogRSSTextField.pin.top(to: blogURLTextField.edge.bottom).marginTop(5)
         tagHeader.pin.top(to: blogRSSTextField.edge.bottom).marginTop(5)
 
-        rootFlexContainer.pin.top(to: tagHeader.edge.bottom).bottom().width(100%)
+        rootFlexContainer.pin.horizontally(20).top(to: tagHeader.edge.bottom).bottom().marginTop(-10)
         rootFlexContainer.flex.layout(mode: .adjustHeight)
 
         contentView.pin.top(to: contentScrollView.edge.top).horizontally().above(of: rootFlexContainer)
 
-        // TODO: 높이 조절하기, 앱 백그라운드로 가면 rootFlexContainer 높이 달라지는 문제 해결하기
         let contentHeight = contentView.frame.maxY + rootFlexContainer.frame.height
         contentScrollView.contentSize = CGSize(width: contentView.frame.width, height: contentHeight)
     }

@@ -22,7 +22,7 @@ class CustomComponentsViewController: UIViewController {
     }
 
     private lazy var customTextFieldView = CustomTextFieldViewWithValidation().then {
-        $0.titleText = "하이하이하이"
+        $0.titleText = "하이하이하이하이하이하이"
         $0.placeholder = "뭐뭐를 입력해주세요."
         $0.validationText = "유효한 값입니다."
         view.addSubview($0)
@@ -107,13 +107,13 @@ class CustomComponentsViewController: UIViewController {
             .top(to: customUserView.edge.bottom)
             .marginTop(15)
 
-//        customCommunityTILView.pin
-//            .top(to: customTILView.edge.bottom)
-//            .marginTop(15)
-//
-//        customBlogView.pin
-//            .top(to: customCommunityTILView.edge.bottom)
-//            .marginTop(15)
+        customCommunityTILView.pin
+            .top(to: customTILView.edge.bottom)
+            .marginTop(15)
+
+        customBlogView.pin
+            .top(to: customCommunityTILView.edge.bottom)
+            .marginTop(15)
 
 //        customSegmentedControl.pin
 //            .hCenter()
@@ -121,7 +121,7 @@ class CustomComponentsViewController: UIViewController {
 //            .marginTop(15)
 
         customTagView.pin
-            .top(to: customTILView.edge.bottom)
+            .top(to: customBlogView.edge.bottom)
             .margin(15)
 
         customTagHeaderView.pin
@@ -244,7 +244,7 @@ class CustomTitleLabel: UILabel {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.horizontally(20).height(24)
+        pin.height(24)
     }
 }
 
@@ -718,9 +718,12 @@ class CustomTagHeaderView: UIView {
 
     private let label = CustomTitleLabel().then {
         $0.text = "블로그 게시물 자동 태그 설정"
+        $0.sizeToFit()
     }
 
-    // TODO: +버튼 추가하기
+    private let button = UIButton().then {
+        $0.setImage(UIImage(systemName: "plus"), for: .normal)
+    }
 
     private let line = UIView().then {
         $0.backgroundColor = .systemGray
@@ -742,13 +745,20 @@ class CustomTagHeaderView: UIView {
 
         addSubview(label)
         addSubview(line)
+        addSubview(button)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
         pin.width(100%).height(height)
+        label.pin.left(20)
+        button.pin.right(20).width(24).height(24)
         line.pin.bottom(to: edge.bottom).horizontally(20).height(0.5)
+    }
+    
+    func addTargetForButton(target: Any?, action: Selector, for event: UIControl.Event) {
+        button.addTarget(target, action: action, for: event)
     }
 }
 
@@ -828,7 +838,7 @@ class CustomTagView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.horizontally(20).height(height)
+        pin.horizontally().height(height)
         flex.layout()
         deleteButton.pin.width(30).height(30).vCenter().right(10)
 
