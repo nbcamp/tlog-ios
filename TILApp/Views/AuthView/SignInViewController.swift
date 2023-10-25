@@ -10,7 +10,7 @@ final class SignInViewController: UIViewController {
         setAppleLoginButton()
     }
 
-    func setAppleLoginButton() {
+    private func setAppleLoginButton() {
         let authorizationButton = ASAuthorizationAppleIDButton(type: .signIn, style: .whiteOutline)
         authorizationButton
             .addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
@@ -23,7 +23,7 @@ final class SignInViewController: UIViewController {
         ])
     }
 
-    @objc func handleAuthorizationAppleIDButtonPress() {
+    @objc private func handleAuthorizationAppleIDButtonPress() {
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
@@ -37,8 +37,10 @@ final class SignInViewController: UIViewController {
 
 extension SignInViewController: ASAuthorizationControllerDelegate {
     // 로그인 성공 후 동작
-    func authorizationController
-    (controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+    func authorizationController(
+        controller: ASAuthorizationController,
+        didCompleteWithAuthorization authorization: ASAuthorization
+    ) {
         switch authorization.credential {
         case let appleIDCredential as ASAuthorizationAppleIDCredential:
             let userIdentifier = appleIDCredential.user
