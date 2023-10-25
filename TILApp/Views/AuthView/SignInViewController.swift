@@ -1,8 +1,7 @@
-import UIKit
 import AuthenticationServices
+import UIKit
 
 final class SignInViewController: UIViewController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -47,19 +46,48 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
             let fullName = appleIDCredential.fullName
             let email = appleIDCredential.email
 
-            if  let authorizationCode = appleIDCredential.authorizationCode,
-                let identityToken = appleIDCredential.identityToken,
-                let authCodeString = String(data: authorizationCode, encoding: .utf8),
-                let identifyTokenString = String(data: identityToken, encoding: .utf8) {
-                print("authorizationCode: \(authorizationCode)")
-                print("identityToken: \(identityToken)")
-                print("authCodeString: \(authCodeString)")
-                print("identifyTokenString: \(identifyTokenString)")
+            var username: String?
+            if fullName != nil {
+                username = (fullName?.familyName ?? "") + (fullName?.givenName ?? "")
             }
 
-            print("User ID : \(userIdentifier)")
-            print("User Email : \(email)")
-            print("User Name : \(fullName)")
+// MARK: 테스트용
+
+            APIService.shared.request(.signIn(.init(
+                username: "user1",
+                avatarUrl: "",
+                provider: "Apple",
+                providerId: "1234567"
+            )), model: SignInOutput.self) { model in
+                print("---")
+                let accessToken = model.accessToken
+                print(accessToken)
+                AuthService.shared.signIn(accessToken: accessToken)
+            } onError: { error in
+                print(error)
+            }
+
+// MARK: 실제 사용할 코드
+
+//            APIService.shared.request(.signIn(.init(
+//                username: username,
+//                avatarUrl: "",
+//                provider: "Apple",
+//                providerId: userIdentifier
+//            )), model: SignInOutput.self) { model in
+//                print("---")
+//                let accessToken = model.accessToken
+//                print(accessToken)
+//                AuthService.shared.signIn(accessToken: accessToken)
+//            } onError: { error in
+//                print(error)
+//            }
+
+// MARK: 테스트용 출력
+
+//            print("User ID : \(userIdentifier)")
+//            print("User Email : \(email)")
+//            print("User Name : \(fullName)")
 
         default:
             break
@@ -74,6 +102,6 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
 
 extension SignInViewController: ASAuthorizationControllerPresentationContextProviding {
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        return self.view.window!
+        return view.window!
     }
 }
