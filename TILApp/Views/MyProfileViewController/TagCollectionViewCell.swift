@@ -10,7 +10,7 @@ class TagCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        contentView.backgroundColor = .systemGray5
+        contentView.backgroundColor = .systemGray6
         contentView.layer.masksToBounds = true
         contentView.layer.cornerRadius = 10
     }

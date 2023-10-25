@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TagCollectionViewController: UIViewController {
+class EditTagViewController: UIViewController {
     // TODO: 태그 최대 개수 제한 생각해보기
     var tagList: [String] = []
 
@@ -19,6 +19,7 @@ class TagCollectionViewController: UIViewController {
 
     private lazy var addTagTF = CustomTextFieldView().then {
         $0.titleText = "자동 입력 태그 추가"
+        $0.placeholder = "태그를 입력하고 키보드 리턴 키를 눌러주세요"
         $0.delegate = self
         view.addSubview($0)
     }
@@ -58,7 +59,7 @@ class TagCollectionViewController: UIViewController {
     }
 }
 
-extension TagCollectionViewController: UICollectionViewDataSource {
+extension EditTagViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return tagList.count
     }
@@ -68,13 +69,18 @@ extension TagCollectionViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
 
-        cell.tagLabel.text = tagList[indexPath.item] + " x"
+        let xString = NSAttributedString(string: " x", attributes: [NSAttributedString.Key.foregroundColor: UIColor.black])
+
+        let combinedString = NSMutableAttributedString(string: tagList[indexPath.item])
+        combinedString.append(xString)
+
+        cell.tagLabel.attributedText = combinedString
 
         return cell
     }
 }
 
-extension TagCollectionViewController: UICollectionViewDelegateFlowLayout {
+extension EditTagViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let label = UILabel().then {
             $0.font = .systemFont(ofSize: 13)
@@ -88,7 +94,7 @@ extension TagCollectionViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension TagCollectionViewController: UICollectionViewDelegate {
+extension EditTagViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedTagIndex = indexPath.item
 
@@ -100,7 +106,7 @@ extension TagCollectionViewController: UICollectionViewDelegate {
     }
 }
 
-extension TagCollectionViewController: UITextFieldDelegate {
+extension EditTagViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let text = textField.text, !text.isEmpty {
             tagList.append(text)

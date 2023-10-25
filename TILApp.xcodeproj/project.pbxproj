@@ -43,7 +43,7 @@
 		D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */; };
 		D29659EE2AE7EE5D000C28A6 /* TagCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29659ED2AE7EE5D000C28A6 /* TagCollectionViewCell.swift */; };
 		D29659F02AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29659EF2AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift */; };
-		D29659F22AE80313000C28A6 /* editTagViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29659F12AE80313000C28A6 /* editTagViewController.swift */; };
+		D29659F22AE80313000C28A6 /* EditTagViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29659F12AE80313000C28A6 /* EditTagViewController.swift */; };
 		D2A4D1F92AE5DD4000B510A3 /* FollowListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */; };
 		D2A4D1FB2AE5DF9000B510A3 /* FollowListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */; };
 		D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */; };
@@ -81,7 +81,7 @@
 		D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogEditViewController.swift; sourceTree = "<group>"; };
 		D29659ED2AE7EE5D000C28A6 /* TagCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCollectionViewCell.swift; sourceTree = "<group>"; };
 		D29659EF2AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
-		D29659F12AE80313000C28A6 /* editTagViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = editTagViewController.swift; sourceTree = "<group>"; };
+		D29659F12AE80313000C28A6 /* EditTagViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTagViewController.swift; sourceTree = "<group>"; };
 		D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListViewController.swift; sourceTree = "<group>"; };
 		D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListTableViewCell.swift; sourceTree = "<group>"; };
 		D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityTableViewCell.swift; sourceTree = "<group>"; };
@@ -252,7 +252,7 @@
 				9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */,
 				D29659ED2AE7EE5D000C28A6 /* TagCollectionViewCell.swift */,
 				D29659EF2AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift */,
-				D29659F12AE80313000C28A6 /* editTagViewController.swift */,
+				D29659F12AE80313000C28A6 /* EditTagViewController.swift */,
 			);
 			path = MyProfileViewController;
 			sourceTree = "<group>";
@@ -405,7 +405,7 @@
 				D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */,
 				D29659F02AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift in Sources */,
 				3334E1DE2AD918CB00D853D7 /* HomeViewController.swift in Sources */,
-				D29659F22AE80313000C28A6 /* editTagViewController.swift in Sources */,
+				D29659F22AE80313000C28A6 /* EditTagViewController.swift in Sources */,
 				3334E1EE2AD919F500D853D7 /* SignInViewController.swift in Sources */,
 				3334E1AA2AD6BC1800D853D7 /* SceneDelegate.swift in Sources */,
 				33DC8E072ADFCF1300580FA0 /* AuthService.swift in Sources */,
