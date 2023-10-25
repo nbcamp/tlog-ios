@@ -10,7 +10,7 @@ import PinLayout
 import UIKit
 
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
-    let tagData: [(name: String, tags: [String])] = [
+    var tagData: [(name: String, tags: [String])] = [
         ("[iOS]", ["TIL", "iOS", "Swift"]),
         ("[Swift]", ["TIL", "iOS", "Swift"]),
         ("[iOS]", ["TIL", "iOS", "Swift"]),
@@ -99,6 +99,8 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
                 tapGestureRecognizer.context["index"] = index
                 customTagView.addGestureRecognizer(tapGestureRecognizer)
                 customTagView.isUserInteractionEnabled = true
+
+                customTagView.addTargetForButton(target: self, action: #selector(deleteTagButtonTapped), for: .touchUpInside)
             }
         }
 
@@ -126,6 +128,39 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
 //            editTagViewController.content = tagData[index]
 //
 //            navigationController?.pushViewController(editTagViewController, animated: true)
+        }
+    }
+
+    @objc func deleteTagButtonTapped(_ sender: UIButton) {
+        if let customTagView = sender.superview as? CustomTagView,
+           let index = rootFlexContainer.subviews.firstIndex(of: customTagView)
+        {
+            let tag = tagData[index]
+            let alertController = UIAlertController(
+                title: "태그 삭제",
+                message: "\n\(tag.name)\n\(tag.tags.joined(separator: ", "))\n\n태그를 삭제하시겠습니까?",
+                preferredStyle: .alert
+            )
+
+            let cancelAction = UIAlertAction(
+                title: "취소",
+                style: .cancel,
+                handler: nil
+            )
+
+            let deleteAction = UIAlertAction(
+                title: "삭제",
+                style: .destructive,
+                handler: { _ in
+                    self.tagData.remove(at: index)
+                    self.view.setNeedsLayout()
+                }
+            )
+
+            alertController.addAction(cancelAction)
+            alertController.addAction(deleteAction)
+
+            present(alertController, animated: true, completion: nil)
         }
     }
 }

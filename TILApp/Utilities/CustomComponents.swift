@@ -756,7 +756,7 @@ class CustomTagHeaderView: UIView {
         button.pin.right(20).width(24).height(24)
         line.pin.bottom(to: edge.bottom).horizontally(20).height(0.5)
     }
-    
+
     func addTargetForButton(target: Any?, action: Selector, for event: UIControl.Event) {
         button.addTarget(target, action: action, for: event)
     }
@@ -845,5 +845,9 @@ class CustomTagView: UIView {
         layer.cornerRadius = 12
         layer.borderWidth = 0.5
         layer.borderColor = UIColor.systemGray3.cgColor
+    }
+
+    func addTargetForButton(target: Any?, action: Selector, for event: UIControl.Event) {
+        deleteButton.addTarget(target, action: action, for: event)
     }
 }
