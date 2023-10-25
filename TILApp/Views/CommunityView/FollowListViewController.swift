@@ -10,7 +10,7 @@ import UIKit
 final class FollowListViewController: UIViewController {
     private lazy var segmentedControl = CustomSegmentedControl(items: ["팔로워 6", "팔로잉 3"]).then {
         $0.addTarget(self, action: #selector(segmentedControlSelected(_:)), for: .valueChanged)
-        
+
         view.addSubview($0)
     }
 
