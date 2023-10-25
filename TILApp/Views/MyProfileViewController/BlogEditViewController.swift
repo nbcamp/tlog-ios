@@ -19,16 +19,17 @@ final class BlogEditViewController: UIViewController {
     }
 
     // TODO: 유효성 검증 로직 작성하기
-    private lazy var blogNameTextField = CustomTextFieldView().then {
+    private lazy var blogNameTextField = CustomTextFieldViewWithValidation().then {
         $0.titleText = "블로그 이름"
         if let blogName = blogName {
             $0.mainText = blogName
         }
         $0.placeholder = "블로그 이름을 입력해주세요"
+        $0.validationText = "유효한 값입니다"
         view.addSubview($0)
     }
 
-    private lazy var blogURLTextField = CustomTextFieldView().then {
+    private lazy var blogURLTextField = CustomTextFieldViewWithValidation().then {
         $0.titleText = "블로그 주소"
         if let blogURL = blogURL {
             $0.mainText = blogURL
@@ -37,7 +38,7 @@ final class BlogEditViewController: UIViewController {
         view.addSubview($0)
     }
 
-    private lazy var blogRSSTextField = CustomTextFieldView().then {
+    private lazy var blogRSSTextField = CustomTextFieldViewWithValidation().then {
         $0.titleText = "블로그 RSS 주소"
         // TODO: RSS 주소로 수정하기
         if let blogURL = blogURL {
@@ -73,10 +74,10 @@ final class BlogEditViewController: UIViewController {
         super.viewDidLayoutSubviews()
 
         mainBlogButton.pin.top(view.pin.safeArea).marginTop(10)
-        blogNameTextField.pin.top(to: mainBlogButton.edge.bottom).marginTop(10)
-        blogURLTextField.pin.top(to: blogNameTextField.edge.bottom).marginTop(10)
-        blogRSSTextField.pin.top(to: blogURLTextField.edge.bottom).marginTop(10)
-        deleteDescriotionLabel.pin.top(to: blogRSSTextField.edge.bottom).horizontally(20).height(25).marginTop(10)
+        blogNameTextField.pin.top(to: mainBlogButton.edge.bottom).marginTop(20)
+        blogURLTextField.pin.top(to: blogNameTextField.edge.bottom).marginTop(5)
+        blogRSSTextField.pin.top(to: blogURLTextField.edge.bottom).marginTop(5)
+        deleteDescriotionLabel.pin.top(to: blogRSSTextField.edge.bottom).horizontally(20).height(25).marginTop(5)
         deleteBlogButton.pin.top(to: deleteDescriotionLabel.edge.bottom)
     }
 }
