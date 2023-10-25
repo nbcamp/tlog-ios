@@ -1,7 +1,10 @@
+import Combine
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
+
+    private var cancellables: [AnyCancellable] = []
 
     func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -14,8 +17,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidDisconnect(_: UIScene) {}
 
     func sceneDidBecomeActive(_: UIScene) {
-        // TODO: 로그인 여부에 따라 페이지 보여주지 말지 결정
-        window?.rootViewController?.present(SignInViewController(), animated: false)
+        AuthService.shared.$isAuthenticated.sink { [weak self] authenticated in
+            guard let self else { return }
+            if !authenticated {
+                let signInViewController = SignInViewController()
+                signInViewController.modalPresentationStyle = .fullScreen
+                window?.rootViewController?.present(signInViewController, animated: false, completion: nil)
+            }
+        }.store(in: &cancellables)
     }
 
     func sceneWillResignActive(_: UIScene) {}
