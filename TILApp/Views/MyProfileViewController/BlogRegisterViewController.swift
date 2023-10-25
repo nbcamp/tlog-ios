@@ -9,7 +9,7 @@ import FlexLayout
 import PinLayout
 import UIKit
 
-final class BlogRegisterViewController: UIViewController {
+final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
     let tagData: [(name: String, tags: [String])] = [
         ("[iOS]", ["TIL", "iOS", "Swift"]),
         ("[Swift]", ["TIL", "iOS", "Swift"]),
@@ -85,17 +85,20 @@ final class BlogRegisterViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        for view in rootFlexContainer.subviews {
-            view.removeFromSuperview()
-        }
+        rootFlexContainer.removeAllSubviews()
 
         rootFlexContainer.flex.define {
-            for (name, tags) in tagData {
+            for (index, tag) in tagData.enumerated() {
                 let customTagView = CustomTagView()
-                customTagView.labelText = name
-                customTagView.tags = tags
+                customTagView.labelText = tag.name
+                customTagView.tags = tag.tags
                 $0.addItem(customTagView).marginTop(10)
                 customTagView.pin.size(customTagView.componentSize)
+
+                let tapGestureRecognizer = ContextTapGestureRecognizer(target: self, action: #selector(customTagViewTapped(_:)))
+                tapGestureRecognizer.context["index"] = index
+                customTagView.addGestureRecognizer(tapGestureRecognizer)
+                customTagView.isUserInteractionEnabled = true
             }
         }
 
@@ -110,9 +113,19 @@ final class BlogRegisterViewController: UIViewController {
         rootFlexContainer.pin.horizontally(20).top(to: tagHeader.edge.bottom).bottom().marginTop(-10)
         rootFlexContainer.flex.layout(mode: .adjustHeight)
 
-        contentView.pin.top(to: contentScrollView.edge.top).horizontally().above(of: rootFlexContainer)
+        contentView.pin.top(to: contentScrollView.edge.top).horizontally().bottom(to: rootFlexContainer.edge.bottom)
 
-        let contentHeight = contentView.frame.maxY + rootFlexContainer.frame.height
-        contentScrollView.contentSize = CGSize(width: contentView.frame.width, height: contentHeight)
+        contentScrollView.contentSize = CGSize(width: contentView.frame.width, height: contentView.frame.height)
+    }
+
+    @objc func customTagViewTapped(_ sender: ContextTapGestureRecognizer) {
+        if let index = sender.context["index"] as? Int {
+            print(index, tagData[index])
+//            let editTagViewController = EditTagViewController()
+//            editTagViewController.selectedIndex = index
+//            editTagViewController.content = tagData[index]
+//
+//            navigationController?.pushViewController(editTagViewController, animated: true)
+        }
     }
 }
