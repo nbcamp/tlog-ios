@@ -4,15 +4,13 @@ import Then
 import UIKit
 
 final class SeeMorePresentationController: UIPresentationController {
-    private lazy var dimmingView: UIView = {
-        let dimmingView = UIView()
-        dimmingView.translatesAutoresizingMaskIntoConstraints = false
-        dimmingView.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
-        dimmingView.alpha = 0.0
+    private lazy var dimmingView: UIView = UIView() .then {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
+        $0.alpha = 0.0
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(recognizer:)))
-        dimmingView.addGestureRecognizer(recognizer)
-        return dimmingView
-    }()
+        $0.addGestureRecognizer(recognizer)
+    }
 
     override var frameOfPresentedViewInContainerView: CGRect {
         var frame: CGRect = .zero
