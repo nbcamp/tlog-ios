@@ -11,6 +11,7 @@ final class SignInViewController: UIViewController {
 
     private func setAppleLoginButton() {
         let authorizationButton = ASAuthorizationAppleIDButton(type: .signIn, style: .whiteOutline)
+        authorizationButton.cornerRadius = 50
         authorizationButton
             .addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
 
@@ -19,6 +20,8 @@ final class SignInViewController: UIViewController {
         NSLayoutConstraint.activate([
             authorizationButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             authorizationButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            authorizationButton.widthAnchor.constraint(equalToConstant: 250),
+            authorizationButton.heightAnchor.constraint(equalToConstant: 44),
         ])
     }
 
