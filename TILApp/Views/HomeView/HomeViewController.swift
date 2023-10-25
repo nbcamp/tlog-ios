@@ -111,9 +111,7 @@ final class HomeViewController: UIViewController {
 
     @objc private func registerBlogButtonTapped() {
         // TODO: 블로그 등록 페이지 추가 후 수정하기
-//        let homeViewController = HomeViewController()
-//
-//        navigationController?.pushViewController(homeViewController, animated: true)
+        navigationController?.pushViewController(BlogRegisterViewController(), animated: true)
     }
 
     private func updateCountTILLabel() {
