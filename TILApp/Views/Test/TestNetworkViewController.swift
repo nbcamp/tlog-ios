@@ -9,6 +9,7 @@ import Then
 import UIKit
 
 struct Pong: Codable {
+    let message: String
     let version: String
     let build: String
     let env: String
@@ -102,11 +103,11 @@ final class TestNetworkViewController: UIViewController {
     // MARK: - APIService (NetworkLayer) 작성방법
 
     @objc private func requestButtonTapped() {
-        APIService.shared.request(.profile) { response in
+        APIService.shared.request(.getUser) { response in
             _ = response
         }
 
-        APIService.shared.request(.profile) { response in
+        APIService.shared.request(.getUser) { response in
             _ = response
             print(response)
         } onError: { error in
@@ -114,11 +115,11 @@ final class TestNetworkViewController: UIViewController {
             print(error)
         }
 
-        APIService.shared.request(.profile, model: AuthUser.self) { model in
+        APIService.shared.request(.getUser, model: AuthUser.self) { model in
             _ = model
         }
 
-        APIService.shared.request(.profile, model: AuthUser.self) { model in
+        APIService.shared.request(.getUser, model: AuthUser.self) { model in
             _ = model
             print(model)
         } onError: { error in
@@ -228,10 +229,10 @@ final class TestNetworkViewController: UIViewController {
     @objc private func signIn() {
         provider
             .requestPublisher(.signIn(.init(
-                username: "Username",
+                username: "이름",
                 avatarUrl: "http://url.com",
                 provider: "APPLE",
-                providerId: "1234"
+                providerId: "123456" // 식별자
             )))
             .map(SignInOutput.self)
             .sink { completion in
