@@ -629,11 +629,33 @@ class CustomCommunityTILView: UIView {
 }
 
 class CustomBlogView: UIView {
+    enum BlogViewType {
+        case primary
+        case normal
+    }
+
+    var type: BlogViewType = .normal {
+        didSet {
+            switch type {
+            case .primary:
+                addSubview(primaryLabel)
+            case .normal:
+                break
+            }
+        }
+    }
+
     private let customLabelView = CustomLabelView()
     private let chevronImage = UIImageView(image: UIImage(
         systemName: "chevron.right",
         withConfiguration: UIImage.SymbolConfiguration(pointSize: 30, weight: .light)
     ))
+    private let primaryLabel = UILabel().then {
+        $0.text = "대표 블로그"
+        $0.font = UIFont.systemFont(ofSize: 13)
+        $0.textColor = UIColor(named: "AccentColor")
+        $0.sizeToFit()
+    }
 
     var blogNameText: String {
         get { customLabelView.nicknameText }
@@ -673,6 +695,13 @@ class CustomBlogView: UIView {
 
         customLabelView.pin.left(20)
         chevronImage.pin.width(20).height(20).centerRight(20)
+
+        switch type {
+        case .primary:
+            primaryLabel.pin.right(to: chevronImage.edge.left).vCenter()
+        case .normal:
+            break
+        }
     }
 }
 

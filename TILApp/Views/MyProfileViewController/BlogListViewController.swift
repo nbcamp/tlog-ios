@@ -22,7 +22,6 @@ final class BlogListViewController: UIViewController {
         title = "블로그 목록"
 
         navigationController?.isNavigationBarHidden = false
-        print(navigationController?.navigationBar)
 
         tableView.dataSource = self
         tableView.delegate = self
@@ -51,6 +50,9 @@ extension BlogListViewController: UITableViewDataSource {
         let (name, url) = blogData[indexPath.row]
         cell.customBlogView.blogNameText = name
         cell.customBlogView.blogURLText = url
+
+        // 대표블로그인 경우에만 primary 타입 보내주기
+        // cell.customBlogView.type = .primary
 
         return cell
     }
