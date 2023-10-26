@@ -71,6 +71,12 @@ final class HomeViewController: UIViewController {
         updateCountTILLabel()
         updateGrowthImage()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.isNavigationBarHidden = true
+    }
 
     private func configureUI() {
         if userDidRegisterBlog {
@@ -111,7 +117,9 @@ final class HomeViewController: UIViewController {
 
     @objc private func registerBlogButtonTapped() {
         // TODO: 블로그 등록 페이지 추가 후 수정하기
-        navigationController?.pushViewController(BlogRegisterViewController(), animated: true)
+        let blogRegisterViewController = BlogRegisterViewController()
+        blogRegisterViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(blogRegisterViewController, animated: true)
     }
 
     private func updateCountTILLabel() {

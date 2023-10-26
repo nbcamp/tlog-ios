@@ -8,7 +8,11 @@
 import UIKit
 
 final class BlogListViewController: UIViewController {
-    private let tableView = UITableView()
+    private lazy var tableView = UITableView().then {
+        $0.dataSource = self
+        $0.delegate = self
+        $0.register(BlogListTableViewCell.self, forCellReuseIdentifier: "CustomBlogCell")
+    }
 
     let blogData: [(name: String, url: String)] = [
         ("Blog 1", "http://blog1.com"),
@@ -21,22 +25,23 @@ final class BlogListViewController: UIViewController {
         view.backgroundColor = .systemBackground
         title = "블로그 목록"
 
-        navigationController?.isNavigationBarHidden = false
-
         let addBlogButton = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addBlogButtonTapped))
         navigationItem.rightBarButtonItem = addBlogButton
 
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(BlogListTableViewCell.self, forCellReuseIdentifier: "CustomBlogCell")
-
         view.addSubview(tableView)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navigationController?.isNavigationBarHidden = false
+        tabBarController?.tabBar.isHidden = true
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        tableView.pin.top(view.pin.safeArea).horizontally().bottom(view.pin.safeArea)
+        tableView.pin.top(view.pin.safeArea).horizontally().bottom()
     }
 
     @objc private func addBlogButtonTapped() {
