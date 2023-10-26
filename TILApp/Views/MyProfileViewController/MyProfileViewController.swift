@@ -1,4 +1,3 @@
-
 import FlexLayout
 import PinLayout
 import Then
@@ -126,6 +125,7 @@ final class MyProfileViewController: UIViewController {
         let vc = SeeMoreBottomSheetViewController()
         vc.modalPresentationStyle = .custom
         vc.transitioningDelegate = self
+        vc.delegate = self
         present(vc, animated: true, completion: nil)
     }
 
@@ -159,4 +159,22 @@ extension MyProfileViewController: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController,
                                 presenting: UIViewController?, source: UIViewController) -> UIPresentationController?
     { return SeeMorePresentationController(presentedViewController: presented, presenting: presenting) }
+}
+
+extension MyProfileViewController: SeeMoreBottomSheetDelegate {
+    func didSelectMenuItem(title: String) {
+        if title == "회원 정보 수정" {
+            let profileEditViewController = ProfileEditViewController()
+            navigationController?.pushViewController(profileEditViewController, animated: true)
+            dismiss(animated: true, completion: nil)
+        } else if title == "로그아웃" {
+            let signInViewController = SignInViewController()
+            navigationController?.pushViewController(signInViewController, animated: true)
+            dismiss(animated: true, completion: nil)
+        } else if title == "자주 묻는 질문" {
+            print("자주 묻는 질문")
+        } else if title == "개인 정보 처리 방침" {
+            print("개인 정보 처리 방침")
+        }
+    }
 }

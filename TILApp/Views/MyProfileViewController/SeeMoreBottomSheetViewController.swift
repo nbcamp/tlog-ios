@@ -3,9 +3,14 @@ import PinLayout
 import Then
 import UIKit
 
+protocol SeeMoreBottomSheetDelegate: class {
+    func didSelectMenuItem(title: String)
+}
+
 class SeeMoreBottomSheetViewController: UIViewController {
     let titles = ["회원 정보 수정", "자주 묻는 질문", "개인 정보 처리 방침", "로그아웃"]
     let iconNames = ["gearshape", "questionmark.app", "exclamationmark.shield", "rectangle.portrait.and.arrow.forward"]
+    weak var delegate: SeeMoreBottomSheetDelegate?
 
     private lazy var backgroundView = UIView().then {
         $0.backgroundColor = .white
@@ -41,27 +46,28 @@ class SeeMoreBottomSheetViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setUpUI()
-        print(view.frame.height)
     }
 
     private func setUpUI() {
         backgroundView.pin.all(view.pin.safeArea)
         handleView.pin.topCenter().marginTop(10)
         moreTableView.pin.below(of: handleView).bottom().left().right().marginTop(25)
+        backgroundView.layer.cornerRadius = 30.0
+        backgroundView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     }
 
     @objc func handlePanGesture(sender: UIPanGestureRecognizer) {
         let translation = sender.translation(in: view)
+        var newY = sender.view!.center.y + translation.y
 
         switch sender.state {
         case .began, .changed:
-            if translation.y > 0 {
-                sender.view!.center = CGPoint(x: sender.view!.center.x, y: sender.view!.center.y + translation.y)
-            }
+            newY = max(846.32, min(1200, newY))
+            sender.view!.center = CGPoint(x: sender.view!.center.x, y: newY)
             sender.setTranslation(.zero, in: view)
+
         case .ended:
             if sender.view!.frame.origin.y >= 650 {
-                let newY = sender.view!.center.y + translation.y
                 UIView.animate(withDuration: 0.7) {
                     self.backgroundView.frame.origin.y = self.view.frame.height
                 }
@@ -98,25 +104,6 @@ extension SeeMoreBottomSheetViewController: UITableViewDataSource, UITableViewDe
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedTitle = titles[indexPath.row]
-
-        switch selectedTitle {
-        case "회원 정보 수정":
-            print("회원 정보 수정 선택됨")
-
-            let profileEditViewController = ProfileEditViewController()
-            navigationController?.pushViewController(profileEditViewController, animated: true)
-
-        case "로그아웃":
-            // TODO: 유저 정보 삭제 하며 뷰 전환
-            print("로그아웃 선택됨")
-
-            let vc = SignInViewController()
-            navigationController?.pushViewController(vc, animated: true)
-
-//        case "자주 묻는 질문":
-//        case "개인 정보 처리 방침":
-        default:
-            break
-        }
+        delegate?.didSelectMenuItem(title: selectedTitle)
     }
 }
