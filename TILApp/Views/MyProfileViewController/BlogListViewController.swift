@@ -73,8 +73,6 @@ extension BlogListViewController: UITableViewDelegate {
         blogEditViewController.blogName = name
         blogEditViewController.blogURL = url
 
-        // present(blogEditViewController, animated: false)
-
         navigationController?.pushViewController(blogEditViewController, animated: true)
     }
 }
