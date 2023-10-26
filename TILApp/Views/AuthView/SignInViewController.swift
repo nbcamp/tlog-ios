@@ -1,28 +1,29 @@
 import AuthenticationServices
+import FlexLayout
+import PinLayout
 import UIKit
 
 final class SignInViewController: UIViewController {
+    private let logoImage = UIImageView(image: UIImage(named: "SignInPageLogo"))
+    private let authorizationButton = ASAuthorizationAppleIDButton(type: .signIn, style: .whiteOutline)
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
 
-        setAppleLoginButton()
-    }
+        logoImage.contentMode = .scaleAspectFill
+        view.addSubview(logoImage)
 
-    private func setAppleLoginButton() {
-        let authorizationButton = ASAuthorizationAppleIDButton(type: .signIn, style: .whiteOutline)
         authorizationButton.cornerRadius = 50
         authorizationButton
             .addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
-
         view.addSubview(authorizationButton)
-        authorizationButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            authorizationButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            authorizationButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            authorizationButton.widthAnchor.constraint(equalToConstant: 250),
-            authorizationButton.heightAnchor.constraint(equalToConstant: 44),
-        ])
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        logoImage.pin.all()
+        authorizationButton.pin.hCenter().bottom(20%).width(250).height(44)
     }
 
     @objc private func handleAuthorizationAppleIDButtonPress() {
@@ -54,12 +55,12 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
                 username = (fullName?.familyName ?? "") + (fullName?.givenName ?? "")
             }
 
-// MARK: 테스트용
+            // MARK: 테스트용
 
             APIService.shared.request(.signIn(.init(
                 username: "user1",
                 avatarUrl: "",
-                provider: "Apple",
+                provider: "APPLE",
                 providerId: "1234567"
             )), model: SignInOutput.self) { model in
                 print("---")
@@ -75,7 +76,7 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
 //            APIService.shared.request(.signIn(.init(
 //                username: username,
 //                avatarUrl: "",
-//                provider: "Apple",
+//                provider: "APPLE",
 //                providerId: userIdentifier
 //            )), model: SignInOutput.self) { model in
 //                print("---")
