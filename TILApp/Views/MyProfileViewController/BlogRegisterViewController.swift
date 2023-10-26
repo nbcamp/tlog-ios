@@ -75,12 +75,18 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        title = "블로그 등록"
         view.backgroundColor = .systemBackground
+
+        let doneButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(doneButtonTapped))
+        navigationItem.rightBarButtonItem = doneButton
 
         view.addSubview(contentScrollView)
         contentScrollView.addSubview(contentView)
         contentView.addSubview(rootFlexContainer)
     }
+
+    @objc private func doneButtonTapped() {}
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()

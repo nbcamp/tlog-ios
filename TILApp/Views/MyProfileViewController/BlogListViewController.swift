@@ -23,6 +23,9 @@ final class BlogListViewController: UIViewController {
 
         navigationController?.isNavigationBarHidden = false
 
+        let addBlogButton = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addBlogButtonTapped))
+        navigationItem.rightBarButtonItem = addBlogButton
+
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(BlogListTableViewCell.self, forCellReuseIdentifier: "CustomBlogCell")
@@ -34,6 +37,10 @@ final class BlogListViewController: UIViewController {
         super.viewDidLayoutSubviews()
 
         tableView.pin.top(view.pin.safeArea).horizontally().bottom(view.pin.safeArea)
+    }
+
+    @objc private func addBlogButtonTapped() {
+        navigationController?.pushViewController(BlogRegisterViewController(), animated: false)
     }
 }
 
@@ -51,8 +58,10 @@ extension BlogListViewController: UITableViewDataSource {
         cell.customBlogView.blogNameText = name
         cell.customBlogView.blogURLText = url
 
-        // 대표블로그인 경우에만 primary 타입 보내주기
-        // cell.customBlogView.type = .primary
+        // 대표블로그 가장 위로 정렬해야 함 -> 대표블로그인 경우에만 primary 타입 보내주기
+        if indexPath.row == 0 {
+            cell.customBlogView.type = .primary
+        }
 
         return cell
     }
