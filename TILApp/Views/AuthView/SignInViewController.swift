@@ -67,8 +67,12 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
                 let accessToken = model.accessToken
                 print(accessToken)
                 AuthService.shared.signIn(accessToken: accessToken)
-            } onError: { error in
-                print(error)
+
+                self.dismiss(animated: false)
+            } onError: { _ in
+                let alert = UIAlertController(title: "로그인 실패", message: "\n다시 시도해 주세요.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
             }
 
 // MARK: 실제 사용할 코드
@@ -99,9 +103,7 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
     }
 
     // 로그인 실패 후 동작
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        // Handle Error
-    }
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {}
 }
 
 extension SignInViewController: ASAuthorizationControllerPresentationContextProviding {
