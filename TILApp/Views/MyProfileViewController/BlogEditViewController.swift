@@ -67,6 +67,7 @@ final class BlogEditViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        title = "블로그 수정"
         view.backgroundColor = .systemBackground
     }
 

@@ -18,13 +18,23 @@ final class BlogListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        title = "블로그 목록"
+
+        navigationController?.isNavigationBarHidden = false
+        print(navigationController?.navigationBar)
 
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(BlogListTableViewCell.self, forCellReuseIdentifier: "CustomBlogCell")
 
         view.addSubview(tableView)
-        tableView.pin.all()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        tableView.pin.top(view.pin.safeArea).horizontally().bottom(view.pin.safeArea)
     }
 }
 
@@ -61,8 +71,8 @@ extension BlogListViewController: UITableViewDelegate {
         blogEditViewController.blogName = name
         blogEditViewController.blogURL = url
 
-        present(blogEditViewController, animated: false)
+        // present(blogEditViewController, animated: false)
 
-        // self.navigationController?.pushViewController(blogEditViewController, animated: true)
+        navigationController?.pushViewController(blogEditViewController, animated: true)
     }
 }

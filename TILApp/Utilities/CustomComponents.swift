@@ -145,12 +145,12 @@ class CustomLargeButton: UIButton {
         backgroundColor = UIColor(named: "AccentColor")
         layer.cornerRadius = 12
         setTitleColor(UIColor(white: 1.0, alpha: 1.0), for: .normal)
-        titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+        titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.horizontally(20).height(40)
+        pin.horizontally(20).height(35)
     }
 }
 
@@ -171,12 +171,12 @@ class CustomLargeBorderButton: UIButton {
         layer.borderColor = UIColor(named: "AccentColor")?.cgColor
         layer.cornerRadius = 12
         setTitleColor(UIColor(named: "AccentColor"), for: .normal)
-        titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+        titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.horizontally(20).height(40)
+        pin.horizontally(20).height(35)
     }
 }
 
