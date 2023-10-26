@@ -66,7 +66,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
     }
 
     // TODO: 이벤트 핸들러 어떻게 할지..
-    @objc func addTagButtonTapped() {
+    @objc private func addTagButtonTapped() {
         navigationController?.pushViewController(EditTagViewController(), animated: false)
     }
 
@@ -120,7 +120,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         contentScrollView.contentSize = CGSize(width: contentView.frame.width, height: contentView.frame.height)
     }
 
-    @objc func customTagViewTapped(_ sender: ContextTapGestureRecognizer) {
+    @objc private func customTagViewTapped(_ sender: ContextTapGestureRecognizer) {
         if let index = sender.context["index"] as? Int {
             print(index, tagData[index])
             let editTagViewController = EditTagViewController()
@@ -131,7 +131,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         }
     }
 
-    @objc func deleteTagButtonTapped(_ sender: UIButton) {
+    @objc private func deleteTagButtonTapped(_ sender: UIButton) {
         if let customTagView = sender.superview as? CustomTagView,
            let index = rootFlexContainer.subviews.firstIndex(of: customTagView)
         {

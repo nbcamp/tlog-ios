@@ -7,7 +7,7 @@
 
 import UIKit
 
-class EditTagViewController: UIViewController {
+final class EditTagViewController: UIViewController {
     // TODO: 태그 최대 개수 제한 생각해보기
 
     var selectedIndex: Int?
