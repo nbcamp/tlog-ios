@@ -63,13 +63,10 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
                 provider: "APPLE",
                 providerId: "1234567"
             )), model: SignInOutput.self) { model in
-                print("---")
-                let accessToken = model.accessToken
-                print(accessToken)
-                AuthService.shared.signIn(accessToken: accessToken)
-
+                AuthService.shared.signIn(accessToken: model.accessToken)
                 self.dismiss(animated: false)
-            } onError: { _ in
+            } onError: { [weak self] _ in
+                guard let self else { return }
                 let alert = UIAlertController(title: "로그인 실패", message: "\n다시 시도해 주세요.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
