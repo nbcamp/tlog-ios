@@ -131,6 +131,11 @@ class CustomComponentsViewController: UIViewController {
 }
 
 class CustomLargeButton: UIButton {
+    private let height: CGFloat = 35
+    var componentSize: CGSize {
+        return CGSize(width: frame.width, height: height)
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupButton()
@@ -150,11 +155,16 @@ class CustomLargeButton: UIButton {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.horizontally(20).height(35)
+        pin.horizontally(20).height(height)
     }
 }
 
 class CustomLargeBorderButton: UIButton {
+    private let height: CGFloat = 35
+    var componentSize: CGSize {
+        return CGSize(width: frame.width, height: height)
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupButton()
@@ -176,7 +186,7 @@ class CustomLargeBorderButton: UIButton {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.horizontally(20).height(35)
+        pin.horizontally(20).height(height)
     }
 }
 
