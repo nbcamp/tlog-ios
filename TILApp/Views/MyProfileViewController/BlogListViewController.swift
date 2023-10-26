@@ -60,7 +60,7 @@ extension BlogListViewController: UITableViewDataSource {
 
         // 대표블로그 가장 위로 정렬해야 함 -> 대표블로그인 경우에만 primary 타입 보내주기
         if indexPath.row == 0 {
-            cell.customBlogView.type = .primary
+            cell.customBlogView.variant = .primary
         }
 
         return cell

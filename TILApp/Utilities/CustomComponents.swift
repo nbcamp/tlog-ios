@@ -629,14 +629,14 @@ class CustomCommunityTILView: UIView {
 }
 
 class CustomBlogView: UIView {
-    enum BlogViewType {
+    enum Variant {
         case primary
         case normal
     }
 
-    var type: BlogViewType = .normal {
+    var variant: Variant = .normal {
         didSet {
-            switch type {
+            switch variant {
             case .primary:
                 addSubview(primaryLabel)
             case .normal:
@@ -696,7 +696,7 @@ class CustomBlogView: UIView {
         customLabelView.pin.left(20)
         chevronImage.pin.width(20).height(20).centerRight(20)
 
-        switch type {
+        switch variant {
         case .primary:
             primaryLabel.pin.right(to: chevronImage.edge.left).vCenter()
         case .normal:
