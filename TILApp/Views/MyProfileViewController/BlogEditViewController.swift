@@ -109,10 +109,15 @@ final class BlogEditViewController: UIViewController {
         title = "블로그 수정"
         view.backgroundColor = .systemBackground
 
+        let doneButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(doneButtonTapped))
+        navigationItem.rightBarButtonItem = doneButton
+
         view.addSubview(contentScrollView)
         contentScrollView.addSubview(contentView)
         contentView.addSubview(rootFlexContainer)
     }
+
+    @objc private func doneButtonTapped() {}
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
