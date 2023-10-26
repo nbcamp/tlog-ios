@@ -167,7 +167,6 @@ final class BlogEditViewController: UIViewController {
 
     @objc private func customTagViewTapped(_ sender: ContextTapGestureRecognizer) {
         if let index = sender.context["index"] as? Int {
-            print(index, tagData[index])
             let editTagViewController = EditTagViewController()
             editTagViewController.selectedIndex = index
             editTagViewController.content = tagData[index]

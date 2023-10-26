@@ -640,7 +640,7 @@ class CustomBlogView: UIView {
             case .primary:
                 addSubview(primaryLabel)
             case .normal:
-                break
+                primaryLabel.removeFromSuperview()
             }
         }
     }
