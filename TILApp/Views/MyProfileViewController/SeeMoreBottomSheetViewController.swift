@@ -7,13 +7,22 @@ protocol SeeMoreBottomSheetDelegate: class {
     func didSelectMenuItem(title: String)
 }
 
+struct Menu {
+    let title: String
+    let icon: String
+}
+
 class SeeMoreBottomSheetViewController: UIViewController {
-    let titles = ["회원 정보 수정", "자주 묻는 질문", "개인 정보 처리 방침", "로그아웃"]
-    let iconNames = ["gearshape", "questionmark.app", "exclamationmark.shield", "rectangle.portrait.and.arrow.forward"]
+    let menus: [Menu] = [
+        .init(title: "회원 정보 수정", icon: "gearshape"),
+        .init(title: "자주 묻는 질문", icon: "questionmark.app"),
+        .init(title: "개인 정보 처리 방침", icon: "exclamationmark.shield"),
+        .init(title: "로그아웃", icon: "rectangle.portrait.and.arrow.forward"),
+    ]
     weak var delegate: SeeMoreBottomSheetDelegate?
 
     private lazy var backgroundView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .systemBackground
         $0.sizeToFit()
         view.addSubview($0)
     }
@@ -26,7 +35,7 @@ class SeeMoreBottomSheetViewController: UIViewController {
     }
 
     private lazy var handleView = UIView().then {
-        $0.backgroundColor = .gray
+        $0.backgroundColor = .systemGray
         let handleHeight: CGFloat = 6
         $0.frame = CGRect(x: (view.frame.width - 40) / 2, y: 10, width: 80, height: handleHeight)
         $0.layer.cornerRadius = handleHeight / 2
@@ -38,7 +47,7 @@ class SeeMoreBottomSheetViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        moreTableView.register(MoreTableViewCell.self, forCellReuseIdentifier: "MoreCell")
+        moreTableView.register(MoreTableViewCell.self, forCellReuseIdentifier: MoreTableViewCell.identifier)
         moreTableView.delegate = self
         moreTableView.dataSource = self
     }
@@ -85,17 +94,17 @@ class SeeMoreBottomSheetViewController: UIViewController {
 
 extension SeeMoreBottomSheetViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "MoreCell", for: indexPath) as? MoreTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: MoreTableViewCell.identifier, for: indexPath) as? MoreTableViewCell else {
             return UITableViewCell()
         }
-        let title = titles[indexPath.row]
-        let iconName = iconNames[indexPath.row]
-        cell.configure(withTitle: title, iconName: iconName)
+
+        let menuList = menus[indexPath.row]
+        cell.configure(withTitle: menuList.title, iconName: menuList.icon)
         return cell
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return menus.count
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -103,7 +112,7 @@ extension SeeMoreBottomSheetViewController: UITableViewDataSource, UITableViewDe
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedTitle = titles[indexPath.row]
+        let selectedTitle = menus[indexPath.row].title
         delegate?.didSelectMenuItem(title: selectedTitle)
     }
 }

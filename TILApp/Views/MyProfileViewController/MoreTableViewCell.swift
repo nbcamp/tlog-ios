@@ -4,7 +4,7 @@ import Then
 import UIKit
 
 class MoreTableViewCell: UITableViewCell {
-    let identifier = "MoreCell"
+    static let identifier = "MoreCell"
 
     lazy var iconButton = UIButton().then {
         let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .light)
