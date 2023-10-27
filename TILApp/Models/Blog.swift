@@ -1,3 +1,5 @@
+import Foundation
+
 struct Keyword: Codable {
     let keyword: String
     let tags: [String]
@@ -10,12 +12,7 @@ struct Blog: Codable {
     let rss: String
     let primary: Bool
     let keywords: [Keyword]
-    let createdAt: Unixtime
-
-    enum CodingKeys: String, CodingKey {
-        case id, name, url, rss, primary, keywords
-        case createdAt = "created_at"
-    }
+    let createdAt: Date
 }
 
 struct CreateBlogInput: Codable {

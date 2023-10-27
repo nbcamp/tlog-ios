@@ -1,7 +1,7 @@
 struct AuthUser: Codable {
     let id: Int
     let username: String
-    let avatarUrl: String
+    let avatarUrl: String?
 }
 
 struct SignInInput: Codable {
@@ -13,4 +13,5 @@ struct SignInInput: Codable {
 
 struct SignInOutput: Codable {
     let accessToken: String
+    let user: AuthUser
 }

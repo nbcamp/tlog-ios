@@ -1,6 +1,3 @@
-import FlexLayout
-import PinLayout
-import Then
 import UIKit
 
 final class HomeViewController: UIViewController {
@@ -71,10 +68,10 @@ final class HomeViewController: UIViewController {
         updateCountTILLabel()
         updateGrowthImage()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         navigationController?.isNavigationBarHidden = true
     }
 

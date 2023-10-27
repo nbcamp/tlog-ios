@@ -11,4 +11,5 @@ disabled_rules:
   - trailing_comma
   - empty_enum_arguments
   - opening_brace
+  - trailing_whitespace
 

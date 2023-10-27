@@ -10,6 +10,9 @@ final class APIService {
     private init() {}
 
     private let provider = MoyaProvider<APIRequest>()
+    private let decoder = JSONDecoder().then { decoder in
+        decoder.dateDecodingStrategy = .secondsSince1970
+    }
 
     func request(
         _ target: APIRequest,
@@ -49,7 +52,8 @@ final class APIService {
                     }
                     onError?(.statusCode(response)); return
                 }
-                guard let model = try? response.map(model) else {
+
+                guard let model = try? response.map(model, using: decoder) else {
                     onError?(.jsonMapping(response)); return
                 }
                 onSuccess(model)
@@ -71,19 +75,30 @@ final class APIService {
 enum APIRequest {
     case ping
 
+    // Users
     case signIn(SignInInput),
-         getUser,
+         getProfile,
+         getUser(Int),
          updateUser(UpdateUserInput),
-         deleteUser
+         deleteUser,
+         followUser(Int),
+         unfollowUser(Int),
+         getFollowers,
+         getFollowings
 
-    case getBlogs,
+    // Blogs
+    case getMyBlogs,
          getBlog(Int),
+         getMainBlog,
+         setMainBlog(Int),
          createBlog(CreateBlogInput),
          updateBlog(Int, UpdateBlogInput),
          deleteBlog(Int)
 
+    // Posts
     case getPosts,
          getPost(Int),
+         createPost(CreatePostInput),
          updatePost(Int, UpdatePostInput)
 }
 
@@ -94,57 +109,109 @@ extension APIRequest: TargetType {
         switch self {
         case .ping:
             return "/"
+
+        // Users
         case .signIn:
             return "/auth/sign-in"
-        case .getUser, .updateUser(_), .deleteUser:
-            return "/users/profile"
-        case .getBlogs, .createBlog:
-            return "/blogs"
+        case .getUser:
+            return "/user"
+        case .getProfile, .updateUser(_), .deleteUser:
+            return "/user/profile"
+        case .followUser(let id):
+            return "/user/follow/\(id)"
+        case .unfollowUser(let id):
+            return "/user/unfollow/\(id)"
+        case .getFollowers:
+            return "/user/followers"
+        case .getFollowings:
+            return "/user/followings"
+
+        // Blogs
+        case .getMyBlogs:
+            return "/blog/list"
+        case .getMainBlog:
+            return "/blog/main"
+        case .setMainBlog(let id):
+            return "/blog/\(id)/main"
         case .getBlog(let id),
              .updateBlog(let id, _),
              .deleteBlog(let id):
-            return "/blogs/\(id)"
+            return "/blog/\(id)"
+        case .createBlog:
+            return "/blog"
+
+        // Posts
         case .getPosts:
-            return "/posts"
+            return "/post/list"
         case .getPost(let id), .updatePost(let id, _):
             return "/post/\(id)"
+        case .createPost:
+            return "/post"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .ping, .getUser, .getBlogs, .getBlog(_), .getPosts, .getPost:
+        case .ping,
+             .getProfile,
+             .getUser,
+             .getFollowers,
+             .getFollowings,
+             .getMyBlogs,
+             .getBlog,
+             .getMainBlog,
+             .getPosts,
+             .getPost:
             return .get
-        case .signIn(_), .createBlog:
+        case .signIn,
+             .followUser,
+             .createBlog,
+             .createPost:
             return .post
-        case .updateUser(_), .updateBlog(_, _), .updatePost:
+        case .updateUser,
+             .updateBlog,
+             .setMainBlog,
+             .updatePost:
             return .patch
-        case .deleteUser, .deleteBlog:
+        case .deleteUser,
+             .deleteBlog,
+             .unfollowUser:
             return .delete
         }
     }
 
     var task: Moya.Task {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .secondsSince1970
         switch self {
         case .ping,
              .getUser,
-             .getBlogs,
-             .getBlog(_),
+             .getProfile,
+             .followUser,
+             .unfollowUser,
+             .getFollowers,
+             .getFollowings,
+             .getMyBlogs,
+             .getBlog,
+             .getMainBlog,
+             .setMainBlog,
              .getPosts,
-             .getPost(_),
+             .getPost,
              .deleteUser,
              .deleteBlog:
             return .requestPlain
         case .signIn(let payload):
-            return .requestJSONEncodable(payload)
+            return .requestCustomJSONEncodable(payload, encoder: encoder)
         case .updateUser(let payload):
-            return .requestJSONEncodable(payload)
+            return .requestCustomJSONEncodable(payload, encoder: encoder)
         case .createBlog(let payload):
-            return .requestJSONEncodable(payload)
+            return .requestCustomJSONEncodable(payload, encoder: encoder)
         case .updateBlog(_, let payload):
-            return .requestJSONEncodable(payload)
+            return .requestCustomJSONEncodable(payload, encoder: encoder)
+        case .createPost(let payload):
+            return .requestCustomJSONEncodable(payload, encoder: encoder)
         case .updatePost(_, let payload):
-            return .requestJSONEncodable(payload)
+            return .requestCustomJSONEncodable(payload, encoder: encoder)
         }
     }
 
@@ -152,9 +219,10 @@ extension APIRequest: TargetType {
         var headers: [String: String] = [:]
         headers.updateValue("application/json", forKey: "Content-type")
 
-        if let accessToken = AuthService.shared.accessToken {
+        if let accessToken = AuthViewModel.shared.accessToken {
             headers.updateValue("Bearer \(accessToken)", forKey: "Authorization")
         }
+
         return headers
     }
 }

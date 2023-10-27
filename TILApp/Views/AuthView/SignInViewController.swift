@@ -1,6 +1,4 @@
 import AuthenticationServices
-import FlexLayout
-import PinLayout
 import UIKit
 
 final class SignInViewController: UIViewController {
@@ -57,14 +55,13 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
 
             // MARK: 테스트용
 
-            APIService.shared.request(.signIn(.init(
+            AuthViewModel.shared.signIn(.init(
                 username: "user1",
                 avatarUrl: "",
                 provider: "APPLE",
                 providerId: "1234567"
-            )), model: SignInOutput.self) { model in
-                AuthService.shared.signIn(accessToken: model.accessToken)
-                self.dismiss(animated: false)
+            )) { [weak self] _ in
+                self?.dismiss(animated: false)
             } onError: { [weak self] _ in
                 guard let self else { return }
                 let alert = UIAlertController(title: "로그인 실패", message: "\n다시 시도해 주세요.", preferredStyle: .alert)

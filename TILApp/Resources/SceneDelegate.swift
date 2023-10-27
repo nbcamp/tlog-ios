@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidDisconnect(_: UIScene) {}
 
     func sceneDidBecomeActive(_: UIScene) {
-        AuthService.shared.$isAuthenticated.sink { [weak self] authenticated in
+        AuthViewModel.shared.$isAuthenticated.sink { [weak self] authenticated in
             guard let self else { return }
             if !authenticated {
                 let signInViewController = SignInViewController()
