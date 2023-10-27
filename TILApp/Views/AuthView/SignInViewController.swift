@@ -5,7 +5,7 @@ import UIKit
 
 final class SignInViewController: UIViewController {
     private let logoImage = UIImageView(image: UIImage(named: "SignInPageLogo"))
-    private let authorizationButton = ASAuthorizationAppleIDButton(type: .signIn, style: .whiteOutline)
+    private let authorizationButton = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +23,7 @@ final class SignInViewController: UIViewController {
         super.viewDidLayoutSubviews()
 
         logoImage.pin.all()
-        authorizationButton.pin.hCenter().bottom(20%).width(250).height(44)
+        authorizationButton.pin.hCenter().bottom(20%).width(80%).height(44)
     }
 
     @objc private func handleAuthorizationAppleIDButtonPress() {
