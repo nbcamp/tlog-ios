@@ -40,6 +40,14 @@ final class ProfileEditViewController: UIViewController {
         view.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))
 
+//        let navigationBar = UINavigationBar(frame: CGRect(x: 0, y: 50, width: view.frame.size.width, height: 44))
+//        navigationBar.barTintColor = .systemBackground
+//        let navigationItem = UINavigationItem(title: "프로필 수정")
+//        let doneButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))
+//        navigationItem.rightBarButtonItem = doneButton
+//        navigationBar.setItems([navigationItem], animated: false)
+//        view.addSubview(navigationBar)
+
         editProfileImageView.isUserInteractionEnabled = true
         editProfileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped(_:))))
     }
@@ -72,8 +80,8 @@ final class ProfileEditViewController: UIViewController {
 
     @objc private func completeButtonTapped() {
         // TODO: 이미지,닉네임 저장 로직
-        let myProfileViewController = MyProfileViewController()
-        present(myProfileViewController, animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
+
     }
 
     private func validateNickname() {

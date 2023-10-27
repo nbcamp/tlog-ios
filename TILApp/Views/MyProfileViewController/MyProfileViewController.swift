@@ -1,4 +1,3 @@
-
 import FlexLayout
 import PinLayout
 import Then
@@ -123,6 +122,11 @@ final class MyProfileViewController: UIViewController {
 
     @objc private func moreButtonTapped() {
         // TODO: 더보기 페이지(사이드바, 바텀시트) 뷰 전환
+        let vc = SeeMoreBottomSheetViewController()
+        vc.modalPresentationStyle = .custom
+        vc.transitioningDelegate = self
+        vc.delegate = self
+        present(vc, animated: true, completion: nil)
     }
 
     @objc private func followersButtonTapped() {
@@ -151,5 +155,29 @@ extension MyProfileViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
 
         return cell
+    }
+}
+
+extension MyProfileViewController: UIViewControllerTransitioningDelegate {
+    func presentationController(forPresented presented: UIViewController,
+                                presenting: UIViewController?, source: UIViewController) -> UIPresentationController?
+    { return SeeMorePresentationController(presentedViewController: presented, presenting: presenting) }
+}
+
+extension MyProfileViewController: SeeMoreBottomSheetDelegate {
+    func didSelectSeeMoreMenu(title: String) {
+        if title == "회원 정보 수정" {
+            let profileEditViewController = ProfileEditViewController()
+            navigationController?.pushViewController(profileEditViewController, animated: true)
+            dismiss(animated: true, completion: nil)
+        } else if title == "로그아웃" {
+            let signInViewController = SignInViewController()
+            navigationController?.pushViewController(signInViewController, animated: true)
+            dismiss(animated: true, completion: nil)
+        } else if title == "자주 묻는 질문" {
+            print("자주 묻는 질문")
+        } else if title == "개인 정보 처리 방침" {
+            print("개인 정보 처리 방침")
+        }
     }
 }
