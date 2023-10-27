@@ -10,6 +10,9 @@ final class APIService {
     private init() {}
 
     private let provider = MoyaProvider<APIRequest>()
+    private let decoder = JSONDecoder().then { decoder in
+        decoder.dateDecodingStrategy = .secondsSince1970
+    }
 
     func request(
         _ target: APIRequest,
@@ -49,7 +52,8 @@ final class APIService {
                     }
                     onError?(.statusCode(response)); return
                 }
-                guard let model = try? response.map(model) else {
+
+                guard let model = try? response.map(model, using: decoder) else {
                     onError?(.jsonMapping(response)); return
                 }
                 onSuccess(model)

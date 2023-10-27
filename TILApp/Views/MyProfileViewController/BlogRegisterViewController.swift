@@ -1,12 +1,3 @@
-//
-//  BlogRegisterViewController.swift
-//  TILApp
-//
-//  Created by 이재희 on 10/20/23.
-//
-
-import FlexLayout
-import PinLayout
 import UIKit
 
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {

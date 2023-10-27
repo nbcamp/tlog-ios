@@ -1,12 +1,3 @@
-//  FollowViewController.swift
-//  TILApp
-//
-//  Created by Lee on 10/19/23.
-//
-
-import FlexLayout
-import PinLayout
-import Then
 import UIKit
 
 final class ProfileEditViewController: UIViewController {
