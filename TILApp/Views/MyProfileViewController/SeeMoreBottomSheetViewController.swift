@@ -4,16 +4,16 @@ import Then
 import UIKit
 
 protocol SeeMoreBottomSheetDelegate: class {
-    func didSelectMenuItem(title: String)
+    func didSelectSeeMoreMenu(title: String)
 }
 
-struct Menu {
+struct SeeMoreMenu {
     let title: String
     let icon: String
 }
 
 class SeeMoreBottomSheetViewController: UIViewController {
-    let menus: [Menu] = [
+    let seeMoreMenus: [SeeMoreMenu] = [
         .init(title: "회원 정보 수정", icon: "gearshape"),
         .init(title: "자주 묻는 질문", icon: "questionmark.app"),
         .init(title: "개인 정보 처리 방침", icon: "exclamationmark.shield"),
@@ -98,13 +98,13 @@ extension SeeMoreBottomSheetViewController: UITableViewDataSource, UITableViewDe
             return UITableViewCell()
         }
 
-        let menuList = menus[indexPath.row]
-        cell.configure(withTitle: menuList.title, iconName: menuList.icon)
+        let seeMenuList = seeMoreMenus[indexPath.row]
+        cell.configure(withTitle: seeMenuList.title, iconName: seeMenuList.icon)
         return cell
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return menus.count
+        return seeMoreMenus.count
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -112,7 +112,7 @@ extension SeeMoreBottomSheetViewController: UITableViewDataSource, UITableViewDe
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedTitle = menus[indexPath.row].title
-        delegate?.didSelectMenuItem(title: selectedTitle)
+        let selectedTitle = seeMoreMenus[indexPath.row].title
+        delegate?.didSelectSeeMoreMenu(title: selectedTitle)
     }
 }

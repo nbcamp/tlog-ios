@@ -162,7 +162,7 @@ extension MyProfileViewController: UIViewControllerTransitioningDelegate {
 }
 
 extension MyProfileViewController: SeeMoreBottomSheetDelegate {
-    func didSelectMenuItem(title: String) {
+    func didSelectSeeMoreMenu(title: String) {
         if title == "회원 정보 수정" {
             let profileEditViewController = ProfileEditViewController()
             navigationController?.pushViewController(profileEditViewController, animated: true)
