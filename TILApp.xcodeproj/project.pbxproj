@@ -133,7 +133,6 @@
 		3334E1A62AD6BC1800D853D7 /* TILApp */ = {
 			isa = PBXGroup;
 			children = (
-				D20AD8D02ADC5ECA00CDEB2C /* TILApp.entitlements */,
 				3334E1C42AD9110000D853D7 /* Resources */,
 				3334E1C22AD910EB00D853D7 /* Services */,
 				3334E1C12AD910E400D853D7 /* Models */,
@@ -202,6 +201,7 @@
 			isa = PBXGroup;
 			children = (
 				3334E1B02AD6BC1A00D853D7 /* Assets.xcassets */,
+				D20AD8D02ADC5ECA00CDEB2C /* TILApp.entitlements */,
 				3334E1A92AD6BC1800D853D7 /* SceneDelegate.swift */,
 				3334E1A72AD6BC1800D853D7 /* AppDelegate.swift */,
 				33A4E81D2AEBB24A00E3F55E /* Exported.swift */,
@@ -574,7 +574,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = TILApp/TILApp.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TILApp/Resources/TILApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7TH7TS2438;
@@ -608,7 +608,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = TILApp/TILApp.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TILApp/Resources/TILApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7TH7TS2438;
