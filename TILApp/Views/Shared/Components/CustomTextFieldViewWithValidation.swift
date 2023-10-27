@@ -69,4 +69,8 @@ class CustomTextFieldViewWithValidation: UIView {
         pin.width(100%).height(height)
         flex.layout()
     }
+
+    func setTextFieldReadOnly() {
+        customTextFieldView.setTextFieldReadOnly()
+    }
 }

@@ -64,7 +64,7 @@ final class BlogEditViewController: UIViewController {
         if let blogURL = blogURL {
             $0.mainText = blogURL
         }
-        $0.placeholder = "블로그 주소를 입력해주세요"
+        $0.setTextFieldReadOnly()
         contentView.addSubview($0)
         $0.pin.size($0.componentSize)
     }
@@ -75,7 +75,7 @@ final class BlogEditViewController: UIViewController {
         if let blogURL = blogURL {
             $0.mainText = blogURL
         }
-        $0.placeholder = "블로그 RSS 주소를 입력해주세요"
+        $0.setTextFieldReadOnly()
         contentView.addSubview($0)
         $0.pin.size($0.componentSize)
     }

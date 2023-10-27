@@ -65,4 +65,9 @@ class CustomTextFieldView: UIView {
         pin.width(100%).height(height)
         flex.layout()
     }
+
+    func setTextFieldReadOnly() {
+        textField.isUserInteractionEnabled = false
+        textField.textColor = .systemGray2
+    }
 }
