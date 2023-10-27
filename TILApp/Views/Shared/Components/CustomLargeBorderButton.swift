@@ -11,6 +11,31 @@ import Then
 import UIKit
 
 class CustomLargeBorderButton: UIButton {
+    enum Variant {
+        case primary
+        case normal
+        case other
+    }
+
+    var variant: Variant = .other {
+        didSet {
+            switch variant {
+            case .primary:
+                setTitle("대표 블로그", for: .normal)
+                setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
+                semanticContentAttribute = .forceRightToLeft
+                layer.borderWidth = 0
+                isEnabled = false
+            case .normal:
+                setTitle("대표 블로그로 설정하기", for: .normal)
+                layer.borderWidth = 0.5
+                isEnabled = true
+            case .other:
+                break
+            }
+        }
+    }
+
     private let height: CGFloat = 35
     var componentSize: CGSize {
         return CGSize(width: frame.width, height: height)
