@@ -21,8 +21,8 @@ class CustomLargeBorderButton: UIButton {
         didSet {
             switch variant {
             case .primary:
-                setTitle("대표 블로그", for: .normal)
-                setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
+                setTitle("대표 블로그 ", for: .normal)
+                setImage(UIImage(systemName: "checkmark.circle.fill"), for: .normal)
                 semanticContentAttribute = .forceRightToLeft
                 layer.borderWidth = 0
                 isEnabled = false
