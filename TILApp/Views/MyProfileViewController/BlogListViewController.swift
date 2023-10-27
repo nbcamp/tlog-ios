@@ -8,7 +8,11 @@
 import UIKit
 
 final class BlogListViewController: UIViewController {
-    private let tableView = UITableView()
+    private lazy var tableView = UITableView().then {
+        $0.dataSource = self
+        $0.delegate = self
+        $0.register(BlogListTableViewCell.self, forCellReuseIdentifier: "CustomBlogCell")
+    }
 
     let blogData: [(name: String, url: String)] = [
         ("Blog 1", "http://blog1.com"),
@@ -18,13 +22,30 @@ final class BlogListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        title = "블로그 목록"
 
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(BlogListTableViewCell.self, forCellReuseIdentifier: "CustomBlogCell")
+        let addBlogButton = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addBlogButtonTapped))
+        navigationItem.rightBarButtonItem = addBlogButton
 
         view.addSubview(tableView)
-        tableView.pin.all()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navigationController?.isNavigationBarHidden = false
+        tabBarController?.tabBar.isHidden = true
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        tableView.pin.top(view.pin.safeArea).horizontally().bottom()
+    }
+
+    @objc private func addBlogButtonTapped() {
+        navigationController?.pushViewController(BlogRegisterViewController(), animated: false)
     }
 }
 
@@ -41,6 +62,11 @@ extension BlogListViewController: UITableViewDataSource {
         let (name, url) = blogData[indexPath.row]
         cell.customBlogView.blogNameText = name
         cell.customBlogView.blogURLText = url
+
+        // 대표블로그 가장 위로 정렬해야 함 -> 대표블로그인 경우에만 primary 타입 보내주기
+        if indexPath.row == 0 {
+            cell.customBlogView.variant = .primary
+        }
 
         return cell
     }
@@ -61,8 +87,6 @@ extension BlogListViewController: UITableViewDelegate {
         blogEditViewController.blogName = name
         blogEditViewController.blogURL = url
 
-        present(blogEditViewController, animated: false)
-
-        // self.navigationController?.pushViewController(blogEditViewController, animated: true)
+        navigationController?.pushViewController(blogEditViewController, animated: true)
     }
 }

@@ -8,7 +8,7 @@
 import PinLayout
 import UIKit
 
-class BlogListTableViewCell: UITableViewCell {
+final class BlogListTableViewCell: UITableViewCell {
     let customBlogView = CustomBlogView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

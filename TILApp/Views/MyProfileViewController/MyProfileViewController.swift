@@ -135,6 +135,9 @@ final class MyProfileViewController: UIViewController {
 
     @objc private func editBlogButtonTapped() {
         // TODO: 블로그 수정 뷰 전환
+        let blogListViewController = BlogListViewController()
+        blogListViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(blogListViewController, animated: true)
     }
 }
 

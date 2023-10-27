@@ -22,6 +22,12 @@ final class CommunityViewController: UIViewController {
         view.addSubview(searchBar)
         view.addSubview(tableView)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.isNavigationBarHidden = true
+    }
 
     override func viewDidLayoutSubviews() {
         searchBar.pin.top(view.pin.safeArea).horizontally().height(60)
@@ -56,6 +62,7 @@ extension CommunityViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedRow = indexPath.row
 
-        // self.navigationController?.pushViewController(blogEditViewController, animated: true)
+        // TODO: tabBarController?.hidesBottomBarWhenPushed = true
+        // self.navigationController?.pushViewController(viewController, animated: true)
     }
 }

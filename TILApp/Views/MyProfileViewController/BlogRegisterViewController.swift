@@ -66,8 +66,8 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
     }
 
     // TODO: 이벤트 핸들러 어떻게 할지..
-    @objc func addTagButtonTapped() {
-        print("버튼 탭")
+    @objc private func addTagButtonTapped() {
+        navigationController?.pushViewController(EditTagViewController(), animated: false)
     }
 
     private lazy var rootFlexContainer = UIView()
@@ -75,11 +75,23 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        title = "블로그 등록"
         view.backgroundColor = .systemBackground
+
+        let doneButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(doneButtonTapped))
+        navigationItem.rightBarButtonItem = doneButton
 
         view.addSubview(contentScrollView)
         contentScrollView.addSubview(contentView)
         contentView.addSubview(rootFlexContainer)
+    }
+
+    @objc private func doneButtonTapped() {}
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navigationController?.isNavigationBarHidden = false
     }
 
     override func viewDidLayoutSubviews() {
@@ -120,18 +132,18 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         contentScrollView.contentSize = CGSize(width: contentView.frame.width, height: contentView.frame.height)
     }
 
-    @objc func customTagViewTapped(_ sender: ContextTapGestureRecognizer) {
+    @objc private func customTagViewTapped(_ sender: ContextTapGestureRecognizer) {
         if let index = sender.context["index"] as? Int {
             print(index, tagData[index])
-//            let editTagViewController = EditTagViewController()
-//            editTagViewController.selectedIndex = index
-//            editTagViewController.content = tagData[index]
-//
-//            navigationController?.pushViewController(editTagViewController, animated: true)
+            let editTagViewController = EditTagViewController()
+            editTagViewController.selectedIndex = index
+            editTagViewController.content = tagData[index]
+
+            navigationController?.pushViewController(editTagViewController, animated: true)
         }
     }
 
-    @objc func deleteTagButtonTapped(_ sender: UIButton) {
+    @objc private func deleteTagButtonTapped(_ sender: UIButton) {
         if let customTagView = sender.superview as? CustomTagView,
            let index = rootFlexContainer.subviews.firstIndex(of: customTagView)
         {

@@ -24,7 +24,5 @@ class TagCollectionViewCell: UICollectionViewCell {
         super.layoutSubviews()
 
         tagLabel.pin.horizontally(8).vertically(5)
-        print(contentView)
-        print(tagLabel)
     }
 }

@@ -131,6 +131,11 @@ class CustomComponentsViewController: UIViewController {
 }
 
 class CustomLargeButton: UIButton {
+    private let height: CGFloat = 35
+    var componentSize: CGSize {
+        return CGSize(width: frame.width, height: height)
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupButton()
@@ -145,16 +150,21 @@ class CustomLargeButton: UIButton {
         backgroundColor = UIColor(named: "AccentColor")
         layer.cornerRadius = 12
         setTitleColor(UIColor(white: 1.0, alpha: 1.0), for: .normal)
-        titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+        titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.horizontally(20).height(40)
+        pin.horizontally(20).height(height)
     }
 }
 
 class CustomLargeBorderButton: UIButton {
+    private let height: CGFloat = 35
+    var componentSize: CGSize {
+        return CGSize(width: frame.width, height: height)
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupButton()
@@ -171,12 +181,12 @@ class CustomLargeBorderButton: UIButton {
         layer.borderColor = UIColor(named: "AccentColor")?.cgColor
         layer.cornerRadius = 12
         setTitleColor(UIColor(named: "AccentColor"), for: .normal)
-        titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+        titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.horizontally(20).height(40)
+        pin.horizontally(20).height(height)
     }
 }
 
@@ -619,11 +629,33 @@ class CustomCommunityTILView: UIView {
 }
 
 class CustomBlogView: UIView {
+    enum Variant {
+        case primary
+        case normal
+    }
+
+    var variant: Variant = .normal {
+        didSet {
+            switch variant {
+            case .primary:
+                addSubview(primaryLabel)
+            case .normal:
+                primaryLabel.removeFromSuperview()
+            }
+        }
+    }
+
     private let customLabelView = CustomLabelView()
     private let chevronImage = UIImageView(image: UIImage(
         systemName: "chevron.right",
         withConfiguration: UIImage.SymbolConfiguration(pointSize: 30, weight: .light)
     ))
+    private let primaryLabel = UILabel().then {
+        $0.text = "대표 블로그"
+        $0.font = UIFont.systemFont(ofSize: 13)
+        $0.textColor = UIColor(named: "AccentColor")
+        $0.sizeToFit()
+    }
 
     var blogNameText: String {
         get { customLabelView.nicknameText }
@@ -663,6 +695,13 @@ class CustomBlogView: UIView {
 
         customLabelView.pin.left(20)
         chevronImage.pin.width(20).height(20).centerRight(20)
+
+        switch variant {
+        case .primary:
+            primaryLabel.pin.right(to: chevronImage.edge.left).vCenter()
+        case .normal:
+            break
+        }
     }
 }
 
