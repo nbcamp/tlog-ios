@@ -51,6 +51,8 @@ final class TestNetworkViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        
+        print(Date().unixtime)
 
 //        moya1()
 //        moya2()
@@ -84,7 +86,7 @@ final class TestNetworkViewController: UIViewController {
                 flex.addItem(statusLabel).marginTop(10)
             }
 
-        AuthService.shared.$isAuthenticated.sink { [weak self] authenticated in
+        AuthViewModel.shared.$isAuthenticated.sink { [weak self] authenticated in
             guard let self else { return }
             self.signButton.removeTarget(nil, action: nil, for: .allEvents)
             if authenticated {
@@ -103,11 +105,11 @@ final class TestNetworkViewController: UIViewController {
     // MARK: - APIService (NetworkLayer) 작성방법
 
     @objc private func requestButtonTapped() {
-        APIService.shared.request(.getUser) { response in
+        APIService.shared.request(.getProfile) { response in
             _ = response
         }
 
-        APIService.shared.request(.getUser) { response in
+        APIService.shared.request(.getProfile) { response in
             _ = response
             print(response)
         } onError: { error in
@@ -115,11 +117,11 @@ final class TestNetworkViewController: UIViewController {
             print(error)
         }
 
-        APIService.shared.request(.getUser, model: AuthUser.self) { model in
+        APIService.shared.request(.getProfile, model: AuthUser.self) { model in
             _ = model
         }
 
-        APIService.shared.request(.getUser, model: AuthUser.self) { model in
+        APIService.shared.request(.getProfile, model: AuthUser.self) { model in
             _ = model
             print(model)
         } onError: { error in
@@ -227,24 +229,20 @@ final class TestNetworkViewController: UIViewController {
     // MARK: - Authentication
 
     @objc private func signIn() {
-        provider
-            .requestPublisher(.signIn(.init(
-                username: "이름",
-                avatarUrl: "http://url.com",
-                provider: "APPLE",
-                providerId: "123456" // 식별자
-            )))
-            .map(SignInOutput.self)
-            .sink { completion in
-                guard case .failure(let error) = completion else { return }
-                print(error)
-            } receiveValue: { output in
-                AuthService.shared.signIn(accessToken: output.accessToken)
-            }.store(in: &cancellables)
+        AuthViewModel.shared.signIn(.init(
+            username: nil,
+            avatarUrl: nil,
+            provider: "APPLE",
+            providerId: "1234"
+        )) { user in
+            print(user)
+        } onError: { error in
+            print(error)
+        }
     }
 
     @objc private func signOut() {
-        AuthService.shared.signOut()
+        AuthViewModel.shared.signOut()
     }
 }
 

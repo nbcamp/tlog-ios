@@ -14,12 +14,12 @@
 		3334E1B42AD6BC1A00D853D7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3334E1B22AD6BC1A00D853D7 /* LaunchScreen.storyboard */; };
 		3334E1C72AD9113900D853D7 /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1C62AD9113900D853D7 /* UIViewController+Ext.swift */; };
 		3334E1C92AD911ED00D853D7 /* Blog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1C82AD911ED00D853D7 /* Blog.swift */; };
-		3334E1CB2AD9121700D853D7 /* AuthUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1CA2AD9121700D853D7 /* AuthUser.swift */; };
+		3334E1CB2AD9121700D853D7 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1CA2AD9121700D853D7 /* Auth.swift */; };
 		3334E1CD2AD9126400D853D7 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1CC2AD9126400D853D7 /* Post.swift */; };
 		3334E1D12AD9129600D853D7 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1D02AD9129600D853D7 /* APIService.swift */; };
 		3334E1D52AD913FE00D853D7 /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1D42AD913FE00D853D7 /* Date+Ext.swift */; };
 		3334E1D72AD914EF00D853D7 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1D62AD914EF00D853D7 /* User.swift */; };
-		3334E1D92AD9181F00D853D7 /* AuthUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1D82AD9181F00D853D7 /* AuthUserViewModel.swift */; };
+		3334E1D92AD9181F00D853D7 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1D82AD9181F00D853D7 /* AuthViewModel.swift */; };
 		3334E1DE2AD918CB00D853D7 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1DD2AD918CB00D853D7 /* HomeViewController.swift */; };
 		3334E1E42AD9194500D853D7 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1E32AD9194500D853D7 /* CalendarViewController.swift */; };
 		3334E1E82AD919A200D853D7 /* CommunityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3334E1E72AD919A200D853D7 /* CommunityViewController.swift */; };
@@ -32,7 +32,6 @@
 		33DC8E002ADF84CC00580FA0 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8DFF2ADF84CC00580FA0 /* Then */; };
 		33DC8E032ADFC9CC00580FA0 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E022ADFC9CC00580FA0 /* CombineMoya */; };
 		33DC8E052ADFC9CC00580FA0 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E042ADFC9CC00580FA0 /* Moya */; };
-		33DC8E072ADFCF1300580FA0 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E062ADFCF1300580FA0 /* AuthService.swift */; };
 		33DC8E0A2ADFDAFF00580FA0 /* TestNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */; };
 		33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */; };
 		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
@@ -41,10 +40,10 @@
 		D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9902AE106F000ED7028 /* BlogListViewController.swift */; };
 		D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */; };
 		D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */; };
+		D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28DC8062AE21E9D00D00EC6 /* BlogRegisterViewController.swift */; };
 		D29659EE2AE7EE5D000C28A6 /* TagCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29659ED2AE7EE5D000C28A6 /* TagCollectionViewCell.swift */; };
 		D29659F02AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29659EF2AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift */; };
 		D29659F22AE80313000C28A6 /* EditTagViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29659F12AE80313000C28A6 /* EditTagViewController.swift */; };
-		D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28DC8062AE21E9D00D00EC6 /* BlogRegisterViewController.swift */; };
 		D2A1684A2AE8D4E5006BD2C4 /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A168492AE8D4E5006BD2C4 /* UIView+Ext.swift */; };
 		D2A1684C2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A1684B2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift */; };
 		D2A4D1F92AE5DD4000B510A3 /* FollowListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */; };
@@ -62,36 +61,35 @@
 		3334E1B52AD6BC1A00D853D7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3334E1C62AD9113900D853D7 /* UIViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Ext.swift"; sourceTree = "<group>"; };
 		3334E1C82AD911ED00D853D7 /* Blog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Blog.swift; sourceTree = "<group>"; };
-		3334E1CA2AD9121700D853D7 /* AuthUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUser.swift; sourceTree = "<group>"; };
+		3334E1CA2AD9121700D853D7 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
 		3334E1CC2AD9126400D853D7 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		3334E1D02AD9129600D853D7 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		3334E1D42AD913FE00D853D7 /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
 		3334E1D62AD914EF00D853D7 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		3334E1D82AD9181F00D853D7 /* AuthUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUserViewModel.swift; sourceTree = "<group>"; };
+		3334E1D82AD9181F00D853D7 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		3334E1DD2AD918CB00D853D7 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		3334E1E32AD9194500D853D7 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		3334E1E72AD919A200D853D7 /* CommunityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityViewController.swift; sourceTree = "<group>"; };
 		3334E1EA2AD919D700D853D7 /* MyProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileViewController.swift; sourceTree = "<group>"; };
 		3334E1ED2AD919F500D853D7 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
-		33DC8E062ADFCF1300580FA0 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkViewController.swift; sourceTree = "<group>"; };
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
 		9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditViewController.swift; sourceTree = "<group>"; };
+		D20AD8D02ADC5ECA00CDEB2C /* TILApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TILApp.entitlements; sourceTree = "<group>"; };
 		D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponents.swift; sourceTree = "<group>"; };
 		D24BB9902AE106F000ED7028 /* BlogListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListViewController.swift; sourceTree = "<group>"; };
 		D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListTableViewCell.swift; sourceTree = "<group>"; };
 		D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogEditViewController.swift; sourceTree = "<group>"; };
+		D28DC8062AE21E9D00D00EC6 /* BlogRegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogRegisterViewController.swift; sourceTree = "<group>"; };
 		D29659ED2AE7EE5D000C28A6 /* TagCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCollectionViewCell.swift; sourceTree = "<group>"; };
 		D29659EF2AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		D29659F12AE80313000C28A6 /* EditTagViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTagViewController.swift; sourceTree = "<group>"; };
-		D28DC8062AE21E9D00D00EC6 /* BlogRegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogRegisterViewController.swift; sourceTree = "<group>"; };
 		D2A168492AE8D4E5006BD2C4 /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
 		D2A1684B2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextTapGestureRecognizer.swift; sourceTree = "<group>"; };
 		D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListViewController.swift; sourceTree = "<group>"; };
 		D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListTableViewCell.swift; sourceTree = "<group>"; };
 		D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityTableViewCell.swift; sourceTree = "<group>"; };
-		D20AD8D02ADC5ECA00CDEB2C /* TILApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TILApp.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,7 +159,7 @@
 		3334E1C02AD910DB00D853D7 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				3334E1D82AD9181F00D853D7 /* AuthUserViewModel.swift */,
+				3334E1D82AD9181F00D853D7 /* AuthViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -169,7 +167,7 @@
 		3334E1C12AD910E400D853D7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				3334E1CA2AD9121700D853D7 /* AuthUser.swift */,
+				3334E1CA2AD9121700D853D7 /* Auth.swift */,
 				3334E1D62AD914EF00D853D7 /* User.swift */,
 				3334E1C82AD911ED00D853D7 /* Blog.swift */,
 				3334E1CC2AD9126400D853D7 /* Post.swift */,
@@ -181,7 +179,6 @@
 			isa = PBXGroup;
 			children = (
 				3334E1D02AD9129600D853D7 /* APIService.swift */,
-				33DC8E062ADFCF1300580FA0 /* AuthService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -402,7 +399,7 @@
 				D2A4D1F92AE5DD4000B510A3 /* FollowListViewController.swift in Sources */,
 				3334E1E42AD9194500D853D7 /* CalendarViewController.swift in Sources */,
 				D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */,
-				3334E1CB2AD9121700D853D7 /* AuthUser.swift in Sources */,
+				3334E1CB2AD9121700D853D7 /* Auth.swift in Sources */,
 				33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */,
 				D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */,
 				D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */,
@@ -412,7 +409,7 @@
 				3334E1C72AD9113900D853D7 /* UIViewController+Ext.swift in Sources */,
 				33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */,
 				3334E1E82AD919A200D853D7 /* CommunityViewController.swift in Sources */,
-				3334E1D92AD9181F00D853D7 /* AuthUserViewModel.swift in Sources */,
+				3334E1D92AD9181F00D853D7 /* AuthViewModel.swift in Sources */,
 				3334E1CD2AD9126400D853D7 /* Post.swift in Sources */,
 				3334E1D12AD9129600D853D7 /* APIService.swift in Sources */,
 				D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */,
@@ -421,7 +418,6 @@
 				D29659F22AE80313000C28A6 /* EditTagViewController.swift in Sources */,
 				3334E1EE2AD919F500D853D7 /* SignInViewController.swift in Sources */,
 				3334E1AA2AD6BC1800D853D7 /* SceneDelegate.swift in Sources */,
-				33DC8E072ADFCF1300580FA0 /* AuthService.swift in Sources */,
 				3334E1D52AD913FE00D853D7 /* Date+Ext.swift in Sources */,
 				D20AD9022AE0AEF800CDEB2C /* CustomComponents.swift in Sources */,
 				D2A1684C2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift in Sources */,

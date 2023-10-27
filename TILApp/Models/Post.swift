@@ -1,14 +1,18 @@
+import Foundation
+
 struct Post: Codable {
     let id: Int
     let title: String
     let content: String
     let url: String
-    let publishedAt: Unixtime
+    let publishedAt: Date
+}
 
-    enum CodingKeys: String, CodingKey {
-        case id, title, content, url
-        case publishedAt = "published_at"
-    }
+struct CreatePostInput: Codable {
+    let title: String
+    let content: String
+    let url: String
+    let publishedAt: Date
 }
 
 struct UpdatePostInput: Codable {
