@@ -50,7 +50,7 @@ class SeeMoreBottomSheetViewController: UIViewController {
 
     private func setUpUI() {
         backgroundView.pin.all(view.pin.safeArea)
-        handleView.pin.topCenter().marginTop(10)
+        handleView.pin.topCenter().marginTop(15)
         moreTableView.pin.below(of: handleView).bottom().left().right().marginTop(25)
         backgroundView.layer.cornerRadius = 30.0
         backgroundView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
