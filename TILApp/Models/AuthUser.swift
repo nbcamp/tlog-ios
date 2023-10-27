@@ -5,7 +5,7 @@ struct AuthUser: Codable {
 }
 
 struct SignInInput: Codable {
-    let username: String
+    let username: String?
     let avatarUrl: String?
     let provider: String
     let providerId: String
