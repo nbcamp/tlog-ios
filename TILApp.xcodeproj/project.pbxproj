@@ -56,7 +56,6 @@
 		D2CDB6F52AEB66A900BFD8C2 /* CustomLargeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6F42AEB66A900BFD8C2 /* CustomLargeButton.swift */; };
 		D2CDB6F72AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6F62AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift */; };
 		D2CDB6F92AEB671800BFD8C2 /* CustomFollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6F82AEB671800BFD8C2 /* CustomFollowButton.swift */; };
-		D2CDB6FB2AEB674500BFD8C2 /* CustomUnfollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6FA2AEB674500BFD8C2 /* CustomUnfollowButton.swift */; };
 		D2CDB6FD2AEB677100BFD8C2 /* CustomTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6FC2AEB677100BFD8C2 /* CustomTitleLabel.swift */; };
 		D2CDB6FF2AEB679800BFD8C2 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6FE2AEB679800BFD8C2 /* CustomTextField.swift */; };
 		D2CDB7012AEB67C000BFD8C2 /* CustomTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB7002AEB67C000BFD8C2 /* CustomTextFieldView.swift */; };
@@ -118,7 +117,6 @@
 		D2CDB6F42AEB66A900BFD8C2 /* CustomLargeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLargeButton.swift; sourceTree = "<group>"; };
 		D2CDB6F62AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLargeBorderButton.swift; sourceTree = "<group>"; };
 		D2CDB6F82AEB671800BFD8C2 /* CustomFollowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFollowButton.swift; sourceTree = "<group>"; };
-		D2CDB6FA2AEB674500BFD8C2 /* CustomUnfollowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUnfollowButton.swift; sourceTree = "<group>"; };
 		D2CDB6FC2AEB677100BFD8C2 /* CustomTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTitleLabel.swift; sourceTree = "<group>"; };
 		D2CDB6FE2AEB679800BFD8C2 /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
 		D2CDB7002AEB67C000BFD8C2 /* CustomTextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextFieldView.swift; sourceTree = "<group>"; };
@@ -336,7 +334,6 @@
 				D2CDB6F42AEB66A900BFD8C2 /* CustomLargeButton.swift */,
 				D2CDB6F62AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift */,
 				D2CDB6F82AEB671800BFD8C2 /* CustomFollowButton.swift */,
-				D2CDB6FA2AEB674500BFD8C2 /* CustomUnfollowButton.swift */,
 				D2CDB6FC2AEB677100BFD8C2 /* CustomTitleLabel.swift */,
 				D2CDB6FE2AEB679800BFD8C2 /* CustomTextField.swift */,
 				D2CDB7002AEB67C000BFD8C2 /* CustomTextFieldView.swift */,
@@ -472,7 +469,6 @@
 				33DC8E0A2ADFDAFF00580FA0 /* TestNetworkViewController.swift in Sources */,
 				D2A4D1F92AE5DD4000B510A3 /* FollowListViewController.swift in Sources */,
 				3334E1E42AD9194500D853D7 /* CalendarViewController.swift in Sources */,
-				D2CDB6FB2AEB674500BFD8C2 /* CustomUnfollowButton.swift in Sources */,
 				D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */,
 				3334E1CB2AD9121700D853D7 /* AuthUser.swift in Sources */,
 				33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */,

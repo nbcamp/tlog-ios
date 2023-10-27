@@ -77,11 +77,11 @@ extension FollowListViewController: UITableViewDataSource {
         switch segmentedControl.selectedSegmentIndex {
         case 0:
             let data = followerData[indexPath.row]
-            followerCell.configure(image: UIImage(), nickname: data.name, date: data.date, buttonTitle: "팔로우")
+            followerCell.customUserView.setup(image: UIImage(), nicknameText: data.name, contentText: data.date, variant: .follow)
             return followerCell
         case 1:
             let data = followingData[indexPath.row]
-            followingCell.configure(image: UIImage(), nickname: data.name, date: data.date, buttonTitle: "언팔로우")
+            followingCell.customUserView.setup(image: UIImage(), nicknameText: data.name, contentText: data.date, variant: .unfollow)
             return followingCell
         default: break
         }

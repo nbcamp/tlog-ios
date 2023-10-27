@@ -14,6 +14,10 @@ class CustomUserView: UIView {
     private let button = CustomFollowButton()
 
     private let customLabelView = CustomLabelView()
+    var variant: CustomFollowButton.Variant {
+        get { return button.variant }
+        set { button.variant = newValue }
+    }
 
     private let imageView = UIImageView().then {
         $0.backgroundColor = .systemGray5
@@ -64,27 +68,17 @@ class CustomUserView: UIView {
         super.layoutSubviews()
         pin.width(100%).height(67)
 
-        imageView.pin
-            .vCenter()
-            .left(10)
-            .width(47)
-            .height(47)
-
-        customLabelView.pin
-            .after(of: imageView)
-            .marginLeft(10)
-
-        button.pin
-            .vCenter(-15)
-            .right(100)
+        imageView.pin.vCenter().left(10).width(47).height(47)
+        button.pin.right(10).vCenter()
+        customLabelView.pin.after(of: imageView).before(of: button).marginLeft(10).marginRight(10)
 
         imageView.layer.cornerRadius = imageView.bounds.size.width / 2.0
     }
 
-    func setup(image: UIImage, nicknameText: String, contentText: String, buttonTitle: String) {
+    func setup(image: UIImage, nicknameText: String, contentText: String, variant: CustomFollowButton.Variant) {
         imageView.image = image
         customLabelView.nicknameText = nicknameText
         customLabelView.dateText = contentText
-        button.setTitle(buttonTitle, for: .normal)
+        self.variant = variant
     }
 }

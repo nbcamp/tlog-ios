@@ -13,11 +13,13 @@ import UIKit
 class CustomLabelView: UIView {
     private let nicknameLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        $0.sizeToFit()
     }
 
     private let dateLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 13)
         $0.textColor = .systemGray2
+        $0.sizeToFit()
     }
 
     private let height: CGFloat = 67
@@ -56,7 +58,7 @@ class CustomLabelView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.width(100%).height(height)
+        pin.height(height)
         flex.layout()
     }
 }

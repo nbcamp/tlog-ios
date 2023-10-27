@@ -75,8 +75,8 @@ class CustomBlogView: UIView {
 
         pin.width(100%).height(67)
 
-        customLabelView.pin.left(20)
         chevronImage.pin.width(20).height(20).centerRight(20)
+        customLabelView.pin.left(20).before(of: chevronImage).marginRight(70)
 
         switch variant {
         case .primary:
