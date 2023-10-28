@@ -25,11 +25,11 @@ final class AuthViewModel {
             guard let self else { return }
             UserDefaults.standard.set(model.accessToken, forKey: Token.accessToken)
             isAuthenticated = true
-            self.user = model.user
+            user = model.user
             onSuccess?(model.user)
         } onError: { [weak self] error in
             guard let self else { return }
-            self.user = nil
+            user = nil
             onError?(error)
         }
     }
@@ -38,5 +38,21 @@ final class AuthViewModel {
         UserDefaults.standard.removeObject(forKey: Token.accessToken)
         isAuthenticated = false
         user = nil
+    }
+
+    func update(
+        _ input: UpdateUserInput,
+        onSuccess: ((_ user: AuthUser) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil
+    ) {
+        APIService.shared.request(.updateUser(input), model: AuthUser.self, onSuccess: { [weak self] model in
+            guard let self else { return }
+            user = model
+            onSuccess?(model)
+        }, onError: onError)
+    }
+
+    func withdraw(onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
+        APIService.shared.request(.deleteUser, onSuccess: { _ in onSuccess?() }, onError: onError)
     }
 }
