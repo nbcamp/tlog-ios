@@ -1,36 +1,27 @@
-//
-//  WebViewController.swift
-//  TILApp
-//
-//  Created by Lee on 10/27/23.
-//
-
-import FlexLayout
-import PinLayout
-import Then
 import UIKit
 import WebKit
 
-class WebViewController: UIViewController {
+final class WebViewController: UIViewController {
     // TODO: 눌려진 셀의 post url 받기
-    var postURL : String? {
+    var postURL: String? {
         didSet {
-           if let postURL, let url = URL(string: postURL) {
+            if let postURL, let url = URL(string: postURL) {
                 let request = URLRequest(url: url)
                 webView.load(request)
             }
         }
     }
 
-//    let blogURL = "https://zeddios.tistory.com/374"
 
+    
+
+    // TODO: false -> 포스트의 하트버튼의 bool 로
     private var isHeartFilled = false
 
     private lazy var webView = WKWebView().then {
         $0.navigationDelegate = self
         $0.allowsBackForwardNavigationGestures = true
         view.addSubview($0)
-        
     }
 
     private lazy var backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(backButtonTapped)).then {
@@ -45,6 +36,10 @@ class WebViewController: UIViewController {
         $0.tintColor = .systemBlue
     }
 
+    private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(heartButtonTapped)).then {
+        $0.tintColor = .accent
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
@@ -54,10 +49,12 @@ class WebViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         addBottomToolBar()
-        let heartFill = isHeartFilled ? "heart.fill" : "heart"
-        let heartButton = UIBarButtonItem(image: UIImage(systemName: heartFill), style: .plain, target: self, action: #selector(heartButtonTapped))
         navigationItem.rightBarButtonItem = heartButton
-
+//        if let url = URL(string: "https://zeddios.tistory.com/374") {
+//            let request = URLRequest(url: url)
+//            webView.load(request)
+//        }
+//        view.add(webView)
     }
 
     override func viewDidLayoutSubviews() {
@@ -69,44 +66,37 @@ class WebViewController: UIViewController {
         webView.pin.all(view.pin.safeArea)
     }
 
-    func addBottomToolBar() {
+    private func addBottomToolBar() {
         let flexibleSpaceButtonItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let paddingButtonItem = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-        paddingButtonItem.width = 24.0
         toolbarItems = [backButton, flexibleSpaceButtonItem, reloadButton, flexibleSpaceButtonItem, forwardButton]
         navigationController?.isToolbarHidden = false
     }
 
-    @objc func backButtonTapped() {
+    @objc private func backButtonTapped() {
         webView.goBack()
     }
 
-    @objc func forwardButtonTapped() {
+    @objc private func forwardButtonTapped() {
         webView.goForward()
     }
 
-    @objc func reloadButtonTapped() {
+    @objc private func reloadButtonTapped() {
         webView.reload()
     }
 
-    @objc func heartButtonTapped() {
+    @objc private func heartButtonTapped() {
         isHeartFilled.toggle()
         let imageName = isHeartFilled ? "heart.fill" : "heart"
-        let heartButton = UIBarButtonItem(image: UIImage(systemName: imageName), style: .plain, target: self, action: #selector(heartButtonTapped))
+        heartButton.image = UIImage(systemName: imageName)
         navigationItem.rightBarButtonItem = heartButton
-        // TODO: 하트버튼 셀이랑 같은값 전달
+        // TODO: 커뮤니티페이지 의 하트버튼 셀이랑 같은값 전달
     }
 }
 
 extension WebViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-        print("1번 메서드 호출")
         backButton.isEnabled = webView.canGoBack
 
         forwardButton.isEnabled = webView.canGoForward
-    }
-
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        print("2번 메서드 호출")
     }
 }
