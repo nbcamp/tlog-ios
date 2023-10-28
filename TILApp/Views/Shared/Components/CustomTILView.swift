@@ -7,7 +7,7 @@ class CustomTILView: UIView {
 
     private let contentLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 13)
-        $0.textColor = .systemGray2
+        $0.textColor = .systemGray
         $0.numberOfLines = 2
     }
 
@@ -20,7 +20,11 @@ class CustomTILView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        setupView()
+        pin.height(85)
+
+        addSubview(titleLabel)
+        addSubview(contentLabel)
+        addSubview(dateLabel)
     }
 
     @available(*, unavailable)
@@ -28,18 +32,8 @@ class CustomTILView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupView() {
-        // backgroundColor = .systemBackground
-
-        addSubview(titleLabel)
-        addSubview(contentLabel)
-        addSubview(dateLabel)
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
-
-        pin.width(100%).height(85)
 
         titleLabel.pin
             .top(15)

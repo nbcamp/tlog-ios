@@ -24,6 +24,12 @@ final class FollowListTableViewCell: UITableViewCell {
     private func setupView() {
         contentView.addSubview(customUserView)
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        customUserView.pin.horizontally()
+    }
 
     func configure(image _: UIImage, nickname: String, date: String, buttonTitle: String) {
         customUserView.image = UIImage()
