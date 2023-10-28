@@ -31,6 +31,9 @@
 		3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F72AD91DCB00D853D7 /* FlexLayoutYogaKit */; };
 		33A4E81C2AEBB14800E3F55E /* BlogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E81B2AEBB14800E3F55E /* BlogViewModel.swift */; };
 		33A4E81E2AEBB24A00E3F55E /* Exported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E81D2AEBB24A00E3F55E /* Exported.swift */; };
+		33A4E8282AECBDE300E3F55E /* SeeMorePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E8272AECBDE300E3F55E /* SeeMorePresentationController.swift */; };
+		33A4E82A2AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E8292AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift */; };
+		33A4E82C2AECBE3C00E3F55E /* MoreTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E82B2AECBE3C00E3F55E /* MoreTableViewCell.swift */; };
 		33DC8E002ADF84CC00580FA0 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8DFF2ADF84CC00580FA0 /* Then */; };
 		33DC8E032ADFC9CC00580FA0 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E022ADFC9CC00580FA0 /* CombineMoya */; };
 		33DC8E052ADFC9CC00580FA0 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E042ADFC9CC00580FA0 /* Moya */; };
@@ -76,6 +79,9 @@
 		3334E1ED2AD919F500D853D7 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		33A4E81B2AEBB14800E3F55E /* BlogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogViewModel.swift; sourceTree = "<group>"; };
 		33A4E81D2AEBB24A00E3F55E /* Exported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exported.swift; sourceTree = "<group>"; };
+		33A4E8272AECBDE300E3F55E /* SeeMorePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeMorePresentationController.swift; sourceTree = "<group>"; };
+		33A4E8292AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeMoreBottomSheetViewController.swift; sourceTree = "<group>"; };
+		33A4E82B2AECBE3C00E3F55E /* MoreTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreTableViewCell.swift; sourceTree = "<group>"; };
 		33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkViewController.swift; sourceTree = "<group>"; };
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
@@ -267,6 +273,9 @@
 				D29659ED2AE7EE5D000C28A6 /* TagCollectionViewCell.swift */,
 				D29659EF2AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift */,
 				D29659F12AE80313000C28A6 /* EditTagViewController.swift */,
+				33A4E8272AECBDE300E3F55E /* SeeMorePresentationController.swift */,
+				33A4E8292AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift */,
+				33A4E82B2AECBE3C00E3F55E /* MoreTableViewCell.swift */,
 			);
 			path = MyProfileViewController;
 			sourceTree = "<group>";
@@ -407,6 +416,7 @@
 				D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */,
 				3334E1CB2AD9121700D853D7 /* AuthUser.swift in Sources */,
 				33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */,
+				33A4E82A2AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift in Sources */,
 				D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */,
 				33A4E81C2AEBB14800E3F55E /* BlogViewModel.swift in Sources */,
 				D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */,
@@ -419,8 +429,10 @@
 				3334E1D92AD9181F00D853D7 /* AuthViewModel.swift in Sources */,
 				3334E1CD2AD9126400D853D7 /* Post.swift in Sources */,
 				3334E1D12AD9129600D853D7 /* APIService.swift in Sources */,
+				33A4E82C2AECBE3C00E3F55E /* MoreTableViewCell.swift in Sources */,
 				D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */,
 				D29659F02AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift in Sources */,
+				33A4E8282AECBDE300E3F55E /* SeeMorePresentationController.swift in Sources */,
 				3334E1DE2AD918CB00D853D7 /* HomeViewController.swift in Sources */,
 				D29659F22AE80313000C28A6 /* EditTagViewController.swift in Sources */,
 				33A4E81E2AEBB24A00E3F55E /* Exported.swift in Sources */,
