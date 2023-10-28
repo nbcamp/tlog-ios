@@ -41,6 +41,8 @@
 		33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */; };
 		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
 		9B859B2B2AE26C2600025E8B /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */; };
+		9BE049B92AEB968E00A47CFC /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049B82AEB968E00A47CFC /* WebViewController.swift */; };
+		D20AD9022AE0AEF800CDEB2C /* CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */; };
 		D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9902AE106F000ED7028 /* BlogListViewController.swift */; };
 		D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */; };
 		D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */; };
@@ -101,7 +103,9 @@
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
 		9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditViewController.swift; sourceTree = "<group>"; };
+		9BE049B82AEB968E00A47CFC /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		D20AD8D02ADC5ECA00CDEB2C /* TILApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TILApp.entitlements; sourceTree = "<group>"; };
+		D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponents.swift; sourceTree = "<group>"; };
 		D24BB9902AE106F000ED7028 /* BlogListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListViewController.swift; sourceTree = "<group>"; };
 		D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListTableViewCell.swift; sourceTree = "<group>"; };
 		D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogEditViewController.swift; sourceTree = "<group>"; };
@@ -155,6 +159,7 @@
 			children = (
 				3334E1A62AD6BC1800D853D7 /* TILApp */,
 				3334E1A52AD6BC1800D853D7 /* Products */,
+				9BE049BA2AEB96B100A47CFC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -287,6 +292,7 @@
 				D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */,
 				D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */,
 				D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */,
+				9BE049B82AEB968E00A47CFC /* WebViewController.swift */,
 			);
 			path = CommunityView;
 			sourceTree = "<group>";
@@ -484,6 +490,7 @@
 				3334E1C72AD9113900D853D7 /* UIViewController+Ext.swift in Sources */,
 				D2CDB7072AEB686E00BFD8C2 /* CustomUserView.swift in Sources */,
 				33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */,
+				9BE049B92AEB968E00A47CFC /* WebViewController.swift in Sources */,
 				3334E1E82AD919A200D853D7 /* CommunityViewController.swift in Sources */,
 				3334E1D92AD9181F00D853D7 /* AuthViewModel.swift in Sources */,
 				3334E1CD2AD9126400D853D7 /* Post.swift in Sources */,
