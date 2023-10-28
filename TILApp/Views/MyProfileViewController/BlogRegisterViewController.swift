@@ -14,21 +14,18 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         $0.titleText = "블로그 이름"
         $0.placeholder = "블로그 이름을 입력해주세요"
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
     }
 
     private lazy var blogURLTextField = CustomTextFieldViewWithValidation().then {
         $0.titleText = "블로그 주소"
         $0.placeholder = "블로그 주소를 입력해주세요"
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
     }
 
     private lazy var blogRSSTextField = CustomTextFieldViewWithValidation().then {
         $0.titleText = "블로그 RSS 주소"
         $0.placeholder = "블로그 RSS 주소를 입력해주세요"
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
     }
 
     private lazy var tagHeader = CustomTagHeaderView().then {
@@ -94,9 +91,9 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         contentScrollView.pin.top(view.pin.safeArea).horizontally().bottom()
         contentView.pin.top(to: contentScrollView.edge.top).horizontally()
 
-        blogNameTextField.pin.top().marginTop(10)
-        blogURLTextField.pin.top(to: blogNameTextField.edge.bottom).marginTop(5)
-        blogRSSTextField.pin.top(to: blogURLTextField.edge.bottom).marginTop(5)
+        blogNameTextField.pin.horizontally().top().marginTop(10)
+        blogURLTextField.pin.horizontally().top(to: blogNameTextField.edge.bottom).marginTop(5)
+        blogRSSTextField.pin.horizontally().top(to: blogURLTextField.edge.bottom).marginTop(5)
         tagHeader.pin.top(to: blogRSSTextField.edge.bottom).marginTop(5)
 
         rootFlexContainer.pin.horizontally(20).top(to: tagHeader.edge.bottom).bottom().marginTop(-10)

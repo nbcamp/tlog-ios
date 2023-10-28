@@ -63,7 +63,6 @@ final class BlogEditViewController: UIViewController {
         $0.placeholder = "블로그 이름을 입력해주세요"
         $0.validationText = "유효한 값입니다"
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
     }
 
     private lazy var blogURLTextField = CustomTextFieldViewWithValidation().then {
@@ -73,7 +72,6 @@ final class BlogEditViewController: UIViewController {
         }
         $0.readOnly = true
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
     }
 
     private lazy var blogRSSTextField = CustomTextFieldViewWithValidation().then {
@@ -84,7 +82,6 @@ final class BlogEditViewController: UIViewController {
         }
         $0.readOnly = true
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
     }
 
     private lazy var deleteDescriotionLabel = UILabel().then {
@@ -152,9 +149,9 @@ final class BlogEditViewController: UIViewController {
         contentView.pin.top(to: contentScrollView.edge.top).horizontally()
 
         mainBlogButton.pin.top(contentView.pin.safeArea).marginTop(10)
-        blogNameTextField.pin.top(to: mainBlogButton.edge.bottom).marginTop(20)
-        blogURLTextField.pin.top(to: blogNameTextField.edge.bottom).marginTop(5)
-        blogRSSTextField.pin.top(to: blogURLTextField.edge.bottom).marginTop(5)
+        blogNameTextField.pin.horizontally().top(to: mainBlogButton.edge.bottom).marginTop(20)
+        blogURLTextField.pin.horizontally().top(to: blogNameTextField.edge.bottom).marginTop(5)
+        blogRSSTextField.pin.horizontally().top(to: blogURLTextField.edge.bottom).marginTop(5)
         deleteDescriotionLabel.pin.top(to: blogRSSTextField.edge.bottom).horizontally(20).height(25).marginTop(5)
         deleteBlogButton.pin.top(to: deleteDescriotionLabel.edge.bottom)
 

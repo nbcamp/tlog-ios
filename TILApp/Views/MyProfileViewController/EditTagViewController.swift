@@ -82,7 +82,7 @@ final class EditTagViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        prefixTF.pin.top(view.pin.safeArea)
+        prefixTF.pin.horizontally().top(view.pin.safeArea)
         addTagTF.pin.top(to: prefixTF.edge.bottom)
         collectionView.pin.top(to: addTagTF.edge.bottom).horizontally(20).bottom()
     }
