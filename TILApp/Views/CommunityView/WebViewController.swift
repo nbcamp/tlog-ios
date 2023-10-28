@@ -12,9 +12,6 @@ final class WebViewController: UIViewController {
         }
     }
 
-
-    
-
     // TODO: false -> 포스트의 하트버튼의 bool 로
     private var isHeartFilled = false
 
