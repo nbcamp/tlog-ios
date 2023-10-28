@@ -11,14 +11,6 @@ import Then
 import UIKit
 
 class CustomTextFieldViewWithValidation: UIView {
-    private let customTextFieldView = CustomTextFieldView()
-
-    private let validationLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 11, weight: .light)
-        $0.textColor = UIColor.systemGreen
-    }
-
-    private let height: CGFloat = 84
     var componentSize: CGSize {
         return CGSize(width: frame.width, height: height)
     }
@@ -42,6 +34,21 @@ class CustomTextFieldViewWithValidation: UIView {
         get { validationLabel.text ?? "" }
         set { validationLabel.text = newValue }
     }
+
+    var readOnly: Bool = false {
+        didSet {
+            customTextFieldView.readOnly = readOnly
+        }
+    }
+
+    private let customTextFieldView = CustomTextFieldView()
+
+    private let validationLabel = UILabel().then {
+        $0.font = UIFont.systemFont(ofSize: 11, weight: .light)
+        $0.textColor = UIColor.systemGreen
+    }
+
+    private let height: CGFloat = 84
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -68,9 +75,5 @@ class CustomTextFieldViewWithValidation: UIView {
 
         pin.width(100%).height(height)
         flex.layout()
-    }
-
-    func setTextFieldReadOnly() {
-        customTextFieldView.setTextFieldReadOnly()
     }
 }

@@ -71,7 +71,7 @@ final class BlogEditViewController: UIViewController {
         if let blogURL = blogURL {
             $0.mainText = blogURL
         }
-        $0.setTextFieldReadOnly()
+        $0.readOnly = true
         contentView.addSubview($0)
         $0.pin.size($0.componentSize)
     }
@@ -82,7 +82,7 @@ final class BlogEditViewController: UIViewController {
         if let blogURL = blogURL {
             $0.mainText = blogURL
         }
-        $0.setTextFieldReadOnly()
+        $0.readOnly = true
         contentView.addSubview($0)
         $0.pin.size($0.componentSize)
     }

@@ -11,9 +11,6 @@ import Then
 import UIKit
 
 class CustomUserView: UIView {
-    private let button = CustomFollowButton()
-
-    private let customLabelView = CustomLabelView()
     var variant: CustomFollowButton.Variant {
         get { return button.variant }
         set { button.variant = newValue }
@@ -44,6 +41,10 @@ class CustomUserView: UIView {
         get { imageView.image }
         set { imageView.image = newValue }
     }
+
+    private let button = CustomFollowButton()
+
+    private let customLabelView = CustomLabelView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)

@@ -11,10 +11,22 @@ import Then
 import UIKit
 
 class CustomTagView: UIView {
-    private let height: CGFloat = 67
     var componentSize: CGSize {
         return CGSize(width: frame.width, height: height)
     }
+
+    var labelText: String {
+        get { titleContentLabel.text ?? "" }
+        set { titleContentLabel.text = newValue }
+    }
+
+    var tags: [String] = [] {
+        didSet {
+            tagContentLabel.text = tags.joined(separator: " | ")
+        }
+    }
+
+    private let height: CGFloat = 67
 
     private let titleLabel = UILabel().then {
         $0.text = "제목"
@@ -42,17 +54,6 @@ class CustomTagView: UIView {
         $0.setTitle("삭제", for: .normal)
         $0.setTitleColor(.systemGray, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 13)
-    }
-
-    var labelText: String {
-        get { titleContentLabel.text ?? "" }
-        set { titleContentLabel.text = newValue }
-    }
-
-    var tags: [String] = [] {
-        didSet {
-            tagContentLabel.text = tags.joined(separator: " | ")
-        }
     }
 
     override init(frame: CGRect) {

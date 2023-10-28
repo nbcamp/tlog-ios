@@ -27,6 +27,16 @@ class CustomBlogView: UIView {
         }
     }
 
+    var blogNameText: String {
+        get { customLabelView.nicknameText }
+        set { customLabelView.nicknameText = newValue }
+    }
+
+    var blogURLText: String {
+        get { customLabelView.dateText }
+        set { customLabelView.dateText = newValue }
+    }
+
     private let customLabelView = CustomLabelView()
     private let chevronImage = UIImageView(image: UIImage(
         systemName: "chevron.right",
@@ -37,16 +47,6 @@ class CustomBlogView: UIView {
         $0.font = UIFont.systemFont(ofSize: 13)
         $0.textColor = UIColor(named: "AccentColor")
         $0.sizeToFit()
-    }
-
-    var blogNameText: String {
-        get { customLabelView.nicknameText }
-        set { customLabelView.nicknameText = newValue }
-    }
-
-    var blogURLText: String {
-        get { customLabelView.dateText }
-        set { customLabelView.dateText = newValue }
     }
 
     override init(frame: CGRect) {

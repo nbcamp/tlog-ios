@@ -11,10 +11,11 @@ import Then
 import UIKit
 
 class CustomTagHeaderView: UIView {
-    private let height: CGFloat = 30
     var componentSize: CGSize {
         return CGSize(width: frame.width, height: height)
     }
+
+    private let height: CGFloat = 30
 
     private let label = CustomTitleLabel().then {
         $0.text = "블로그 게시물 자동 태그 설정"

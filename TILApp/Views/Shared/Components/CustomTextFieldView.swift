@@ -11,14 +11,6 @@ import Then
 import UIKit
 
 class CustomTextFieldView: UIView {
-    private let titleLabel = CustomTitleLabel()
-    private let textField = CustomTextField()
-
-    private let height: CGFloat = 64
-    var componentSize: CGSize {
-        return CGSize(width: frame.width, height: height)
-    }
-
     var titleText: String {
         get { titleLabel.text ?? "" }
         set { titleLabel.text = newValue }
@@ -38,6 +30,23 @@ class CustomTextFieldView: UIView {
         get { textField.delegate }
         set { textField.delegate = newValue }
     }
+
+    var readOnly: Bool = false {
+        didSet {
+            if readOnly {
+                textField.isUserInteractionEnabled = false
+                textField.textColor = .systemGray2
+            }
+        }
+    }
+
+    var componentSize: CGSize {
+        return CGSize(width: frame.width, height: height)
+    }
+
+    private let titleLabel = CustomTitleLabel()
+    private let textField = CustomTextField()
+    private let height: CGFloat = 64
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -64,10 +73,5 @@ class CustomTextFieldView: UIView {
 
         pin.width(100%).height(height)
         flex.layout()
-    }
-
-    func setTextFieldReadOnly() {
-        textField.isUserInteractionEnabled = false
-        textField.textColor = .systemGray2
     }
 }

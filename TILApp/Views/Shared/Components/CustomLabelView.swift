@@ -11,18 +11,6 @@ import Then
 import UIKit
 
 class CustomLabelView: UIView {
-    private let nicknameLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
-        $0.sizeToFit()
-    }
-
-    private let dateLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 13)
-        $0.textColor = .systemGray2
-        $0.sizeToFit()
-    }
-
-    private let height: CGFloat = 67
     var componentSize: CGSize {
         return CGSize(width: frame.width, height: height)
     }
@@ -36,6 +24,19 @@ class CustomLabelView: UIView {
         get { dateLabel.text ?? "" }
         set { dateLabel.text = newValue }
     }
+
+    private let nicknameLabel = UILabel().then {
+        $0.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        $0.sizeToFit()
+    }
+
+    private let dateLabel = UILabel().then {
+        $0.font = UIFont.systemFont(ofSize: 13)
+        $0.textColor = .systemGray2
+        $0.sizeToFit()
+    }
+
+    private let height: CGFloat = 67
 
     override init(frame: CGRect) {
         super.init(frame: frame)
