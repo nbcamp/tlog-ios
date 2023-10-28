@@ -1,7 +1,7 @@
 import UIKit
 
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
-    let blogViewModel = BlogViewModel.shared
+    private let blogViewModel = BlogViewModel.shared
 
     private let contentScrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false

@@ -28,7 +28,8 @@ final class EditTagViewController: UIViewController {
 
     var selectedIndex: Int = -1
     var keyword: KeywordInput = .init(keyword: "", tags: [])
-    let blogViewModel = BlogViewModel.shared
+
+    private let blogViewModel = BlogViewModel.shared
 
     private lazy var prefixTF = CustomTextFieldViewWithValidation().then {
         $0.titleText = "게시물 제목에 포함될 문자"
