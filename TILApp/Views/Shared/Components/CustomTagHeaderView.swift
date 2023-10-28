@@ -1,13 +1,3 @@
-//
-//  CustomTagHeaderView.swift
-//  TILApp
-//
-//  Created by 이재희 on 10/27/23.
-//
-
-import FlexLayout
-import PinLayout
-import Then
 import UIKit
 
 class CustomTagHeaderView: UIView {

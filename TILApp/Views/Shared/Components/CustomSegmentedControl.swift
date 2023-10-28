@@ -1,13 +1,3 @@
-//
-//  CustomSegmentedControl.swift
-//  TILApp
-//
-//  Created by 이재희 on 10/27/23.
-//
-
-import FlexLayout
-import PinLayout
-import Then
 import UIKit
 
 // TODO: 테두리, 배경색, 폰트 등등 수정하기
