@@ -175,8 +175,8 @@ final class BlogEditViewController: UIViewController {
     @objc private func customTagViewTapped(_ sender: ContextTapGestureRecognizer) {
         if let index = sender.context["index"] as? Int {
             let editTagViewController = EditTagViewController()
-            editTagViewController.selectedIndex = index
-            //editTagViewController.content = tagData[index]
+            // editTagViewController.selectedIndex = index
+            // editTagViewController.content = tagData[index]
 
             navigationController?.pushViewController(editTagViewController, animated: true)
         }

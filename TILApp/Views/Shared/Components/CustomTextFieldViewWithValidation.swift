@@ -25,9 +25,26 @@ class CustomTextFieldViewWithValidation: UIView {
         set { validationLabel.text = newValue }
     }
 
+    var delegate: UITextFieldDelegate? {
+        get { customTextFieldView.delegate }
+        set { customTextFieldView.delegate = newValue }
+    }
+
     var readOnly: Bool = false {
         didSet {
             customTextFieldView.readOnly = readOnly
+        }
+    }
+
+    var isValid: Bool = false {
+        didSet {
+            validationLabel.textColor = isValid ? .systemGreen : .systemRed
+        }
+    }
+
+    var textFieldTag: Int = 0 {
+        didSet {
+            customTextFieldView.tag = textFieldTag
         }
     }
 
@@ -35,7 +52,6 @@ class CustomTextFieldViewWithValidation: UIView {
 
     private let validationLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 11, weight: .light)
-        $0.textColor = UIColor.systemGreen
     }
 
     private let height: CGFloat = 84

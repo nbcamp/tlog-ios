@@ -28,3 +28,18 @@ struct UpdateBlogInput: Codable {
     let primary: Bool?
     let keywords: [Keyword]?
 }
+
+struct KeywordInput {
+    var keyword: String
+    var tags: [String]
+
+    init(keyword: String, tags: [String]) {
+        self.keyword = keyword
+        self.tags = tags
+    }
+
+    init(from keyword: Keyword) {
+        self.keyword = keyword.keyword
+        self.tags = keyword.tags
+    }
+}

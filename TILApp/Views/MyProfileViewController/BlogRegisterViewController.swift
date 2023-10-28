@@ -1,29 +1,8 @@
 import UIKit
 
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
-//    var tagData: [(name: String, tags: [String])] = [
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//        ("[Swift]", ["TIL", "iOS", "Swift"]),
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//        ("[Swift]", ["TIL", "iOS", "Swift"]),
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//        ("[Swift]", ["TIL", "iOS", "Swift"]),
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//        ("[Swift]", ["TIL", "iOS", "Swift"]),
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//        ("[Swift]", ["TIL", "iOS", "Swift"]),
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//        ("[Swift]", ["TIL", "iOS", "Swift"]),
-//        ("[iOS]", ["TIL", "iOS", "Swift"]),
-//    ]
+    let blogViewModel = BlogViewModel.shared
 
-    private var keywords: [Keyword] = []
-    
     private let contentScrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -58,9 +37,8 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         $0.addTargetForButton(target: self, action: #selector(addTagButtonTapped), for: .touchUpInside)
     }
 
-    // TODO: 이벤트 핸들러 어떻게 할지..
     @objc private func addTagButtonTapped() {
-        navigationController?.pushViewController(EditTagViewController(), animated: false)
+        navigationController?.pushViewController(EditTagViewController(), animated: true)
     }
 
     private lazy var rootFlexContainer = UIView()
@@ -79,12 +57,16 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         contentView.addSubview(rootFlexContainer)
     }
 
-    @objc private func doneButtonTapped() {}
+    @objc private func doneButtonTapped() {
+        // TODO: 저장하고 나서 clear하기
+        blogViewModel.clearKeywords()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         navigationController?.isNavigationBarHidden = false
+        view.setNeedsLayout()
     }
 
     override func viewDidLayoutSubviews() {
@@ -93,7 +75,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         rootFlexContainer.removeAllSubviews()
 
         rootFlexContainer.flex.define {
-            for (index, keyword) in keywords.enumerated() {
+            for (index, keyword) in blogViewModel.keywords.enumerated() {
                 let customTagView = CustomTagView()
                 customTagView.labelText = keyword.keyword
                 customTagView.tags = keyword.tags
@@ -127,12 +109,12 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
 
     @objc private func customTagViewTapped(_ sender: ContextTapGestureRecognizer) {
         if let index = sender.context["index"] as? Int {
-            print(index, keywords[index])
-            let editTagViewController = EditTagViewController()
-            editTagViewController.selectedIndex = index
-            editTagViewController.content = keywords[index]
+            let editTagVC = EditTagViewController().then {
+                $0.selectedIndex = index
+                $0.variant = .update
+            }
 
-            navigationController?.pushViewController(editTagViewController, animated: true)
+            navigationController?.pushViewController(editTagVC, animated: true)
         }
     }
 
@@ -140,7 +122,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         if let customTagView = sender.superview as? CustomTagView,
            let index = rootFlexContainer.subviews.firstIndex(of: customTagView)
         {
-            let keyword = keywords[index]
+            let keyword = blogViewModel.keywords[index]
             let alertController = UIAlertController(
                 title: "태그 삭제",
                 message: "\n\(keyword.keyword)\n\(keyword.tags.joined(separator: ", "))\n\n태그를 삭제하시겠습니까?",
@@ -157,7 +139,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
                 title: "삭제",
                 style: .destructive,
                 handler: { _ in
-                    self.keywords.remove(at: index)
+                    self.blogViewModel.removeKeyword(index: index)
                     self.view.setNeedsLayout()
                 }
             )

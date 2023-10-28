@@ -34,6 +34,12 @@ class CustomTextFieldView: UIView {
         }
     }
 
+    var textFieldTag: Int = 0 {
+        didSet {
+            textField.tag = textFieldTag
+        }
+    }
+
     var componentSize: CGSize {
         return CGSize(width: frame.width, height: height)
     }

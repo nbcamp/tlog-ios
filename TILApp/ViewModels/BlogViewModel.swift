@@ -52,4 +52,27 @@ final class BlogViewModel {
             onError?(error)
         }
     }
+
+    // TODO: 다 정리되면 위쪽으로 옮기기
+    private(set) var keywords: [KeywordInput] = []
+
+    func clearKeywords() {
+        keywords = []
+    }
+
+    func addKeyword(_ keyword: KeywordInput) {
+        keywords.append(keyword)
+    }
+
+    func updateKeyword(_ index: Int, _ keyword: KeywordInput) {
+        keywords[index] = keyword
+    }
+
+    func removeKeyword(index: Int) {
+        keywords.remove(at: index)
+    }
+
+    func hasKeyword(_ keywordToCheck: String) -> Bool {
+        return keywords.contains { $0.keyword == keywordToCheck }
+    }
 }
