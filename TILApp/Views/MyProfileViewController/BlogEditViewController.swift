@@ -30,6 +30,7 @@ final class BlogEditViewController: UIViewController {
         ("[iOS]", ["TIL", "iOS", "Swift"]),
     ]
 
+    var isPrimary: Bool?
     var blogName: String?
     var blogURL: String?
 
@@ -40,11 +41,17 @@ final class BlogEditViewController: UIViewController {
     private lazy var contentView = UIView()
     private lazy var rootFlexContainer = UIView()
 
-    // TODO: 대표블로그인 경우 어떻게 보여줄지 로직 추가하기
     private lazy var mainBlogButton = CustomLargeBorderButton().then {
-        $0.setTitle("대표 블로그로 설정하기", for: .normal)
+        guard let isPrimary = isPrimary else { return }
+        $0.variant = isPrimary ? .primary : .normal
         contentView.addSubview($0)
         $0.pin.size($0.componentSize)
+        $0.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+    }
+
+    // TODO: 완료 버튼 탭하면 해당 블로그 대표블로그로 설정 로직 추가하기
+    @objc private func buttonTapped() {
+        mainBlogButton.variant = .primary
     }
 
     // TODO: 유효성 검증 로직 작성하기
@@ -64,7 +71,7 @@ final class BlogEditViewController: UIViewController {
         if let blogURL = blogURL {
             $0.mainText = blogURL
         }
-        $0.placeholder = "블로그 주소를 입력해주세요"
+        $0.readOnly = true
         contentView.addSubview($0)
         $0.pin.size($0.componentSize)
     }
@@ -75,7 +82,7 @@ final class BlogEditViewController: UIViewController {
         if let blogURL = blogURL {
             $0.mainText = blogURL
         }
-        $0.placeholder = "블로그 RSS 주소를 입력해주세요"
+        $0.readOnly = true
         contentView.addSubview($0)
         $0.pin.size($0.componentSize)
     }

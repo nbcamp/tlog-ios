@@ -84,6 +84,7 @@ extension BlogListViewController: UITableViewDelegate {
 
         let blogEditViewController = BlogEditViewController()
 
+        blogEditViewController.isPrimary = selectedRow == 0
         blogEditViewController.blogName = name
         blogEditViewController.blogURL = url
 

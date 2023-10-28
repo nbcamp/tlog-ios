@@ -41,7 +41,6 @@
 		33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */; };
 		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
 		9B859B2B2AE26C2600025E8B /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */; };
-		D20AD9022AE0AEF800CDEB2C /* CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */; };
 		D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9902AE106F000ED7028 /* BlogListViewController.swift */; };
 		D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */; };
 		D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */; };
@@ -54,6 +53,22 @@
 		D2A4D1F92AE5DD4000B510A3 /* FollowListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */; };
 		D2A4D1FB2AE5DF9000B510A3 /* FollowListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */; };
 		D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */; };
+		D2CDB6F52AEB66A900BFD8C2 /* CustomLargeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6F42AEB66A900BFD8C2 /* CustomLargeButton.swift */; };
+		D2CDB6F72AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6F62AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift */; };
+		D2CDB6F92AEB671800BFD8C2 /* CustomFollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6F82AEB671800BFD8C2 /* CustomFollowButton.swift */; };
+		D2CDB6FD2AEB677100BFD8C2 /* CustomTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6FC2AEB677100BFD8C2 /* CustomTitleLabel.swift */; };
+		D2CDB6FF2AEB679800BFD8C2 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6FE2AEB679800BFD8C2 /* CustomTextField.swift */; };
+		D2CDB7012AEB67C000BFD8C2 /* CustomTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB7002AEB67C000BFD8C2 /* CustomTextFieldView.swift */; };
+		D2CDB7032AEB680300BFD8C2 /* CustomTextFieldViewWithValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB7022AEB680300BFD8C2 /* CustomTextFieldViewWithValidation.swift */; };
+		D2CDB7052AEB684100BFD8C2 /* CustomLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB7042AEB684100BFD8C2 /* CustomLabelView.swift */; };
+		D2CDB7072AEB686E00BFD8C2 /* CustomUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB7062AEB686E00BFD8C2 /* CustomUserView.swift */; };
+		D2CDB7092AEB689D00BFD8C2 /* CustomTILView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB7082AEB689D00BFD8C2 /* CustomTILView.swift */; };
+		D2CDB70B2AEB68DB00BFD8C2 /* CustomCommunityTILView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB70A2AEB68DB00BFD8C2 /* CustomCommunityTILView.swift */; };
+		D2CDB70D2AEB690400BFD8C2 /* CustomBlogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB70C2AEB690400BFD8C2 /* CustomBlogView.swift */; };
+		D2CDB70F2AEB693C00BFD8C2 /* CustomSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB70E2AEB693C00BFD8C2 /* CustomSegmentedControl.swift */; };
+		D2CDB7112AEB696E00BFD8C2 /* CustomTagHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB7102AEB696E00BFD8C2 /* CustomTagHeaderView.swift */; };
+		D2CDB7132AEB699000BFD8C2 /* CustomTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB7122AEB699000BFD8C2 /* CustomTagView.swift */; };
+		D2CDB7152AEB69DB00BFD8C2 /* TestComponentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB7142AEB69DB00BFD8C2 /* TestComponentsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -87,7 +102,6 @@
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
 		9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditViewController.swift; sourceTree = "<group>"; };
 		D20AD8D02ADC5ECA00CDEB2C /* TILApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TILApp.entitlements; sourceTree = "<group>"; };
-		D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponents.swift; sourceTree = "<group>"; };
 		D24BB9902AE106F000ED7028 /* BlogListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListViewController.swift; sourceTree = "<group>"; };
 		D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListTableViewCell.swift; sourceTree = "<group>"; };
 		D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogEditViewController.swift; sourceTree = "<group>"; };
@@ -100,6 +114,22 @@
 		D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListViewController.swift; sourceTree = "<group>"; };
 		D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListTableViewCell.swift; sourceTree = "<group>"; };
 		D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityTableViewCell.swift; sourceTree = "<group>"; };
+		D2CDB6F42AEB66A900BFD8C2 /* CustomLargeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLargeButton.swift; sourceTree = "<group>"; };
+		D2CDB6F62AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLargeBorderButton.swift; sourceTree = "<group>"; };
+		D2CDB6F82AEB671800BFD8C2 /* CustomFollowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFollowButton.swift; sourceTree = "<group>"; };
+		D2CDB6FC2AEB677100BFD8C2 /* CustomTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTitleLabel.swift; sourceTree = "<group>"; };
+		D2CDB6FE2AEB679800BFD8C2 /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
+		D2CDB7002AEB67C000BFD8C2 /* CustomTextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextFieldView.swift; sourceTree = "<group>"; };
+		D2CDB7022AEB680300BFD8C2 /* CustomTextFieldViewWithValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextFieldViewWithValidation.swift; sourceTree = "<group>"; };
+		D2CDB7042AEB684100BFD8C2 /* CustomLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLabelView.swift; sourceTree = "<group>"; };
+		D2CDB7062AEB686E00BFD8C2 /* CustomUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUserView.swift; sourceTree = "<group>"; };
+		D2CDB7082AEB689D00BFD8C2 /* CustomTILView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTILView.swift; sourceTree = "<group>"; };
+		D2CDB70A2AEB68DB00BFD8C2 /* CustomCommunityTILView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCommunityTILView.swift; sourceTree = "<group>"; };
+		D2CDB70C2AEB690400BFD8C2 /* CustomBlogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBlogView.swift; sourceTree = "<group>"; };
+		D2CDB70E2AEB693C00BFD8C2 /* CustomSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedControl.swift; sourceTree = "<group>"; };
+		D2CDB7102AEB696E00BFD8C2 /* CustomTagHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTagHeaderView.swift; sourceTree = "<group>"; };
+		D2CDB7122AEB699000BFD8C2 /* CustomTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTagView.swift; sourceTree = "<group>"; };
+		D2CDB7142AEB69DB00BFD8C2 /* TestComponentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestComponentsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,7 +227,6 @@
 			isa = PBXGroup;
 			children = (
 				3334E1C52AD9112B00D853D7 /* Extensions */,
-				D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */,
 				D2A1684B2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift */,
 			);
 			path = Utilities;
@@ -229,6 +258,7 @@
 		3334E1DA2AD9184B00D853D7 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				D2CDB6F32AEB665C00BFD8C2 /* Components */,
 				3334E1AB2AD6BC1800D853D7 /* RootViewController.swift */,
 			);
 			path = Shared;
@@ -293,8 +323,31 @@
 			children = (
 				33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */,
 				33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */,
+				D2CDB7142AEB69DB00BFD8C2 /* TestComponentsViewController.swift */,
 			);
 			path = Test;
+			sourceTree = "<group>";
+		};
+		D2CDB6F32AEB665C00BFD8C2 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				D2CDB6F42AEB66A900BFD8C2 /* CustomLargeButton.swift */,
+				D2CDB6F62AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift */,
+				D2CDB6F82AEB671800BFD8C2 /* CustomFollowButton.swift */,
+				D2CDB6FC2AEB677100BFD8C2 /* CustomTitleLabel.swift */,
+				D2CDB6FE2AEB679800BFD8C2 /* CustomTextField.swift */,
+				D2CDB7002AEB67C000BFD8C2 /* CustomTextFieldView.swift */,
+				D2CDB7022AEB680300BFD8C2 /* CustomTextFieldViewWithValidation.swift */,
+				D2CDB7042AEB684100BFD8C2 /* CustomLabelView.swift */,
+				D2CDB7062AEB686E00BFD8C2 /* CustomUserView.swift */,
+				D2CDB7082AEB689D00BFD8C2 /* CustomTILView.swift */,
+				D2CDB70A2AEB68DB00BFD8C2 /* CustomCommunityTILView.swift */,
+				D2CDB70C2AEB690400BFD8C2 /* CustomBlogView.swift */,
+				D2CDB70E2AEB693C00BFD8C2 /* CustomSegmentedControl.swift */,
+				D2CDB7102AEB696E00BFD8C2 /* CustomTagHeaderView.swift */,
+				D2CDB7122AEB699000BFD8C2 /* CustomTagView.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -407,9 +460,12 @@
 			files = (
 				3334E1EB2AD919D700D853D7 /* MyProfileViewController.swift in Sources */,
 				3334E1AC2AD6BC1800D853D7 /* RootViewController.swift in Sources */,
+				D2CDB7132AEB699000BFD8C2 /* CustomTagView.swift in Sources */,
 				D2A1684A2AE8D4E5006BD2C4 /* UIView+Ext.swift in Sources */,
 				3334E1A82AD6BC1800D853D7 /* AppDelegate.swift in Sources */,
+				D2CDB6FF2AEB679800BFD8C2 /* CustomTextField.swift in Sources */,
 				9B859B2B2AE26C2600025E8B /* ProfileEditViewController.swift in Sources */,
+				D2CDB70D2AEB690400BFD8C2 /* CustomBlogView.swift in Sources */,
 				33DC8E0A2ADFDAFF00580FA0 /* TestNetworkViewController.swift in Sources */,
 				D2A4D1F92AE5DD4000B510A3 /* FollowListViewController.swift in Sources */,
 				3334E1E42AD9194500D853D7 /* CalendarViewController.swift in Sources */,
@@ -419,30 +475,42 @@
 				33A4E82A2AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift in Sources */,
 				D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */,
 				33A4E81C2AEBB14800E3F55E /* BlogViewModel.swift in Sources */,
+				D2CDB7152AEB69DB00BFD8C2 /* TestComponentsViewController.swift in Sources */,
 				D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */,
 				3334E1C92AD911ED00D853D7 /* Blog.swift in Sources */,
+				D2CDB6F92AEB671800BFD8C2 /* CustomFollowButton.swift in Sources */,
 				D2A4D1FB2AE5DF9000B510A3 /* FollowListTableViewCell.swift in Sources */,
 				D29659EE2AE7EE5D000C28A6 /* TagCollectionViewCell.swift in Sources */,
 				3334E1C72AD9113900D853D7 /* UIViewController+Ext.swift in Sources */,
+				D2CDB7072AEB686E00BFD8C2 /* CustomUserView.swift in Sources */,
 				33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */,
 				3334E1E82AD919A200D853D7 /* CommunityViewController.swift in Sources */,
 				3334E1D92AD9181F00D853D7 /* AuthViewModel.swift in Sources */,
 				3334E1CD2AD9126400D853D7 /* Post.swift in Sources */,
 				3334E1D12AD9129600D853D7 /* APIService.swift in Sources */,
 				33A4E82C2AECBE3C00E3F55E /* MoreTableViewCell.swift in Sources */,
+				D2CDB6FD2AEB677100BFD8C2 /* CustomTitleLabel.swift in Sources */,
+				D2CDB6F52AEB66A900BFD8C2 /* CustomLargeButton.swift in Sources */,
 				D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */,
+				D2CDB6F72AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift in Sources */,
+				D2CDB7112AEB696E00BFD8C2 /* CustomTagHeaderView.swift in Sources */,
+				D2CDB7052AEB684100BFD8C2 /* CustomLabelView.swift in Sources */,
+				D2CDB7012AEB67C000BFD8C2 /* CustomTextFieldView.swift in Sources */,
+				D2CDB7032AEB680300BFD8C2 /* CustomTextFieldViewWithValidation.swift in Sources */,
 				D29659F02AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift in Sources */,
 				33A4E8282AECBDE300E3F55E /* SeeMorePresentationController.swift in Sources */,
 				3334E1DE2AD918CB00D853D7 /* HomeViewController.swift in Sources */,
+				D2CDB70B2AEB68DB00BFD8C2 /* CustomCommunityTILView.swift in Sources */,
 				D29659F22AE80313000C28A6 /* EditTagViewController.swift in Sources */,
 				33A4E81E2AEBB24A00E3F55E /* Exported.swift in Sources */,
 				3334E1EE2AD919F500D853D7 /* SignInViewController.swift in Sources */,
 				3334E1AA2AD6BC1800D853D7 /* SceneDelegate.swift in Sources */,
 				3334E1D52AD913FE00D853D7 /* Date+Ext.swift in Sources */,
-				D20AD9022AE0AEF800CDEB2C /* CustomComponents.swift in Sources */,
+				D2CDB7092AEB689D00BFD8C2 /* CustomTILView.swift in Sources */,
 				D2A1684C2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift in Sources */,
 				3334E1D72AD914EF00D853D7 /* User.swift in Sources */,
 				D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */,
+				D2CDB70F2AEB693C00BFD8C2 /* CustomSegmentedControl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

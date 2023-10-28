@@ -48,7 +48,7 @@ extension CommunityViewController: UITableViewDataSource {
         let info = communityData[indexPath.row]
 
         // TODO: CommunityTableViewCell에 configure 함수 만들기
-        cell.customCommunityTILView.userView.setup(image: UIImage(), nicknameText: info[0], contentText: info[1], buttonTitle: info[2])
+        cell.customCommunityTILView.userView.setup(image: UIImage(), nicknameText: info[0], contentText: info[1], variant: .follow)
         cell.customCommunityTILView.tilView.setup(withTitle: info[3], content: info[4], date: info[5])
         return cell
     }
