@@ -5,13 +5,7 @@ class CustomUserView: UIView {
         get { return button.variant }
         set { button.variant = newValue }
     }
-
-    private let imageView = UIImageView().then {
-        $0.backgroundColor = .systemGray5
-        $0.contentMode = .scaleAspectFit
-        $0.clipsToBounds = true
-    }
-
+    
     var buttonTitle: String {
         get { button.titleLabel?.text ?? "" }
         set { button.setTitle(newValue, for: .normal) }
@@ -32,14 +26,24 @@ class CustomUserView: UIView {
         set { imageView.image = newValue }
     }
 
+    private let imageView = UIImageView().then {
+        $0.backgroundColor = .systemGray5
+        $0.contentMode = .scaleAspectFit
+        $0.clipsToBounds = true
+    }
+
     private let button = CustomFollowButton()
 
     private let customLabelView = CustomLabelView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        pin.height(67)
 
-        setupView()
+        addSubview(imageView)
+        addSubview(customLabelView)
+        addSubview(button)
     }
 
     @available(*, unavailable)
@@ -47,17 +51,8 @@ class CustomUserView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupView() {
-        // backgroundColor = .systemBackground
-
-        addSubview(imageView)
-        addSubview(customLabelView)
-        addSubview(button)
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.width(100%).height(67)
 
         imageView.pin.vCenter().left(10).width(47).height(47)
         button.pin.right(10).vCenter()
