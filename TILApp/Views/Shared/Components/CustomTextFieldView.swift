@@ -33,10 +33,8 @@ class CustomTextFieldView: UIView {
 
     var readOnly: Bool = false {
         didSet {
-            if readOnly {
-                textField.isUserInteractionEnabled = false
-                textField.textColor = .systemGray2
-            }
+            textField.isUserInteractionEnabled = !readOnly
+            textField.textColor = readOnly ? .systemGray2 : .black
         }
     }
 
