@@ -1,27 +1,29 @@
 import UIKit
 
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
-    var tagData: [(name: String, tags: [String])] = [
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-    ]
+//    var tagData: [(name: String, tags: [String])] = [
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//        ("[Swift]", ["TIL", "iOS", "Swift"]),
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//        ("[Swift]", ["TIL", "iOS", "Swift"]),
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//        ("[Swift]", ["TIL", "iOS", "Swift"]),
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//        ("[Swift]", ["TIL", "iOS", "Swift"]),
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//        ("[Swift]", ["TIL", "iOS", "Swift"]),
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//        ("[Swift]", ["TIL", "iOS", "Swift"]),
+//        ("[iOS]", ["TIL", "iOS", "Swift"]),
+//    ]
 
+    private var keywords: [Keyword] = []
+    
     private let contentScrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -91,10 +93,10 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         rootFlexContainer.removeAllSubviews()
 
         rootFlexContainer.flex.define {
-            for (index, tag) in tagData.enumerated() {
+            for (index, keyword) in keywords.enumerated() {
                 let customTagView = CustomTagView()
-                customTagView.labelText = tag.name
-                customTagView.tags = tag.tags
+                customTagView.labelText = keyword.keyword
+                customTagView.tags = keyword.tags
                 $0.addItem(customTagView).marginTop(10)
                 customTagView.pin.size(customTagView.componentSize)
 
@@ -125,10 +127,10 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
 
     @objc private func customTagViewTapped(_ sender: ContextTapGestureRecognizer) {
         if let index = sender.context["index"] as? Int {
-            print(index, tagData[index])
+            print(index, keywords[index])
             let editTagViewController = EditTagViewController()
             editTagViewController.selectedIndex = index
-            editTagViewController.content = tagData[index]
+            editTagViewController.content = keywords[index]
 
             navigationController?.pushViewController(editTagViewController, animated: true)
         }
@@ -138,10 +140,10 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         if let customTagView = sender.superview as? CustomTagView,
            let index = rootFlexContainer.subviews.firstIndex(of: customTagView)
         {
-            let tag = tagData[index]
+            let keyword = keywords[index]
             let alertController = UIAlertController(
                 title: "태그 삭제",
-                message: "\n\(tag.name)\n\(tag.tags.joined(separator: ", "))\n\n태그를 삭제하시겠습니까?",
+                message: "\n\(keyword.keyword)\n\(keyword.tags.joined(separator: ", "))\n\n태그를 삭제하시겠습니까?",
                 preferredStyle: .alert
             )
 
@@ -155,7 +157,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
                 title: "삭제",
                 style: .destructive,
                 handler: { _ in
-                    self.tagData.remove(at: index)
+                    self.keywords.remove(at: index)
                     self.view.setNeedsLayout()
                 }
             )

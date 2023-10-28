@@ -9,7 +9,7 @@ import Then
 import UIKit
 
 final class BlogEditViewController: UIViewController {
-    var tagData: [(name: String, tags: [String])] = [
+    var keywords: [(name: String, tags: [String])] = [
         ("[iOS]", ["TIL", "iOS", "Swift"]),
         ("[Swift]", ["TIL", "iOS", "Swift"]),
         ("[iOS]", ["TIL", "iOS", "Swift"]),
@@ -132,7 +132,7 @@ final class BlogEditViewController: UIViewController {
         rootFlexContainer.removeAllSubviews()
 
         rootFlexContainer.flex.define {
-            for (index, tag) in tagData.enumerated() {
+            for (index, tag) in keywords.enumerated() {
                 let customTagView = CustomTagView()
                 customTagView.labelText = tag.name
                 customTagView.tags = tag.tags
@@ -176,7 +176,7 @@ final class BlogEditViewController: UIViewController {
         if let index = sender.context["index"] as? Int {
             let editTagViewController = EditTagViewController()
             editTagViewController.selectedIndex = index
-            editTagViewController.content = tagData[index]
+            //editTagViewController.content = tagData[index]
 
             navigationController?.pushViewController(editTagViewController, animated: true)
         }
@@ -186,7 +186,7 @@ final class BlogEditViewController: UIViewController {
         if let customTagView = sender.superview as? CustomTagView,
            let index = rootFlexContainer.subviews.firstIndex(of: customTagView)
         {
-            let tag = tagData[index]
+            let tag = keywords[index]
             let alertController = UIAlertController(
                 title: "태그 삭제",
                 message: "\n\(tag.name)\n\(tag.tags.joined(separator: ", "))\n\n태그를 삭제하시겠습니까?",
@@ -203,7 +203,7 @@ final class BlogEditViewController: UIViewController {
                 title: "삭제",
                 style: .destructive,
                 handler: { _ in
-                    self.tagData.remove(at: index)
+                    self.keywords.remove(at: index)
                     self.view.setNeedsLayout()
                 }
             )

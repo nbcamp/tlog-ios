@@ -11,14 +11,14 @@ final class EditTagViewController: UIViewController {
     // TODO: 태그 최대 개수 제한 생각해보기
 
     var selectedIndex: Int?
-    var content: (name: String, tags: [String])?
+    var content: Keyword?
 
     private lazy var tagList: [String] = content?.tags ?? []
 
     private lazy var prefixTF = CustomTextFieldViewWithValidation().then {
         $0.titleText = "게시물 제목에 포함될 문자"
         $0.placeholder = "ex) [TIL]"
-        $0.mainText = content?.name ?? ""
+        $0.mainText = content?.keyword ?? ""
         view.addSubview($0)
     }
 
