@@ -12,15 +12,25 @@ import UIKit
 import WebKit
 
 class WebViewController: UIViewController {
-    //TODO: 눌려진 셀의 post url 받기
-    let blogURL = ""
+    // TODO: 눌려진 셀의 post url 받기
+    var postURL : String? {
+        didSet {
+           if let postURL, let url = URL(string: postURL) {
+                let request = URLRequest(url: url)
+                webView.load(request)
+            }
+        }
+    }
 
 //    let blogURL = "https://zeddios.tistory.com/374"
 
     private var isHeartFilled = false
 
     private lazy var webView = WKWebView().then {
+        $0.navigationDelegate = self
+        $0.allowsBackForwardNavigationGestures = true
         view.addSubview($0)
+        
     }
 
     private lazy var backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(backButtonTapped)).then {
@@ -47,15 +57,7 @@ class WebViewController: UIViewController {
         let heartFill = isHeartFilled ? "heart.fill" : "heart"
         let heartButton = UIBarButtonItem(image: UIImage(systemName: heartFill), style: .plain, target: self, action: #selector(heartButtonTapped))
         navigationItem.rightBarButtonItem = heartButton
-        webView = WKWebView()
-        webView.navigationDelegate = self
-        webView.allowsBackForwardNavigationGestures = true
-        view.addSubview(webView)
 
-        if let url = URL(string: blogURL) {
-            let request = URLRequest(url: url)
-            webView.load(request)
-        }
     }
 
     override func viewDidLayoutSubviews() {
