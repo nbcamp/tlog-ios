@@ -5,18 +5,20 @@ enum APIError: Error {
     case error(_ reason: String)
 }
 
+private enum Coder {
+    static let encoder = JSONEncoder().then { $0.dateEncodingStrategy = .secondsSince1970 }
+    static let decoder = JSONDecoder().then { $0.dateDecodingStrategy = .secondsSince1970 }
+}
+
 final class APIService {
     static let shared: APIService = .init()
     private init() {}
 
     private let provider = MoyaProvider<APIRequest>()
-    private let decoder = JSONDecoder().then { decoder in
-        decoder.dateDecodingStrategy = .secondsSince1970
-    }
 
     func request(
         _ target: APIRequest,
-        onSuccess: @escaping (_ response: Response) -> Void,
+        onSuccess: ((_ response: Response) -> Void)? = nil,
         onError: ((_ error: MoyaError) -> Void)? = nil
     ) {
         provider.request(target) { [weak self] result in
@@ -29,7 +31,7 @@ final class APIService {
                     }
                     onError?(.statusCode(response)); return
                 }
-                onSuccess(response)
+                onSuccess?(response)
             case .failure(let error):
                 onError?(error)
             }
@@ -39,7 +41,7 @@ final class APIService {
     func request<Model: Decodable>(
         _ target: APIRequest,
         model: Model.Type,
-        onSuccess: @escaping (_ model: Model) -> Void,
+        onSuccess: ((_ model: Model) -> Void)? = nil,
         onError: ((_ error: MoyaError) -> Void)? = nil
     ) {
         provider.request(target) { [weak self] result in
@@ -53,10 +55,10 @@ final class APIService {
                     onError?(.statusCode(response)); return
                 }
 
-                guard let model = try? response.map(model, using: decoder) else {
+                guard let model = try? response.map(model, using: Coder.decoder) else {
                     onError?(.jsonMapping(response)); return
                 }
-                onSuccess(model)
+                onSuccess?(model)
             case .failure(let error):
                 onError?(error)
             }
@@ -96,7 +98,7 @@ enum APIRequest {
          deleteBlog(Int)
 
     // Posts
-    case getPosts,
+    case getPosts(GetPostsQuery),
          getPost(Int),
          createPost(CreatePostInput),
          updatePost(Int, UpdatePostInput)
@@ -181,8 +183,6 @@ extension APIRequest: TargetType {
     }
 
     var task: Moya.Task {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .secondsSince1970
         switch self {
         case .ping,
              .getUser,
@@ -195,23 +195,27 @@ extension APIRequest: TargetType {
              .getBlog,
              .getMainBlog,
              .setMainBlog,
-             .getPosts,
              .getPost,
              .deleteUser,
              .deleteBlog:
             return .requestPlain
         case .signIn(let payload):
-            return .requestCustomJSONEncodable(payload, encoder: encoder)
+            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
         case .updateUser(let payload):
-            return .requestCustomJSONEncodable(payload, encoder: encoder)
+            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
         case .createBlog(let payload):
-            return .requestCustomJSONEncodable(payload, encoder: encoder)
+            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
         case .updateBlog(_, let payload):
-            return .requestCustomJSONEncodable(payload, encoder: encoder)
+            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
+        case .getPosts(let query):
+            return .requestParameters(parameters: [
+                "userId": query.userId as Any,
+                "q": query.query as Any
+            ], encoding: URLEncoding.queryString)
         case .createPost(let payload):
-            return .requestCustomJSONEncodable(payload, encoder: encoder)
+            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
         case .updatePost(_, let payload):
-            return .requestCustomJSONEncodable(payload, encoder: encoder)
+            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
         }
     }
 

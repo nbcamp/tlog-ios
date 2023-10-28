@@ -12,6 +12,7 @@ struct Blog: Codable {
     let rss: String
     let primary: Bool
     let keywords: [Keyword]
+    let lastPublishedAt: Date
     let createdAt: Date
 }
 

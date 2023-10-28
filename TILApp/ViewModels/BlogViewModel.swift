@@ -24,7 +24,12 @@ final class BlogViewModel {
         }
     }
 
-    func update(_ blog: Blog, _ input: UpdateBlogInput, onSuccess: (([Blog]) -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
+    func update(
+        _ blog: Blog,
+        _ input: UpdateBlogInput,
+        onSuccess: (([Blog]) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil
+    ) {
         APIService.shared.request(.updateBlog(blog.id, input), model: Blog.self) { [weak self] model in
             guard let self else { return }
             if let index = (blogs.firstIndex { $0.id == blog.id }) {
