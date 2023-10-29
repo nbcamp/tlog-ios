@@ -1,6 +1,6 @@
 
 import UIKit
-
+// TODO: 데이터 연결시 구조체 삭제
 struct TILList {
     let title: String
     let content: String
@@ -8,6 +8,7 @@ struct TILList {
 }
 
 final class UserProfileViewController: UIViewController {
+    // TODO: 데이터 연결시 더미 데이터 삭제
     let userTILList: [TILList] = [
         .init(title: "작성글1", content: "오늘 오전엔 CustomComponent를 사용하는법을 익혔습니다.", date: "2023-10-25"),
         .init(title: "작성글2", content: "오늘 오후엔 UIPresentationController를 학습했습니다.", date: "2023-10-25"),
@@ -146,14 +147,14 @@ final class UserProfileViewController: UIViewController {
     }
 
     @objc private func moreButtonTapped() {
-        let reportAction = UIAction(title: "신고", image: UIImage(systemName: "flag.fill"), attributes: .destructive) { [weak self] _ in
+        let reportAction = UIAction(title: "신고하기", image: UIImage(systemName: "flag.fill"), attributes: .destructive) { [weak self] _ in
             let alertController = UIAlertController(title: "신고 접수 완료", message: "신고가 고객센터에 접수되었습니다.", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
 
             self!.present(alertController, animated: true, completion: nil)
         }
 
-        let menu = UIMenu(title: "더보기", children: [reportAction])
+        let menu = UIMenu(children: [reportAction])
 
         moreButton.showsMenuAsPrimaryAction = true
         moreButton.menu = menu
