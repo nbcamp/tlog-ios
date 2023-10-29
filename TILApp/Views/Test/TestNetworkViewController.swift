@@ -126,11 +126,11 @@ final class TestNetworkViewController: UIViewController {
     }
 
     @objc private func requestViewModel() {
-        PostViewModel.shared.withPosts(by: 2) { posts in
-            print(posts)
-        } onError: { error in
-            print(error)
-        }
+//        PostViewModel.shared.withPosts(byUserId: 2) { posts in
+//            print(posts)
+//        } onError: { error in
+//            print(error)
+//        }
     }
 
     // MARK: - Using Custom APIService with Moya
