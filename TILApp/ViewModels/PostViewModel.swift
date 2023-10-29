@@ -19,11 +19,11 @@ final class PostViewModel {
 
     func create(
         _ inputs: [CreatePostInput],
-        onSuccess: ((_ posts: [Post]) -> Void)? = nil,
+        onSuccess: ((_ posts: [Post?]) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
         let group = DispatchGroup()
-        var posts: [Post] = []
+        var posts: [Post?] = .init(repeating: nil, count: inputs.count)
 
         for (index, input) in inputs.enumerated() {
             group.enter()
@@ -35,7 +35,7 @@ final class PostViewModel {
                 group.leave()
             }
         }
-        
+
         group.notify(queue: .main) {
             onSuccess?(posts)
         }

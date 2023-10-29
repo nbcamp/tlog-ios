@@ -14,7 +14,9 @@ final class APIService {
     static let shared: APIService = .init()
     private init() {}
 
-    private let provider = MoyaProvider<APIRequest>()
+    private let provider = MoyaProvider<APIRequest>(plugins: [
+        //        MoyaLoggingPlugin() // 디버그 용
+    ])
 
     func request(
         _ target: APIRequest,
@@ -54,8 +56,8 @@ final class APIService {
                     }
                     onError?(.statusCode(response)); return
                 }
-
                 guard let model = try? response.map(model, using: Coder.decoder) else {
+                    printJsonAsString(json: response.data)
                     onError?(.jsonMapping(response)); return
                 }
                 onSuccess?(model)
@@ -71,6 +73,14 @@ final class APIService {
               let error = error["error"] as? String
         else { return nil }
         return error
+    }
+
+    private func printJsonAsString(json: Data) {
+        if let string = String(data: json, encoding: .utf8) {
+            debugPrint(string)
+        } else {
+            debugPrint("Failed to convert data to string.")
+        }
     }
 }
 
@@ -115,8 +125,8 @@ extension APIRequest: TargetType {
         // Users
         case .signIn:
             return "/auth/sign-in"
-        case .getUser:
-            return "/user"
+        case .getUser(let id):
+            return "/user/\(id)"
         case .getProfile, .updateUser(_), .deleteUser:
             return "/user/profile"
         case .followUser(let id):
@@ -124,9 +134,9 @@ extension APIRequest: TargetType {
         case .unfollowUser(let id):
             return "/user/unfollow/\(id)"
         case .getFollowers:
-            return "/user/followers"
+            return "/user/follower/list"
         case .getFollowings:
-            return "/user/followings"
+            return "/user/following/list"
 
         // Blogs
         case .getMyBlogs:
@@ -208,10 +218,10 @@ extension APIRequest: TargetType {
         case .updateBlog(_, let payload):
             return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
         case .getPosts(let query):
-            return .requestParameters(parameters: [
-                "userId": query.userId as Any,
-                "q": query.query as Any
-            ], encoding: URLEncoding.queryString)
+            var params: [String: Any] = [:]
+            if let userId = query.userId { params.updateValue(userId, forKey: "userId") }
+            if let searchQuery = query.query { params.updateValue(searchQuery, forKey: "q") }
+            return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
         case .createPost(let payload):
             return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
         case .updatePost(_, let payload):
@@ -228,5 +238,72 @@ extension APIRequest: TargetType {
         }
 
         return headers
+    }
+}
+
+final class MoyaLoggingPlugin: PluginType {
+    func willSend(_ request: RequestType, target: TargetType) {
+        guard let httpRequest = request.request else {
+            print("--> Invalid Request")
+            return
+        }
+        let url = httpRequest.description
+        let method = httpRequest.httpMethod ?? "Unknown Method"
+        var log = """
+        ------------------------------------------------------
+        [\(method)] \(url)
+
+        """
+        log.append("[API] \(target)\n")
+        if let headers = httpRequest.allHTTPHeaderFields, !headers.isEmpty {
+            log.append("header: \(headers)\n")
+        }
+        if let body = httpRequest.httpBody, let bodyString = String(bytes: body, encoding: String.Encoding.utf8) {
+            log.append("\(bodyString)\n")
+        }
+        log.append("------------------ END [\(method)] -------------------------")
+        print(log)
+    }
+
+    func didReceive(_ result: Result<Response, MoyaError>, target: TargetType) {
+        switch result {
+        case .success(let response):
+            onSucceed(response, target: target, isFromError: false)
+        case .failure(let error):
+            onFail(error, target: target)
+        }
+    }
+
+    func onFail(_ error: MoyaError, target: TargetType) {
+        if let response = error.response {
+            onSucceed(response, target: target, isFromError: true)
+            return
+        }
+        var log = "Network Error"
+        log.append("<-- \(error.errorCode) \(target)\n")
+        log.append("\(error.failureReason ?? error.errorDescription ?? "unknown error")\n")
+        log.append("<-- END HTTP")
+        print(log)
+    }
+
+    private func onSucceed(_ response: Response, target: TargetType, isFromError: Bool) {
+        let request = response.request
+        let url = request?.url?.absoluteString ?? "nil"
+        let statusCode = response.statusCode
+        var log = "------------------- Network Success -------------------\n"
+        log.append("""
+        [\(statusCode)] \(url)
+        ----------------------------------------------------
+
+        """)
+        log.append("API: \(target)\n")
+        response.response?.allHeaderFields.forEach {
+            log.append("\($0): \($1)\n")
+        }
+        if let string = String(bytes: response.data, encoding: String.Encoding.utf8) {
+            log.append("\(string)\n")
+        }
+        log.append("--------------- END HTTP (\(response.data.count)-byte body) ---------------")
+        print(log)
     }
 }

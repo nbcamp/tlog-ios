@@ -10,9 +10,9 @@ struct Blog: Codable {
     let name: String
     let url: String
     let rss: String
-    let primary: Bool
+    let main: Bool
     let keywords: [Keyword]
-    let lastPublishedAt: Date
+    let lastPublishedAt: Date?
     let createdAt: Date
 }
 
@@ -25,6 +25,5 @@ struct CreateBlogInput: Codable {
 
 struct UpdateBlogInput: Codable {
     let name: String?
-    let primary: Bool?
     let keywords: [Keyword]?
 }

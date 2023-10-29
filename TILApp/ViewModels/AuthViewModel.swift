@@ -40,16 +40,34 @@ final class AuthViewModel {
         user = nil
     }
 
+    func profile(
+        onSuccess: ((_ user: AuthUser) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil
+    ) {
+        APIService.shared.request(
+            .getProfile, model: AuthUser.self,
+            onSuccess: { [weak self] model in
+                guard let self else { return }
+                user = model
+                onSuccess?(model)
+            }, onError: onError
+        )
+    }
+
     func update(
         _ input: UpdateUserInput,
         onSuccess: ((_ user: AuthUser) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        APIService.shared.request(.updateUser(input), model: AuthUser.self, onSuccess: { [weak self] model in
-            guard let self else { return }
-            user = model
-            onSuccess?(model)
-        }, onError: onError)
+        APIService.shared.request(
+            .updateUser(input),
+            model: AuthUser.self,
+            onSuccess: { [weak self] model in
+                guard let self else { return }
+                user = model
+                onSuccess?(model)
+            }, onError: onError
+        )
     }
 
     func withdraw(onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
