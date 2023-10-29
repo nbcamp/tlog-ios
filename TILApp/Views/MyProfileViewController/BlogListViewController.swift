@@ -25,6 +25,10 @@ final class BlogListViewController: UIViewController {
         navigationItem.rightBarButtonItem = addBlogButton
 
         view.addSubview(tableView)
+        
+        // TODO: 나중에 지우기
+        blogViewModel.load()
+        tableView.reloadData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -35,9 +39,6 @@ final class BlogListViewController: UIViewController {
         
         blogViewModel.clearKeywords()
         tableView.reloadData()
-
-        // TODO: 나중에 지우기
-        blogViewModel.load()
     }
 
     override func viewDidLayoutSubviews() {

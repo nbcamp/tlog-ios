@@ -28,6 +28,7 @@ final class BlogEditViewController: UIViewController {
     // TODO: 완료 버튼 탭하면 해당 블로그 대표블로그로 설정 로직 추가하기
     @objc private func toMainButtonTapped() {
         mainBlogButton.variant = .primary
+        navigationItem.rightBarButtonItem?.isEnabled = true
     }
 
     // TODO: 유효성 검증 로직 작성하기
@@ -138,6 +139,9 @@ final class BlogEditViewController: UIViewController {
         blogViewModel.update(blog, .init(name: blogNameTextField.mainText, keywords: blogViewModel.keywords), onSuccess: { [weak self] updatedBlog in
             guard let self else { return }
             print("블로그가 성공적으로 수정되었습니다.")
+            if mainBlogButton.variant == .primary {
+                blogViewModel.setMainBlog(id)
+            }
             navigationController?.popViewController(animated: true)
         }, onError: { error in
             print("블로그 수정 중 오류 발생: \(error)")

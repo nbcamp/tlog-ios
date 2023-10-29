@@ -55,6 +55,17 @@ final class BlogViewModel {
             onError?(error)
         }
     }
+    
+    // TODO: 결과 받아와서 blogs에 적용하기
+    func setMainBlog(_ id: Int, onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
+        APIService.shared.request(.setMainBlog(id)) { [weak self] _ in
+            guard let self else { return }
+            
+            onSuccess?()
+        } onError: { error in
+            onError?(error)
+        }
+    }
 
     func getBlog(blogId: Int) -> Blog {
         return blogs.first { $0.id == blogId }!

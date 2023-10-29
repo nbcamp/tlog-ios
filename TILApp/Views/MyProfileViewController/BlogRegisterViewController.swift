@@ -1,6 +1,5 @@
 import UIKit
 
-// TODO: 블로그 최초 등록 시 대표블로그로 설정하기
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
     private let blogViewModel = BlogViewModel.shared
 
