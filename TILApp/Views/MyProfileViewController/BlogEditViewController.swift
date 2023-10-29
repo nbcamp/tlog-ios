@@ -35,6 +35,7 @@ final class BlogEditViewController: UIViewController {
         $0.titleText = "블로그 이름"
         $0.mainText = blog.name
         $0.placeholder = "블로그 이름을 입력해주세요"
+        $0.isValid = true
         $0.delegate = self
         contentView.addSubview($0)
     }
@@ -126,7 +127,11 @@ final class BlogEditViewController: UIViewController {
         super.viewWillAppear(animated)
 
         view.setNeedsLayout()
-        updateDoneButtonState()
+        
+        let blogKeywords = blog.keywords.map{ KeywordInput.init(from: $0) }
+        if blogKeywords != blogViewModel.keywords {
+            updateDoneButtonState()
+        }
     }
 
     @objc private func doneButtonTapped() {

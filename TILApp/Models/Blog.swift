@@ -28,7 +28,7 @@ struct UpdateBlogInput: Codable {
     let keywords: [KeywordInput]?
 }
 
-struct KeywordInput: Codable {
+struct KeywordInput: Codable, Equatable {
     var keyword: String
     var tags: [String]
 
@@ -40,5 +40,9 @@ struct KeywordInput: Codable {
     init(from keyword: Keyword) {
         self.keyword = keyword.keyword
         self.tags = keyword.tags
+    }
+    
+    static func == (lhs: KeywordInput, rhs: KeywordInput) -> Bool {
+        return lhs.keyword == rhs.keyword && lhs.tags == rhs.tags
     }
 }
