@@ -60,6 +60,10 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
     
     // TODO: 프린트문 삭제
     @objc private func doneButtonTapped() {
+//        var convertedKeywords: [Keyword] = []
+//        for keyword in blogViewModel.keywords {
+//            convertedKeywords.append(Keyword(keyword: keyword.keyword, tags: keyword.tags))
+//        }
         blogViewModel.create(.init(
             name: blogNameTextField.mainText,
             url: blogURLTextField.mainText,

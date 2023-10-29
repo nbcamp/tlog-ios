@@ -20,7 +20,7 @@ class CustomLargeButton: UIButton {
         backgroundColor = UIColor(named: "AccentColor")
         layer.cornerRadius = 12
         setTitleColor(UIColor(white: 1.0, alpha: 1.0), for: .normal)
-        titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
     }
 
     override func layoutSubviews() {

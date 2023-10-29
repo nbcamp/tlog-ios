@@ -29,7 +29,7 @@ final class HomeViewController: UIViewController {
     }
 
     private let hiLabel = UILabel().then {
-        $0.text = "ooo님, 안녕하세요!"
+        $0.text = "\(String(describing: AuthViewModel.shared.user?.username))님, 안녕하세요!"
         $0.textAlignment = .center
         $0.font = UIFont.boldSystemFont(ofSize: 24)
         $0.sizeToFit()
@@ -55,8 +55,8 @@ final class HomeViewController: UIViewController {
         $0.setTitleColor(.white, for: .normal)
         $0.setTitle("블로그 등록하기", for: .normal)
         $0.sizeToFit()
-        $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         $0.layer.cornerRadius = 8
+        $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         $0.setBackgroundImage(UIImage(named: "pressedButtonImage"), for: .highlighted)
     }
 
