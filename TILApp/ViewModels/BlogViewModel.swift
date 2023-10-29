@@ -53,11 +53,23 @@ final class BlogViewModel {
         }
     }
 
+    func getBlog(blogId: Int) -> Blog {
+        return blogs.first { $0.id == blogId }!
+    }
+    
+    func deleteBlog(blogId: Int) {
+        blogs.removeAll(where: { $0.id == blogId })
+    }
+    
     // TODO: 다 정리되면 위쪽으로 옮기기
     private(set) var keywords: [KeywordInput] = []
 
     func clearKeywords() {
         keywords = []
+    }
+    
+    func initKeywords(blogId: Int) {
+        keywords = (getBlog(blogId: blogId).keywords.map{ KeywordInput.init(from: $0) })
     }
 
     func addKeyword(_ keyword: KeywordInput) {

@@ -1,38 +1,15 @@
-//
-//  BlogEditViewController.swift
-//  TILApp
-//
-//  Created by 이재희 on 10/19/23.
-//
-
-import Then
 import UIKit
 
 final class BlogEditViewController: UIViewController {
-    var keywords: [(name: String, tags: [String])] = [
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-        ("[Swift]", ["TIL", "iOS", "Swift"]),
-        ("[iOS]", ["TIL", "iOS", "Swift"]),
-    ]
+    var id: Int = 0 {
+        didSet {
+            blog = blogViewModel.getBlog(blogId: id)
+            blogViewModel.initKeywords(blogId: id)
+        }
+    }
 
-    var isPrimary: Bool?
-    var blogName: String?
-    var blogURL: String?
+    private lazy var blog: Blog = blogViewModel.getBlog(blogId: id)
+    private let blogViewModel = BlogViewModel.shared
 
     private let contentScrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
@@ -42,24 +19,21 @@ final class BlogEditViewController: UIViewController {
     private lazy var rootFlexContainer = UIView()
 
     private lazy var mainBlogButton = CustomLargeBorderButton().then {
-        guard let isPrimary = isPrimary else { return }
-        $0.variant = isPrimary ? .primary : .normal
+        $0.variant = blog.main ? .primary : .normal
         contentView.addSubview($0)
         $0.pin.size($0.componentSize)
-        $0.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(toMainButtonTapped), for: .touchUpInside)
     }
 
     // TODO: 완료 버튼 탭하면 해당 블로그 대표블로그로 설정 로직 추가하기
-    @objc private func buttonTapped() {
+    @objc private func toMainButtonTapped() {
         mainBlogButton.variant = .primary
     }
 
     // TODO: 유효성 검증 로직 작성하기
     private lazy var blogNameTextField = CustomTextFieldViewWithValidation().then {
         $0.titleText = "블로그 이름"
-        if let blogName = blogName {
-            $0.mainText = blogName
-        }
+        $0.mainText = blog.name
         $0.placeholder = "블로그 이름을 입력해주세요"
         $0.validationText = "유효한 값입니다"
         contentView.addSubview($0)
@@ -67,9 +41,7 @@ final class BlogEditViewController: UIViewController {
 
     private lazy var blogURLTextField = CustomTextFieldViewWithValidation().then {
         $0.titleText = "블로그 주소"
-        if let blogURL = blogURL {
-            $0.mainText = blogURL
-        }
+        $0.mainText = blog.url
         $0.readOnly = true
         contentView.addSubview($0)
     }
@@ -77,9 +49,7 @@ final class BlogEditViewController: UIViewController {
     private lazy var blogRSSTextField = CustomTextFieldViewWithValidation().then {
         $0.titleText = "블로그 RSS 주소"
         // TODO: RSS 주소로 수정하기
-        if let blogURL = blogURL {
-            $0.mainText = blogURL
-        }
+        $0.mainText = blog.rss
         $0.readOnly = true
         contentView.addSubview($0)
     }
@@ -99,6 +69,36 @@ final class BlogEditViewController: UIViewController {
 
         contentView.addSubview($0)
         $0.pin.size($0.componentSize)
+        $0.addTarget(self, action: #selector(deleteBlogButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func deleteBlogButtonTapped() {
+        let alertController = UIAlertController(
+            title: "블로그 삭제",
+            message: "\n블로그를 삭제하시겠습니까?",
+            preferredStyle: .alert
+        )
+        
+        let cancelAction = UIAlertAction(
+            title: "취소",
+            style: .cancel,
+            handler: nil
+        )
+        alertController.addAction(cancelAction)
+        
+        let deleteAction = UIAlertAction(
+            title: "삭제",
+            style: .destructive,
+            handler: { [weak self] _ in
+                guard let self else { return }
+                blogViewModel.deleteBlog(blogId: id)
+                blogViewModel.delete(blog)
+                navigationController?.popViewController(animated: true)
+            }
+        )
+        alertController.addAction(deleteAction)
+        
+        present(alertController, animated: true, completion: nil)
     }
 
     private lazy var tagHeader = CustomTagHeaderView().then {
@@ -120,6 +120,12 @@ final class BlogEditViewController: UIViewController {
         contentScrollView.addSubview(contentView)
         contentView.addSubview(rootFlexContainer)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        view.setNeedsLayout()
+    }
 
     @objc private func doneButtonTapped() {}
 
@@ -129,10 +135,10 @@ final class BlogEditViewController: UIViewController {
         rootFlexContainer.removeAllSubviews()
 
         rootFlexContainer.flex.define {
-            for (index, tag) in keywords.enumerated() {
+            for (index, keyword) in blogViewModel.keywords.enumerated() {
                 let customTagView = CustomTagView()
-                customTagView.labelText = tag.name
-                customTagView.tags = tag.tags
+                customTagView.labelText = keyword.keyword
+                customTagView.tags = keyword.tags
                 $0.addItem(customTagView).marginTop(10)
                 customTagView.pin.size(customTagView.componentSize)
 
@@ -166,16 +172,17 @@ final class BlogEditViewController: UIViewController {
     }
 
     @objc private func addTagButtonTapped() {
-        navigationController?.pushViewController(EditTagViewController(), animated: false)
+        navigationController?.pushViewController(EditTagViewController(), animated: true)
     }
 
     @objc private func customTagViewTapped(_ sender: ContextTapGestureRecognizer) {
         if let index = sender.context["index"] as? Int {
-            let editTagViewController = EditTagViewController()
-            // editTagViewController.selectedIndex = index
-            // editTagViewController.content = tagData[index]
+            let editTagVC = EditTagViewController().then {
+                $0.selectedIndex = index
+                $0.variant = .update
+            }
 
-            navigationController?.pushViewController(editTagViewController, animated: true)
+            navigationController?.pushViewController(editTagVC, animated: true)
         }
     }
 
@@ -183,10 +190,10 @@ final class BlogEditViewController: UIViewController {
         if let customTagView = sender.superview as? CustomTagView,
            let index = rootFlexContainer.subviews.firstIndex(of: customTagView)
         {
-            let tag = keywords[index]
+            let tag = blogViewModel.keywords[index]
             let alertController = UIAlertController(
                 title: "태그 삭제",
-                message: "\n\(tag.name)\n\(tag.tags.joined(separator: ", "))\n\n태그를 삭제하시겠습니까?",
+                message: "\n\(tag.keyword)\n\(tag.tags.joined(separator: ", "))\n\n태그를 삭제하시겠습니까?",
                 preferredStyle: .alert
             )
 
@@ -200,7 +207,7 @@ final class BlogEditViewController: UIViewController {
                 title: "삭제",
                 style: .destructive,
                 handler: { _ in
-                    self.keywords.remove(at: index)
+                    self.blogViewModel.removeKeyword(index: index)
                     self.view.setNeedsLayout()
                 }
             )

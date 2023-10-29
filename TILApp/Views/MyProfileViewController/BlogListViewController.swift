@@ -14,11 +14,7 @@ final class BlogListViewController: UIViewController {
         $0.register(BlogListTableViewCell.self, forCellReuseIdentifier: "CustomBlogCell")
     }
 
-    let blogData: [(name: String, url: String)] = [
-        ("Blog 1", "http://blog1.com"),
-        ("Blog 2", "http://blog2.com"),
-        ("Blog 3", "http://blog3.com"),
-    ]
+    private let blogViewModel = BlogViewModel.shared
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +32,12 @@ final class BlogListViewController: UIViewController {
 
         navigationController?.isNavigationBarHidden = false
         tabBarController?.tabBar.isHidden = true
+        
+        blogViewModel.clearKeywords()
+        tableView.reloadData()
+
+        // TODO: 나중에 지우기
+        blogViewModel.load()
     }
 
     override func viewDidLayoutSubviews() {
@@ -51,7 +53,7 @@ final class BlogListViewController: UIViewController {
 
 extension BlogListViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return blogData.count
+        return blogViewModel.blogs.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -59,13 +61,13 @@ extension BlogListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        let (name, url) = blogData[indexPath.row]
-        cell.customBlogView.blogNameText = name
-        cell.customBlogView.blogURLText = url
-
-        // 대표블로그 가장 위로 정렬해야 함 -> 대표블로그인 경우에만 primary 타입 보내주기
-        if indexPath.row == 0 {
+        let blog = blogViewModel.blogs[indexPath.row]
+        cell.customBlogView.blogNameText = blog.name
+        cell.customBlogView.blogURLText = blog.url
+        if blog.main {
             cell.customBlogView.variant = .primary
+        } else {
+            cell.customBlogView.variant = .normal
         }
 
         return cell
@@ -80,13 +82,10 @@ extension BlogListViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedRow = indexPath.row
 
-        let (name, url) = blogData[selectedRow]
+        let blog = blogViewModel.blogs[selectedRow]
 
         let blogEditViewController = BlogEditViewController()
-
-        blogEditViewController.isPrimary = selectedRow == 0
-        blogEditViewController.blogName = name
-        blogEditViewController.blogURL = url
+        blogEditViewController.id = blog.id
 
         navigationController?.pushViewController(blogEditViewController, animated: true)
     }

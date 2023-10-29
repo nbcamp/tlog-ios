@@ -73,6 +73,8 @@ final class HomeViewController: UIViewController {
         super.viewWillAppear(animated)
 
         navigationController?.isNavigationBarHidden = true
+        guard let username = AuthViewModel.shared.user?.username else { return }
+        hiLabel.text = "\(username)님, 안녕하세요!"
     }
 
     private func configureUI() {
