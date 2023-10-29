@@ -1,7 +1,11 @@
 import UIKit
 
 final class MyProfileViewController: UIViewController {
+    private let authViewModel = AuthViewModel.shared
+    private let userViewModel = UserViewModel.shared
+    private let postViewModel = PostViewModel.shared
     private let accentColor = UIColor(named: "AccentColor")
+
     private lazy var screenView = UIView().then {
         view.addSubview($0)
     }
@@ -17,7 +21,11 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var nicknameLabel = UILabel().then {
         $0.font = UIFont.boldSystemFont(ofSize: 20)
-        $0.text = "nickname"
+        if let username = authViewModel.user?.username {
+            $0.text = username
+        } else {
+            $0.text = "nickname"
+        }
         $0.sizeToFit()
     }
 
@@ -33,7 +41,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("39\npost", for: .normal)
+        $0.setTitle("0\nposts", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -45,7 +53,7 @@ final class MyProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("107\nfollowers", for: .normal)
+        $0.setTitle("0\nfollowers", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
     }
@@ -53,7 +61,7 @@ final class MyProfileViewController: UIViewController {
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("64\nfollowing", for: .normal)
+        $0.setTitle("0\nfollowing", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
@@ -80,10 +88,33 @@ final class MyProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        print("\(authViewModel.user?.username)")
+        print("\(userViewModel.followings.count)")
+        print("\(userViewModel.followers.count)")
+
+        updateProfileUI()
+    }
+
+    private func updateProfileUI() {
+        if let username = authViewModel.user?.username {
+            nicknameLabel.text = username
+        } else {
+            nicknameLabel.text = "nickname"
+        }
+  
+        let followersText = "\(userViewModel.followers.count)\nfollowers"
+        followersButton.setTitle(followersText, for: .normal)
+
+        let followingsText = "\(userViewModel.followings.count)\nfollowings"
+        followingButton.setTitle(followersText, for: .normal)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        navigationController?.setNavigationBarHidden(true, animated: false)
     }
 
     override func viewDidLayoutSubviews() {
@@ -118,7 +149,6 @@ final class MyProfileViewController: UIViewController {
     }
 
     @objc private func moreButtonTapped() {
-        // TODO: 더보기 페이지(사이드바, 바텀시트) 뷰 전환
         let vc = SeeMoreBottomSheetViewController()
         vc.modalPresentationStyle = .custom
         vc.transitioningDelegate = self
@@ -127,15 +157,16 @@ final class MyProfileViewController: UIViewController {
     }
 
     @objc private func followersButtonTapped() {
-        // TODO: 팔로워 / 팔로윙 관리 페이지 뷰 전환 구현
+        let vc = FollowListViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc private func followingButtonTapped() {
-        // TODO: 팔로워 / 팔로윙 관리 페이지 뷰 전환 구현
+        let vc = FollowListViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc private func editBlogButtonTapped() {
-        // TODO: 블로그 수정 뷰 전환
         let blogListViewController = BlogListViewController()
         blogListViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(blogListViewController, animated: true)
@@ -166,10 +197,16 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
         if title == "회원 정보 수정" {
             let profileEditViewController = ProfileEditViewController()
             navigationController?.pushViewController(profileEditViewController, animated: true)
+            navigationController?.hidesBottomBarWhenPushed = true
+
             dismiss(animated: true, completion: nil)
+            navigationController?.hidesBottomBarWhenPushed = true
+
         } else if title == "로그아웃" {
+            authViewModel.signOut()
             let signInViewController = SignInViewController()
             navigationController?.pushViewController(signInViewController, animated: true)
+            navigationController?.hidesBottomBarWhenPushed = true
             dismiss(animated: true, completion: nil)
         } else if title == "자주 묻는 질문" {
             print("자주 묻는 질문")

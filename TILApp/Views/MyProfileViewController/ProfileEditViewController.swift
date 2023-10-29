@@ -1,6 +1,8 @@
 import UIKit
 
 final class ProfileEditViewController: UIViewController {
+    private let userViewModel = UserViewModel.shared
+    private let authViewModel = AuthViewModel.shared
     private lazy var componentView = UIView().then {
         view.addSubview($0)
     }
@@ -20,25 +22,34 @@ final class ProfileEditViewController: UIViewController {
         $0.backgroundColor = .white
     }
 
+    private lazy var memberWithdrawalButton = UIButton().then {
+        $0.setTitle("회원 탈퇴", for: .normal)
+        $0.setTitleColor(.systemRed, for: .normal)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        $0.sizeToFit()
+        view.addSubview($0)
+        $0.addTarget(self, action: #selector(memberWithdrawalTapped), for: .touchUpInside)
+    }
+
     private lazy var nicknameTextFieldView = CustomTextFieldViewWithValidation().then {
         $0.titleText = "유저 닉네임"
         $0.placeholder = "닉네임을 입력하세요"
         $0.validationText = ""
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.hidesBottomBarWhenPushed = true
 
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))
 
-//        let navigationBar = UINavigationBar(frame: CGRect(x: 0, y: 50, width: view.frame.size.width, height: 44))
-//        navigationBar.barTintColor = .systemBackground
-//        let navigationItem = UINavigationItem(title: "프로필 수정")
-//        let doneButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))
-//        navigationItem.rightBarButtonItem = doneButton
-//        navigationBar.setItems([navigationItem], animated: false)
-//        view.addSubview(navigationBar)
-
+        authViewModel.profile()
+        navigationItem.title = "프로필 수정"
+        let doneBarButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))
+        navigationItem.rightBarButtonItem = doneBarButton
         editProfileImageView.isUserInteractionEnabled = true
         editProfileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped(_:))))
     }
@@ -59,20 +70,58 @@ final class ProfileEditViewController: UIViewController {
         }
         componentView.pin.top(view.pin.safeArea).bottom(50%).left(view.pin.safeArea).right(view.pin.safeArea)
         componentView.flex.layout()
+        memberWithdrawalButton.pin.bottom(view.pin.safeArea).hCenter()
     }
 
     @objc private func editProfileButtonTapped() {
-        // TODO: 버튼 액션 (프로필사진 선택 로직)
+//        let imagePicker = UIImagePickerController()
+//        imagePicker.delegate = self
+//        imagePicker.allowsEditing = true
+//        present(imagePicker, animated: true, completion: nil)
     }
 
     @objc private func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
-        // TODO: 이미지뷰 액션 (프로필사진 선택 로직)
+//        let imagePicker = UIImagePickerController()
+//        imagePicker.delegate = self
+//        imagePicker.allowsEditing = true
+//        present(imagePicker, animated: true, completion: nil)
+    }
+
+    @objc private func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
     }
 
     @objc private func completeButtonTapped() {
-        // TODO: 이미지,닉네임 저장 로직
-        navigationController?.popViewController(animated: true)
+        let newNickname = nicknameTextFieldView.mainText
+        let updateInput = UpdateUserInput(username: newNickname, avatarUrl: nil)
 
+        authViewModel.update(updateInput, onSuccess: { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }, onError: { [weak self] _ in
+            let alert = UIAlertController(title: "업데이트 실패", message: "다시 시도 해주세요.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            self?.present(alert, animated: true, completion: nil)
+        })
+    }
+
+    @objc private func memberWithdrawalTapped() {
+        let alertController = UIAlertController(title: "회원 탈퇴", message: "정말로 회원 탈퇴를 하시겠습니까?", preferredStyle: .alert)
+
+        let confirmAction = UIAlertAction(title: "확인", style: .destructive) { [weak self] _ in
+            self?.authViewModel.withdraw()
+            let alert = UIAlertController(title: "회원 탈퇴 성공", message: "\n다음에 또 이용해 주십시오.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            let vc = SignInViewController()
+            self?.navigationController?.pushViewController(vc, animated: true)
+            self?.navigationController?.hidesBottomBarWhenPushed = true
+            self?.present(alert, animated: true, completion: nil)
+        }
+        alertController.addAction(confirmAction)
+
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+
+        present(alertController, animated: true, completion: nil)
     }
 
     private func validateNickname() {
@@ -87,3 +136,18 @@ final class ProfileEditViewController: UIViewController {
 //        }
     }
 }
+
+// TODO: 이미구현후 주석 풀기
+// extension ProfileEditViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+//        if let editedImage = info[.editedImage] as? UIImage {
+//            editProfileImageView.image = editedImage
+//            print("선택한 이미지: \(editedImage)")
+//        }
+//        picker.dismiss(animated: true, completion: nil)
+//    }
+//
+//    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+//        picker.dismiss(animated: true, completion: nil)
+//    }
+// }
