@@ -61,6 +61,10 @@ final class BlogViewModel {
         blogs.removeAll(where: { $0.id == blogId })
     }
     
+    func hasBlogName(_ blogNameToCheck: String) -> Bool {
+        return blogs.contains { $0.name == blogNameToCheck }
+    }
+    
     // TODO: 다 정리되면 위쪽으로 옮기기
     private(set) var keywords: [KeywordInput] = []
 

@@ -60,10 +60,6 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
     
     // TODO: 프린트문 삭제
     @objc private func doneButtonTapped() {
-//        var convertedKeywords: [Keyword] = []
-//        for keyword in blogViewModel.keywords {
-//            convertedKeywords.append(Keyword(keyword: keyword.keyword, tags: keyword.tags))
-//        }
         blogViewModel.create(.init(
             name: blogNameTextField.mainText,
             url: blogURLTextField.mainText,
@@ -71,10 +67,6 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
             keywords: blogViewModel.keywords), onSuccess: { [weak self] createdBlogs in
                 guard let self = self else { return }
                 print("블로그가 성공적으로 생성되었습니다.")
-                for blog in createdBlogs {
-                    print("생성된 블로그 이름: \(blog.name)")
-                }
-                // TODO: 뷰모델에 블로그 저장하기
                 navigationController?.popViewController(animated: true)
             }, onError: { error in
                 print("블로그 생성 중 오류 발생: \(error)")
