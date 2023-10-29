@@ -2,6 +2,9 @@ struct AuthUser: Codable {
     let id: Int
     let username: String
     let avatarUrl: String?
+    let posts: Int
+    let followers: Int
+    let followings: Int
 }
 
 struct SignInInput: Codable {

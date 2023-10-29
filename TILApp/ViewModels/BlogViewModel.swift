@@ -4,7 +4,10 @@ final class BlogViewModel {
 
     private(set) var blogs: [Blog] = []
 
-    func load(onSuccess: (([Blog]) -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
+    func load(
+        onSuccess: ((_ blogs: [Blog]) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil
+    ) {
         APIService.shared.request(.getMyBlogs, model: [Blog].self) { [weak self] model in
             guard let self else { return }
             blogs = model
@@ -27,7 +30,7 @@ final class BlogViewModel {
     func update(
         _ blog: Blog,
         _ input: UpdateBlogInput,
-        onSuccess: (([Blog]) -> Void)? = nil,
+        onSuccess: ((Blog) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
         APIService.shared.request(.updateBlog(blog.id, input), model: Blog.self) { [weak self] model in
@@ -35,19 +38,19 @@ final class BlogViewModel {
             if let index = (blogs.firstIndex { $0.id == blog.id }) {
                 blogs[index] = model
             }
-            onSuccess?(blogs)
+            onSuccess?(model)
         } onError: { error in
             onError?(error)
         }
     }
 
-    func delete(_ blog: Blog, onSuccess: (([Blog]) -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
+    func delete(_ blog: Blog, onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
         APIService.shared.request(.deleteBlog(blog.id)) { [weak self] _ in
             guard let self else { return }
             if let index = (blogs.firstIndex { $0.id == blog.id }) {
                 blogs.remove(at: index)
             }
-            onSuccess?(blogs)
+            onSuccess?()
         } onError: { error in
             onError?(error)
         }

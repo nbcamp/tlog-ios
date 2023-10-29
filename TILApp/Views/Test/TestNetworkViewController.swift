@@ -34,7 +34,7 @@ final class TestNetworkViewController: UIViewController {
         button.backgroundColor = .systemTeal
         button.layer.cornerRadius = 8
         button.contentEdgeInsets = .init(top: 6, left: 10, bottom: 6, right: 10)
-        button.addTarget(self, action: #selector(requestButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(requestViewModel), for: .touchUpInside)
     }
 
     private lazy var statusLabel = UILabel().then { label in
@@ -48,8 +48,6 @@ final class TestNetworkViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-        
-        print(Date().unixtime)
 
 //        moya1()
 //        moya2()
@@ -125,6 +123,14 @@ final class TestNetworkViewController: UIViewController {
             _ = error
             print(error)
         }
+    }
+
+    @objc private func requestViewModel() {
+//        PostViewModel.shared.withPosts(byUserId: 2) { posts in
+//            print(posts)
+//        } onError: { error in
+//            print(error)
+//        }
     }
 
     // MARK: - Using Custom APIService with Moya
@@ -230,7 +236,7 @@ final class TestNetworkViewController: UIViewController {
             username: nil,
             avatarUrl: nil,
             provider: "APPLE",
-            providerId: "1234"
+            providerId: "1234567"
         )) { user in
             print(user)
         } onError: { error in
