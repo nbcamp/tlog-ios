@@ -5,12 +5,13 @@ final class PostViewModel {
     private init() {}
 
     func withPosts(
-        by userId: Int,
+        byUserId userId: Int? = nil,
+        byQuery query: String? = nil,
         onSuccess: ((_ posts: [Post]) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
         APIService.shared.request(
-            .getPosts(.init(userId: userId, query: nil)),
+            .getPosts(.init(userId: userId, query: query)),
             model: [Post].self,
             onSuccess: onSuccess,
             onError: onError
