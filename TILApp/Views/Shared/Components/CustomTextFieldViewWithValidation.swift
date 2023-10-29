@@ -40,7 +40,7 @@ class CustomTextFieldViewWithValidation: UIView {
 
     var textFieldTag: Int = 0 {
         didSet {
-            customTextFieldView.tag = textFieldTag
+            customTextFieldView.textFieldTag = textFieldTag
         }
     }
 
