@@ -1,9 +1,9 @@
 import UIKit
 
 final class HomeViewController: UIViewController {
-    private var TILPost = [1, 2, 3, 4]
+    private var TILPost = [1]
     // TODO: 모델 추가후 변경하기
-    private var userDidRegisterBlog: Bool = false // 로그인상태
+    private var userDidRegisterBlog: Bool = true // 로그인상태
     private var todayTILComplete: Bool = false // TIL 작성 상태
     private let countTILLabel = UILabel().then {
         $0.textAlignment = .center
@@ -67,6 +67,49 @@ final class HomeViewController: UIViewController {
         configureUI()
         updateCountTILLabel()
         updateGrowthImage()
+        PostViewModel.shared.withPosts(
+            onSuccess: { [weak self] posts in
+
+                self?.updateUI(with: posts)
+                
+            }, onError: { [weak self] _ in
+                let alert = UIAlertController(title: "데이터 불러오기 실패", message: "데이터를 불러오는 중에 오류가 발생했습니다. 나중에 다시 시도하세요.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                self?.present(alert, animated: true, completion: nil)
+            })
+
+    }
+
+    private func updateUI(with posts: [Post]) {
+        let postTitles = posts.map { $0.title }
+        let titleCount = postTitles.count
+
+        let currentDate = Date()
+        let todayTILComplete = posts.contains { post in
+            let calendar = Calendar.current
+            return calendar.isDate(post.publishedAt, inSameDayAs: currentDate)
+        }
+        
+        if todayTILComplete {
+            isCompleteImageView.image = UIImage(systemName: "checkmark.square.fill")
+        } else {
+            isCompleteImageView.image = UIImage(systemName: "x.square")
+        }
+
+        if postTitles.isEmpty {
+            userDidRegisterBlog = false
+        } else {
+            userDidRegisterBlog = true
+        }
+
+        countTILLabel.text = "대단해요!! TIL \(titleCount)개 작성"
+
+        if titleCount >= 1 && titleCount <= 50 {
+            let imageName = "\(titleCount / 5 + 1)"
+            if let image = UIImage(named: imageName) {
+                growthImage.image = image
+            }
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -95,11 +138,7 @@ final class HomeViewController: UIViewController {
         growthImage.pin.top(30%).bottom(20%).left(7.5%).right(7.5%)
         isCompleteImageView.pin.top(20.5%).right(23%).after(of: completedTILLabel).height(30)
 
-        if todayTILComplete {
-            isCompleteImageView.image = UIImage(systemName: "checkmark.square.fill")
-        } else {
-            isCompleteImageView.image = UIImage(systemName: "x.square")
-        }
+
     }
 
     private func setUpUIForUnregisteredUser() {

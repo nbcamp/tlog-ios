@@ -59,6 +59,10 @@ final class ProfileEditViewController: UIViewController {
         setUpUI()
     }
 
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+         view.endEditing(true)
+     }
+    
     private func setUpUI() {
         componentView.flex.direction(.column).marginTop(40).define { flex in
             flex.addItem().direction(.row).justifyContent(.center).define { flex in
