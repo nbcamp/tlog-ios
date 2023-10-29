@@ -20,7 +20,7 @@ struct CreateBlogInput: Codable {
     let name: String
     let url: String
     let rss: String
-    let keywords: [Keyword]
+    let keywords: [KeywordInput]
 }
 
 struct UpdateBlogInput: Codable {
@@ -29,7 +29,7 @@ struct UpdateBlogInput: Codable {
     let keywords: [Keyword]?
 }
 
-struct KeywordInput {
+struct KeywordInput: Codable {
     var keyword: String
     var tags: [String]
 

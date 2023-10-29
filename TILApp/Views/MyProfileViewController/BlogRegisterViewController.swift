@@ -1,5 +1,6 @@
 import UIKit
 
+// TODO: 블로그 최초 등록 시 대표블로그로 설정하기
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
     private let blogViewModel = BlogViewModel.shared
 
@@ -12,19 +13,22 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
     // TODO: 유효성 검증 로직 작성하기
     private lazy var blogNameTextField = CustomTextFieldViewWithValidation().then {
         $0.titleText = "블로그 이름"
-        $0.placeholder = "블로그 이름을 입력해주세요"
+        $0.placeholder = "블로그 이름을 입력해 주세요"
+        $0.textFieldTag = 0
         contentView.addSubview($0)
     }
 
     private lazy var blogURLTextField = CustomTextFieldViewWithValidation().then {
         $0.titleText = "블로그 주소"
-        $0.placeholder = "블로그 주소를 입력해주세요"
+        $0.placeholder = "블로그 주소를 입력해 주세요"
+        $0.textFieldTag = 1
         contentView.addSubview($0)
     }
 
     private lazy var blogRSSTextField = CustomTextFieldViewWithValidation().then {
         $0.titleText = "블로그 RSS 주소"
-        $0.placeholder = "블로그 RSS 주소를 입력해주세요"
+        $0.placeholder = "블로그 RSS 주소를 입력해 주세요"
+        $0.textFieldTag = 2
         contentView.addSubview($0)
     }
 
@@ -53,9 +57,24 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         contentScrollView.addSubview(contentView)
         contentView.addSubview(rootFlexContainer)
     }
-
+    
+    // TODO: 프린트문 삭제
     @objc private func doneButtonTapped() {
-        // TODO: 저장하고 나서 clear하기
+        blogViewModel.create(.init(
+            name: blogNameTextField.mainText,
+            url: blogURLTextField.mainText,
+            rss: blogRSSTextField.mainText,
+            keywords: blogViewModel.keywords), onSuccess: { [weak self] createdBlogs in
+                guard let self = self else { return }
+                print("블로그가 성공적으로 생성되었습니다.")
+                for blog in createdBlogs {
+                    print("생성된 블로그 이름: \(blog.name)")
+                }
+                // TODO: 뷰모델에 블로그 저장하기
+                navigationController?.popViewController(animated: true)
+            }, onError: { error in
+                print("블로그 생성 중 오류 발생: \(error)")
+            })
         blogViewModel.clearKeywords()
     }
 
