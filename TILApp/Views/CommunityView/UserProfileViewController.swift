@@ -2,6 +2,20 @@
 import UIKit
 
 final class UserProfileViewController: UIViewController {
+    struct TILList {
+        let title: String
+        let content: String
+        let date: String
+    }
+
+    let userTILList: [TILList] = [
+        .init(title: "작성글1", content: "오늘 오전엔 CustomComponent를 사용하는법을 익혔습니다.", date: "2023-10-25"),
+        .init(title: "작성글2", content: "오늘 오후엔 UIPresentationController를 학습했습니다.", date: "2023-10-25"),
+    ]
+    let userLikeTILList: [TILList] = [
+        .init(title: "좋아요누른 글1", content: "오늘은 좋아요를 눌러보겠습니다.", date: "2023-10-25"),
+        .init(title: "좋아요누른 글2", content: "금일 TLog를 사용하면서 TIL에대한 것을 알고 한번 사용해보도록 하려고 합니다.", date: "2023-10-25"),
+    ]
 
     private lazy var screenView = UIView().then {
         view.addSubview($0)
@@ -40,7 +54,7 @@ final class UserProfileViewController: UIViewController {
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("39\nposts", for: .normal)
+        $0.setTitle("00\nposts", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -52,14 +66,14 @@ final class UserProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("107\nfollowers", for: .normal)
+        $0.setTitle("00\nfollowers", for: .normal)
         $0.setTitleColor(.black, for: .normal)
     }
 
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("64\nfollowing", for: .normal)
+        $0.setTitle("00\nfollowing", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
@@ -73,7 +87,7 @@ final class UserProfileViewController: UIViewController {
     private lazy var userBlogURL = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-        $0.titleLabel?.textAlignment = .center
+        $0.titleLabel?.textAlignment = .left
         $0.setTitle("유저의 블로그 URL링크", for: .normal)
         $0.setTitleColor(.systemGray, for: .normal)
     }
@@ -90,10 +104,55 @@ final class UserProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+//        let yourUserId = 451
+//        UserViewModel.shared.find(by: yourUserId, onSuccess: { [weak self] user in
+//            self?.nicknameLabel.text = user.username
+//            self?.postButton.setTitle("\(user.posts)\nposts", for: .normal)
+//            self?.followersButton.setTitle("\(user.followers)\nfollowers", for: .normal)
+//            self?.followingButton.setTitle("\(user.followings)\nfollowings", for: .normal)
+//
+//        }, onError: { [weak self] error in
+//            print("사용자 정보를 가져오는 중 에러 발생: \(error.localizedDescription)")
+//        })
+//
+//        APIService.shared.request(.getMainBlog, model: Blog.self) { [weak self] blog in
+//            self?.userBlogURL.setTitle(blog.url, for: .normal)
+//            print("2222\(blog.url)")
+//        } onError: { [weak self] error in
+//            print("\(error)")
+//            print("2222\(blog.url)")
+//
+//            self?.userBlogURL.setTitle("메인블로그를 설정하지 않았습니다.", for: .normal)
+//        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         navigationController?.isNavigationBarHidden = false
+
+        let yourUserId = 451
+        UserViewModel.shared.find(by: yourUserId, onSuccess: { [weak self] user in
+            self?.nicknameLabel.text = user.username
+            self?.postButton.setTitle("\(user.posts)\nposts", for: .normal)
+            self?.followersButton.setTitle("\(user.followers)\nfollowers", for: .normal)
+            self?.followingButton.setTitle("\(user.followings)\nfollowings", for: .normal)
+
+        }, onError: { [weak self] error in
+            print("사용자 정보를 가져오는 중 에러 발생: \(error.localizedDescription)")
+        })
+
+        APIService.shared.request(.getMainBlog, model: [Blog].self) { [weak self] _ in
+//            self?.userBlogURL.setTitle(blog.url, for: .normal)
+//            print("\(blog)")
+        } onError: { [weak self] error in
+            print("\(error)")
+
+            self?.userBlogURL.setTitle("메인블로그를 설정하지 않았습니다.", for: .normal)
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -116,9 +175,9 @@ final class UserProfileViewController: UIViewController {
                     }
             }
         }
-        followButtonView.flex.addItem().direction(.row).width(200).height(50).marginLeft(20).define { flex in
+        followButtonView.flex.addItem().direction(.row).width(300).height(50).marginLeft(20).define { flex in
             flex.addItem(doingFollowButton).width(100).height(30)
-            flex.addItem(userBlogURL).marginBottom(20).marginLeft(10)
+            flex.addItem(userBlogURL).width(180).marginBottom(20).marginLeft(10)
         }
         screenView.flex.layout()
         countView.flex.layout()
@@ -179,10 +238,12 @@ extension UserProfileViewController: UITableViewDataSource {
 
             let data = userTILList[indexPath.row]
             userPostCell.userTILView.setup(withTitle: data.title, content: data.content, date: data.date)
+            print("\(data)")
             return userPostCell
         case 1:
             let data = userLikeTILList[indexPath.row]
             userLikeCell.userTILView.setup(withTitle: data.title, content: data.content, date: data.date)
+            print("\(data)")
             return userLikeCell
         default: break
         }

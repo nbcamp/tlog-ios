@@ -106,42 +106,24 @@ final class MyProfileViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
-        print("\(authViewModel.user?.username)")
-        print("\(userViewModel.followings.count)")
-        print("\(userViewModel.followers.count)")
-        updateProfileUI()
-    }
+        AuthViewModel.shared.profile(
+            onSuccess: { [weak self] user in
+                self?.nicknameLabel.text = user.username
+                self?.postButton.setTitle("\(user.posts)\nposts", for: .normal)
+                self?.followersButton.setTitle("\(user.followers)\nfollowers", for: .normal)
+                self?.followingButton.setTitle("\(user.followings)\nfollowings", for: .normal)
 
-    private func updateProfileUI() {
-        if let username = authViewModel.user?.username {
-            nicknameLabel.text = username
-        } else {
-            nicknameLabel.text = "nickname"
-        }
-
-//        let postsText = "\(userViewModel.posts.count)\nposts"
-//        postButton.setTitle(postsText, for: .normal)
-//        
-        let followersText = "\(userViewModel.followers.count)\nfollowers"
-        followersButton.setTitle(followersText, for: .normal)
-
-        let followingsText = "\(userViewModel.followings.count)\nfollowings"
-        followingButton.setTitle(followersText, for: .normal)
-
+            },
+            onError: {[weak self] error in
+                print("프로필 정보를 가져오는 중 에러 발생: \(error.localizedDescription)")
+            })
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        PostViewModel.shared.withPosts(
-            onSuccess: { [weak self] posts in
 
-                self?.updateUI(with: posts)
-            }, onError: { [weak self] _ in
-                let alert = UIAlertController(title: "데이터 불러오기 실패", message: "데이터를 불러오는 중에 오류가 발생했습니다. 나중에 다시 시도하세요.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-                self?.present(alert, animated: true, completion: nil)
-            })
+        print("myTILList: \(myTILList)")
     }
 
     private func updateUI(with posts: [Post]) {
@@ -150,7 +132,7 @@ final class MyProfileViewController: UIViewController {
 
         postButton.setTitle("\(titleCount)\nposts", for: .normal)
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setUpUI()
@@ -223,7 +205,7 @@ extension MyProfileViewController: UITableViewDataSource {
         switch myProfileSegmentedControl.selectedSegmentIndex {
         case 0:
             return myTILList.count
-            
+
         case 1:
             return likeTILList.count
         default: break
@@ -238,17 +220,17 @@ extension MyProfileViewController: UITableViewDataSource {
         switch myProfileSegmentedControl.selectedSegmentIndex {
         case 0:
             let data = myTILList[indexPath.row]
-            
-            myPostCell.myTILView.setup(withTitle: data.title, content: data.content, date: data.date)
-            print("셀 데이터 확인 - 제목: \(data.title), 내용: \(data.content), 날짜: \(data.date)")
 
+            myPostCell.myTILView.setup(withTitle: data.title, content: data.content, date: data.date)
+            print("\(data)")
             return myPostCell
         case 1:
             let data = likeTILList[indexPath.row]
             likeCell.myTILView.setup(withTitle: data.title, content: data.content, date: data.date)
-            print("셀 데이터 확인 - 제목: \(data.title), 내용: \(data.content), 날짜: \(data.date)")
+            print("\(data)")
 
             return likeCell
+
         default: break
         }
         return myPostCell
@@ -281,10 +263,6 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
 
         } else if title == "로그아웃" {
             authViewModel.signOut()
-            let signInViewController = SignInViewController()
-            navigationController?.pushViewController(signInViewController, animated: true)
-            navigationController?.hidesBottomBarWhenPushed = true
-            dismiss(animated: true, completion: nil)
         } else if title == "자주 묻는 질문" {
             print("자주 묻는 질문")
         } else if title == "개인 정보 처리 방침" {

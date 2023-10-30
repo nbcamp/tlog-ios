@@ -33,25 +33,34 @@ final class ProfileEditViewController: UIViewController {
 
     private lazy var nicknameTextFieldView = CustomTextFieldViewWithValidation().then {
         $0.titleText = "유저 닉네임"
+        $0.mainText = "123123123123123123"
         $0.placeholder = "닉네임을 입력하세요"
         $0.validationText = ""
     }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
         navigationController?.hidesBottomBarWhenPushed = true
-
     }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
 
-        authViewModel.profile()
         navigationItem.title = "프로필 수정"
         let doneBarButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))
         navigationItem.rightBarButtonItem = doneBarButton
         editProfileImageView.isUserInteractionEnabled = true
         editProfileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped(_:))))
+        AuthViewModel.shared.profile(
+            onSuccess: { [weak self] user in
+                self?.nicknameTextFieldView.mainText = user.username
+
+            },
+            onError: { error in
+                print("프로필 정보를 가져오는 중 에러 발생: \(error.localizedDescription)")
+            })
     }
 
     override func viewDidLayoutSubviews() {
@@ -60,9 +69,9 @@ final class ProfileEditViewController: UIViewController {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-         view.endEditing(true)
-     }
-    
+        view.endEditing(true)
+    }
+
     private func setUpUI() {
         componentView.flex.direction(.column).marginTop(40).define { flex in
             flex.addItem().direction(.row).justifyContent(.center).define { flex in
@@ -115,10 +124,6 @@ final class ProfileEditViewController: UIViewController {
             self?.authViewModel.withdraw()
             let alert = UIAlertController(title: "회원 탈퇴 성공", message: "\n다음에 또 이용해 주십시오.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-            let vc = SignInViewController()
-            self?.navigationController?.pushViewController(vc, animated: true)
-            self?.navigationController?.hidesBottomBarWhenPushed = true
-            self?.present(alert, animated: true, completion: nil)
         }
         alertController.addAction(confirmAction)
 
