@@ -2,7 +2,6 @@ import UIKit
 import WebKit
 
 final class WebViewController: UIViewController {
-    // TODO: 눌려진 셀의 post url 받기
     var postURL: String? {
         didSet {
             if let postURL, let url = URL(string: postURL) {
@@ -21,19 +20,38 @@ final class WebViewController: UIViewController {
         view.addSubview($0)
     }
 
-    private lazy var backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(backButtonTapped)).then {
+    private lazy var backButton = UIBarButtonItem(
+        image: UIImage(systemName: "chevron.left"),
+        style: .plain, target: self,
+        action: #selector(backButtonTapped)
+    ).then {
         $0.tintColor = .systemBlue
     }
 
-    private lazy var forwardButton = UIBarButtonItem(image: UIImage(systemName: "chevron.right"), style: .plain, target: self, action: #selector(forwardButtonTapped)).then {
+    private lazy var forwardButton = UIBarButtonItem(
+        image: UIImage(systemName: "chevron.right"),
+        style: .plain,
+        target: self,
+        action: #selector(forwardButtonTapped)
+    ).then {
         $0.tintColor = .systemBlue
     }
 
-    private lazy var reloadButton = UIBarButtonItem(image: UIImage(systemName: "arrow.clockwise"), style: .plain, target: self, action: #selector(reloadButtonTapped)).then {
+    private lazy var reloadButton = UIBarButtonItem(
+        image: UIImage(systemName: "arrow.clockwise"),
+        style: .plain,
+        target: self,
+        action: #selector(reloadButtonTapped)
+    ).then {
         $0.tintColor = .systemBlue
     }
 
-    private lazy var heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(heartButtonTapped)).then {
+    private lazy var heartButton = UIBarButtonItem(
+        image: UIImage(systemName: "heart"),
+        style: .plain,
+        target: self,
+        action: #selector(heartButtonTapped)
+    ).then {
         $0.tintColor = .accent
     }
 
@@ -47,11 +65,6 @@ final class WebViewController: UIViewController {
         view.backgroundColor = .systemBackground
         addBottomToolBar()
         navigationItem.rightBarButtonItem = heartButton
-//        if let url = URL(string: "https://zeddios.tistory.com/374") {
-//            let request = URLRequest(url: url)
-//            webView.load(request)
-//        }
-//        view.add(webView)
     }
 
     override func viewDidLayoutSubviews() {

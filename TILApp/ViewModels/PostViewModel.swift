@@ -18,6 +18,19 @@ final class PostViewModel {
         )
     }
 
+    func withCommunity(
+        byQuery query: String? = nil,
+        onSuccess: ((_ posts: [CommunityPost]) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil
+    ) {
+        APIService.shared.request(
+            .getCommunity(query),
+            model: [CommunityPost].self,
+            onSuccess: onSuccess,
+            onError: onError
+        )
+    }
+
     func create(
         _ inputs: [CreatePostInput],
         onSuccess: ((_ posts: [Post?]) -> Void)? = nil,
