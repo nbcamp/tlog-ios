@@ -71,6 +71,10 @@ final class AuthViewModel {
     }
 
     func withdraw(onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
-        APIService.shared.request(.deleteUser, onSuccess: { _ in onSuccess?() }, onError: onError)
+        APIService.shared.request(.deleteUser, onSuccess: {[weak self] _ in
+            guard let self else { return }
+            signOut()
+            onSuccess?()
+        }, onError: onError)
     }
 }

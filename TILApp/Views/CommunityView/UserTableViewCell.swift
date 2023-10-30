@@ -14,6 +14,7 @@ final class UserTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
+
         setUpUI()
     }
 
@@ -24,5 +25,8 @@ final class UserTableViewCell: UITableViewCell {
 
     private func setUpUI() {
         contentView.addSubview(userTILView)
+        userTILView.translatesAutoresizingMaskIntoConstraints = false
+
+        userTILView.pin.all(contentView.pin.safeArea)
     }
 }

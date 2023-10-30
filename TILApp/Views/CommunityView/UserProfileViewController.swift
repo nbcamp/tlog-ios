@@ -8,6 +8,8 @@ final class UserProfileViewController: UIViewController {
         let date: String
     }
 
+    private var posts: [Post] = []
+
     let userTILList: [TILList] = [
         .init(title: "작성글1", content: "오늘 오전엔 CustomComponent를 사용하는법을 익혔습니다.", date: "2023-10-25"),
         .init(title: "작성글2", content: "오늘 오후엔 UIPresentationController를 학습했습니다.", date: "2023-10-25"),
@@ -134,7 +136,7 @@ final class UserProfileViewController: UIViewController {
         view.backgroundColor = .systemBackground
         navigationController?.isNavigationBarHidden = false
 
-        let yourUserId = 451
+        let yourUserId = 15
         UserViewModel.shared.find(by: yourUserId, onSuccess: { [weak self] user in
             self?.nicknameLabel.text = user.username
             self?.postButton.setTitle("\(user.posts)\nposts", for: .normal)
@@ -153,6 +155,14 @@ final class UserProfileViewController: UIViewController {
 
             self?.userBlogURL.setTitle("메인블로그를 설정하지 않았습니다.", for: .normal)
         }
+
+        PostViewModel.shared.withPosts(byUserId: yourUserId, onSuccess: { [weak self] posts in
+            self?.posts = posts
+            print(">>>>>>\(self?.posts)")
+            self?.userProfileTableView.reloadData()
+        }, onError: { error in
+            print("게시물을 가져오는 중 에러 발생: \(error.localizedDescription)")
+        })
     }
 
     override func viewDidLayoutSubviews() {
@@ -221,7 +231,7 @@ extension UserProfileViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         switch userSegmentedControl.selectedSegmentIndex {
         case 0:
-            return userTILList.count
+            return posts.count
         case 1:
             return userLikeTILList.count
         default: break
@@ -235,10 +245,9 @@ extension UserProfileViewController: UITableViewDataSource {
 
         switch userSegmentedControl.selectedSegmentIndex {
         case 0:
-
-            let data = userTILList[indexPath.row]
-            userPostCell.userTILView.setup(withTitle: data.title, content: data.content, date: data.date)
-            print("\(data)")
+            let post = posts[indexPath.row]
+            let dateString = DateFormatter.dateFormatter.string(from: post.publishedAt)
+            userPostCell.userTILView.setup(withTitle: post.title, content: post.content, date: dateString)
             return userPostCell
         case 1:
             let data = userLikeTILList[indexPath.row]
@@ -251,10 +260,18 @@ extension UserProfileViewController: UITableViewDataSource {
     }
 
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
-        return 93
+        return 85
     }
 }
 
 extension UserProfileViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
+}
+
+extension DateFormatter {
+    static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
 }

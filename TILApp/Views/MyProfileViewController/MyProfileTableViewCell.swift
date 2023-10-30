@@ -24,5 +24,6 @@ final class MyProfileTableViewCell: UITableViewCell {
 
     private func setUpUI() {
         contentView.addSubview(myTILView)
+        myTILView.pin.all(contentView.pin.safeArea)
     }
 }

@@ -18,6 +18,7 @@ final class MyProfileViewController: UIViewController {
     private let authViewModel = AuthViewModel.shared
     private let userViewModel = UserViewModel.shared
     private let postViewModel = PostViewModel.shared
+    private var posts: [Post] = []
     private let accentColor = UIColor(named: "AccentColor")
 
     private lazy var screenView = UIView().then {
@@ -117,6 +118,15 @@ final class MyProfileViewController: UIViewController {
             onError: {[weak self] error in
                 print("프로필 정보를 가져오는 중 에러 발생: \(error.localizedDescription)")
             })
+        let yourUserId = 1
+        PostViewModel.shared.withPosts(byUserId: yourUserId, onSuccess: { [weak self] posts in
+                self?.posts = posts
+            print(">>>>>>\(self?.posts)")
+            self?.myProfileTableView.reloadData()
+        }, onError: { error in
+            print("게시물을 가져오는 중 에러 발생: \(error.localizedDescription)")
+        })
+        
     }
 
     override func viewDidLoad() {
@@ -204,8 +214,7 @@ extension MyProfileViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         switch myProfileSegmentedControl.selectedSegmentIndex {
         case 0:
-            return myTILList.count
-
+            return posts.count
         case 1:
             return likeTILList.count
         default: break
@@ -219,10 +228,9 @@ extension MyProfileViewController: UITableViewDataSource {
 
         switch myProfileSegmentedControl.selectedSegmentIndex {
         case 0:
-            let data = myTILList[indexPath.row]
-
-            myPostCell.myTILView.setup(withTitle: data.title, content: data.content, date: data.date)
-            print("\(data)")
+            let post = posts[indexPath.row]
+            let dateString = DateFormatter.dateFormatter.string(from: post.publishedAt)
+            myPostCell.myTILView.setup(withTitle: post.title, content: post.content, date: dateString)
             return myPostCell
         case 1:
             let data = likeTILList[indexPath.row]
@@ -237,7 +245,7 @@ extension MyProfileViewController: UITableViewDataSource {
     }
 
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
-        return 93
+        return 85
     }
 }
 
@@ -270,3 +278,4 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
         }
     }
 }
+
