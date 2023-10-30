@@ -1,6 +1,8 @@
 import UIKit
 
 final class MyProfileViewController: UIViewController {
+    private let authViewModel = AuthViewModel.shared
+    private lazy var user = authViewModel.user
     struct TILList {
         let title: String
         let content: String
@@ -15,7 +17,7 @@ final class MyProfileViewController: UIViewController {
         .init(title: "좋아요누른 글1", content: "오늘은 좋아요를 눌러보겠습니다.", date: "2023-10-25"),
         .init(title: "좋아요누른 글2", content: "금일 TLog를 사용하면서 TIL에대한 것을 알고 한번 사용해보도록 하려고 합니다.", date: "2023-10-25"),
     ]
-    private let authViewModel = AuthViewModel.shared
+
     private let userViewModel = UserViewModel.shared
     private let postViewModel = PostViewModel.shared
     private var posts: [Post] = []
@@ -36,11 +38,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var nicknameLabel = UILabel().then {
         $0.font = UIFont.boldSystemFont(ofSize: 20)
-        if let username = authViewModel.user?.username {
-            $0.text = username
-        } else {
-            $0.text = "nickname"
-        }
+        $0.text = user?.username
         $0.sizeToFit()
     }
 
@@ -56,7 +54,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("0\nposts", for: .normal)
+        $0.setTitle("\(user?.posts ?? 0)\npost", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -68,7 +66,7 @@ final class MyProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("0\nfollowers", for: .normal)
+        $0.setTitle("\(user?.followers ?? 0)\nfollowers", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
     }
@@ -76,7 +74,7 @@ final class MyProfileViewController: UIViewController {
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("0\nfollowing", for: .normal)
+        $0.setTitle("\(user?.followings ?? 0)\nfollowing", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
@@ -133,14 +131,15 @@ final class MyProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
 
-        print("myTILList: \(myTILList)")
+        // TODO: 불러오는 위치 변경하기
+        UserViewModel.shared.withFollowers()
+        UserViewModel.shared.withFollowings()
     }
 
-    private func updateUI(with posts: [Post]) {
-        let postTitles = posts.map { $0.title }
-        let titleCount = postTitles.count
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
 
-        postButton.setTitle("\(titleCount)\nposts", for: .normal)
+        navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
     override func viewDidLayoutSubviews() {
@@ -184,11 +183,15 @@ final class MyProfileViewController: UIViewController {
 
     @objc private func followersButtonTapped() {
         let vc = FollowListViewController()
+        vc.hidesBottomBarWhenPushed = true
+        vc.selectedIndex = 0
         navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc private func followingButtonTapped() {
         let vc = FollowListViewController()
+        vc.hidesBottomBarWhenPushed = true
+        vc.selectedIndex = 1
         navigationController?.pushViewController(vc, animated: true)
     }
 

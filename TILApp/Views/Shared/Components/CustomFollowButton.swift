@@ -17,14 +17,17 @@ class CustomFollowButton: UIButton {
         }
     }
 
+    var tapHandler: (() -> Void)?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupButton()
+        addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupButton()
+        fatalError("init(coder:) has not been implemented")
     }
 
     private func setupButton() {
@@ -46,5 +49,9 @@ class CustomFollowButton: UIButton {
         backgroundColor = UIColor.white
         setTitleColor(UIColor(named: "AccentColor"), for: .normal)
         setTitle("언팔로우", for: .normal)
+    }
+
+    @objc private func buttonTapped() {
+        tapHandler?()
     }
 }

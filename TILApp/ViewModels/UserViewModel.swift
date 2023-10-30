@@ -1,7 +1,7 @@
 final class UserViewModel {
     static let shared: UserViewModel = .init()
     private init() {}
-    
+
     private(set) var followers: [User] = []
     private(set) var followings: [User] = []
 
@@ -25,7 +25,15 @@ final class UserViewModel {
     ) {
         APIService.shared.request(
             .followUser(userId),
-            onSuccess: { _ in onSuccess?() },
+            onSuccess: { [weak self] _ in
+                guard let self else { return }
+                UserViewModel.shared.find(by: userId) { [weak self] user in
+                    guard let self else { return }
+                    self.followings.append(user)
+                    print(followings.count)
+                }
+                onSuccess?()
+            },
             onError: onError
         )
     }
@@ -36,8 +44,13 @@ final class UserViewModel {
         onError: ((Error) -> Void)? = nil
     ) {
         APIService.shared.request(
-            .followUser(userId),
-            onSuccess: { _ in onSuccess?() },
+            .unfollowUser(userId),
+            onSuccess: { [weak self] _ in
+                if let index = self?.followings.firstIndex(where: { $0.id == userId }) {
+                    self?.followings.remove(at: index)
+                }
+                onSuccess?()
+            },
             onError: onError
         )
     }
@@ -49,7 +62,11 @@ final class UserViewModel {
         APIService.shared.request(
             .getFollowers,
             model: [User].self,
-            onSuccess: onSuccess,
+            onSuccess: { [weak self] model in
+                guard let self else { return }
+                followers = model
+                onSuccess?(model)
+            },
             onError: onError
         )
     }
@@ -61,8 +78,16 @@ final class UserViewModel {
         APIService.shared.request(
             .getFollowings,
             model: [User].self,
-            onSuccess: onSuccess,
+            onSuccess: { [weak self] model in
+                guard let self else { return }
+                followings = model
+                onSuccess?(model)
+            },
             onError: onError
         )
+    }
+
+    func isFollowed(user: User) -> Bool {
+        return followings.contains(where: { $0 == user })
     }
 }

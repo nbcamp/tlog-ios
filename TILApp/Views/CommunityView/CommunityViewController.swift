@@ -33,6 +33,12 @@ final class CommunityViewController: UIViewController {
         navigationController?.isNavigationBarHidden = true
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+
     override func viewDidLayoutSubviews() {
         searchBar.pin.top(view.pin.safeArea).horizontally().height(60)
         tableView.pin.top(to: searchBar.edge.bottom).horizontally().bottom(view.pin.safeArea)

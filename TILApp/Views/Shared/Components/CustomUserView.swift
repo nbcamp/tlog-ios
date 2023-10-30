@@ -5,7 +5,7 @@ class CustomUserView: UIView {
         get { return button.variant }
         set { button.variant = newValue }
     }
-    
+
     var buttonTitle: String {
         get { button.titleLabel?.text ?? "" }
         set { button.setTitle(newValue, for: .normal) }
@@ -26,6 +26,11 @@ class CustomUserView: UIView {
         set { imageView.image = newValue }
     }
 
+    var buttonTapHandler: (() -> Void)? {
+        get { return button.tapHandler }
+        set { button.tapHandler = newValue }
+    }
+
     private let imageView = UIImageView().then {
         $0.backgroundColor = .systemGray5
         $0.contentMode = .scaleAspectFit
@@ -38,7 +43,7 @@ class CustomUserView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         pin.height(67)
 
         addSubview(imageView)
