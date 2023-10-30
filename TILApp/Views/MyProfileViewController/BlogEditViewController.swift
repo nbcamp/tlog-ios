@@ -140,9 +140,13 @@ final class BlogEditViewController: UIViewController {
             guard let self else { return }
             print("블로그가 성공적으로 수정되었습니다.")
             if mainBlogButton.variant == .primary {
-                blogViewModel.setMainBlog(id)
+                blogViewModel.setMainBlog(id) { [weak self] in
+                    guard let self else { return }
+                    navigationController?.popViewController(animated: true)
+                }
+            } else {
+                navigationController?.popViewController(animated: true)
             }
-            navigationController?.popViewController(animated: true)
         }, onError: { error in
             print("블로그 수정 중 오류 발생: \(error)")
         })

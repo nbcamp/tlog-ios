@@ -1,6 +1,9 @@
 import UIKit
 
 final class MyProfileViewController: UIViewController {
+    private let authViewModel = AuthViewModel.shared
+    private lazy var user = authViewModel.user
+
     private let accentColor = UIColor(named: "AccentColor")
     private lazy var screenView = UIView().then {
         view.addSubview($0)
@@ -17,7 +20,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var nicknameLabel = UILabel().then {
         $0.font = UIFont.boldSystemFont(ofSize: 20)
-        $0.text = "nickname"
+        $0.text = user?.username
         $0.sizeToFit()
     }
 
@@ -33,7 +36,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("39\npost", for: .normal)
+        $0.setTitle("\(user?.posts ?? 0)\npost", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -45,7 +48,7 @@ final class MyProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("107\nfollowers", for: .normal)
+        $0.setTitle("\(user?.followers ?? 0)\nfollowers", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
     }
@@ -53,7 +56,7 @@ final class MyProfileViewController: UIViewController {
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("64\nfollowing", for: .normal)
+        $0.setTitle("\(user?.followings ?? 0)\nfollowing", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
@@ -83,7 +86,22 @@ final class MyProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+
+        // TODO: 불러오는 위치 변경하기
+        UserViewModel.shared.withFollowers()
+        UserViewModel.shared.withFollowings()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
         navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
     override func viewDidLayoutSubviews() {
@@ -127,11 +145,17 @@ final class MyProfileViewController: UIViewController {
     }
 
     @objc private func followersButtonTapped() {
-        // TODO: 팔로워 / 팔로윙 관리 페이지 뷰 전환 구현
+        let vc = FollowListViewController()
+        vc.hidesBottomBarWhenPushed = true
+        vc.selectedIndex = 0
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc private func followingButtonTapped() {
-        // TODO: 팔로워 / 팔로윙 관리 페이지 뷰 전환 구현
+        let vc = FollowListViewController()
+        vc.hidesBottomBarWhenPushed = true
+        vc.selectedIndex = 1
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc private func editBlogButtonTapped() {
