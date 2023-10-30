@@ -10,11 +10,29 @@ final class AuthViewModel {
         static let accessToken = "Access Token"
     }
 
-    var user: AuthUser?
+    private(set) var user: AuthUser?
 
     var accessToken: String? { UserDefaults.standard.string(forKey: Token.accessToken) }
     var authenticated: Bool { accessToken != nil }
     @Published var isAuthenticated: Bool
+    
+    func withUser(
+        onSuccess: ((_ user: AuthUser) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil
+    ) {
+        APIService.shared.request(.getProfile, model: AuthUser.self) { [weak self] model in
+            guard let self else { return }
+            user = model
+            isAuthenticated = true
+            onSuccess?(model)
+        } onError: { [weak self] error in
+            print(error)
+            guard let self else { return }
+            user = nil
+            isAuthenticated = false
+            onError?(error)
+        }
+    }
 
     func signIn(
         _ input: SignInInput,

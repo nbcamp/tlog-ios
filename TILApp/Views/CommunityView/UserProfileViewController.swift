@@ -28,7 +28,7 @@ final class UserProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
-    private lazy var calenderView = UIView().then {
+    private lazy var calendarView = UIView().then {
         $0.backgroundColor = .systemBlue
         view.addSubview($0)
     }
@@ -195,9 +195,9 @@ final class UserProfileViewController: UIViewController {
 
         screenView.pin.top(view.pin.safeArea).bottom(80%).left().right()
         followButtonView.pin.top(18%).left().right().height(50)
-        calenderView.pin.top(28%).left().right().bottom(30%)
+        calendarView.pin.top(28%).left().right().bottom(30%)
         moreButton.pin.top(view.pin.safeArea).right(20)
-        userSegmentedControl.pin.below(of: calenderView)
+        userSegmentedControl.pin.below(of: calendarView)
         userProfileTableView.pin.below(of: userSegmentedControl).bottom(view.pin.safeArea).left().right()
     }
 

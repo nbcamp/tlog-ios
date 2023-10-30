@@ -105,7 +105,7 @@ final class MyProfileViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
-        AuthViewModel.shared.profile(
+        authViewModel.profile(
             onSuccess: { [weak self] user in
                 self?.nicknameLabel.text = user.username
                 self?.postButton.setTitle("\(user.posts)\nposts", for: .normal)
