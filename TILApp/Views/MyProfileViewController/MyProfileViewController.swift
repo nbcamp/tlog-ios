@@ -17,7 +17,7 @@ final class MyProfileViewController: UIViewController {
         .init(title: "좋아요누른 글1", content: "오늘은 좋아요를 눌러보겠습니다.", date: "2023-10-25"),
         .init(title: "좋아요누른 글2", content: "금일 TLog를 사용하면서 TIL에대한 것을 알고 한번 사용해보도록 하려고 합니다.", date: "2023-10-25"),
     ]
-    private let authViewModel = AuthViewModel.shared
+
     private let userViewModel = UserViewModel.shared
     private let postViewModel = PostViewModel.shared
     private var posts: [Post] = []
@@ -134,12 +134,6 @@ final class MyProfileViewController: UIViewController {
         // TODO: 불러오는 위치 변경하기
         UserViewModel.shared.withFollowers()
         UserViewModel.shared.withFollowings()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        navigationController?.setNavigationBarHidden(true, animated: false)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
