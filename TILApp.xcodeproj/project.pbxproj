@@ -36,6 +36,7 @@
 		33A4E8282AECBDE300E3F55E /* SeeMorePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E8272AECBDE300E3F55E /* SeeMorePresentationController.swift */; };
 		33A4E82A2AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E8292AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift */; };
 		33A4E82C2AECBE3C00E3F55E /* MoreTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E82B2AECBE3C00E3F55E /* MoreTableViewCell.swift */; };
+		33A4E8302AEF740600E3F55E /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E82F2AEF740600E3F55E /* Community.swift */; };
 		33DC8E002ADF84CC00580FA0 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8DFF2ADF84CC00580FA0 /* Then */; };
 		33DC8E032ADFC9CC00580FA0 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E022ADFC9CC00580FA0 /* CombineMoya */; };
 		33DC8E052ADFC9CC00580FA0 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E042ADFC9CC00580FA0 /* Moya */; };
@@ -44,7 +45,6 @@
 		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
 		9B859B2B2AE26C2600025E8B /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */; };
 		9BE049B92AEB968E00A47CFC /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049B82AEB968E00A47CFC /* WebViewController.swift */; };
-		D20AD9022AE0AEF800CDEB2C /* CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */; };
 		9BE049C02AED229600A47CFC /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049BF2AED229600A47CFC /* UserProfileViewController.swift */; };
 		9BE049C22AED60EE00A47CFC /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049C12AED60EE00A47CFC /* UserTableViewCell.swift */; };
 		D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9902AE106F000ED7028 /* BlogListViewController.swift */; };
@@ -105,6 +105,7 @@
 		33A4E8272AECBDE300E3F55E /* SeeMorePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeMorePresentationController.swift; sourceTree = "<group>"; };
 		33A4E8292AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeMoreBottomSheetViewController.swift; sourceTree = "<group>"; };
 		33A4E82B2AECBE3C00E3F55E /* MoreTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreTableViewCell.swift; sourceTree = "<group>"; };
+		33A4E82F2AEF740600E3F55E /* Community.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
 		33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkViewController.swift; sourceTree = "<group>"; };
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
@@ -113,7 +114,6 @@
 		9BE049BF2AED229600A47CFC /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		9BE049C12AED60EE00A47CFC /* UserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		D20AD8D02ADC5ECA00CDEB2C /* TILApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TILApp.entitlements; sourceTree = "<group>"; };
-		D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponents.swift; sourceTree = "<group>"; };
 		D24BB9902AE106F000ED7028 /* BlogListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListViewController.swift; sourceTree = "<group>"; };
 		D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListTableViewCell.swift; sourceTree = "<group>"; };
 		D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogEditViewController.swift; sourceTree = "<group>"; };
@@ -167,7 +167,6 @@
 			children = (
 				3334E1A62AD6BC1800D853D7 /* TILApp */,
 				3334E1A52AD6BC1800D853D7 /* Products */,
-				9BE049BA2AEB96B100A47CFC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -226,6 +225,7 @@
 				3334E1D62AD914EF00D853D7 /* User.swift */,
 				3334E1C82AD911ED00D853D7 /* Blog.swift */,
 				3334E1CC2AD9126400D853D7 /* Post.swift */,
+				33A4E82F2AEF740600E3F55E /* Community.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -519,6 +519,7 @@
 				D2CDB7032AEB680300BFD8C2 /* CustomTextFieldViewWithValidation.swift in Sources */,
 				33A4E8262AECB57000E3F55E /* PostViewModel.swift in Sources */,
 				D29659F02AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift in Sources */,
+				33A4E8302AEF740600E3F55E /* Community.swift in Sources */,
 				33A4E8282AECBDE300E3F55E /* SeeMorePresentationController.swift in Sources */,
 				33A4E8242AECB4C700E3F55E /* UserViewModel.swift in Sources */,
 				3334E1DE2AD918CB00D853D7 /* HomeViewController.swift in Sources */,

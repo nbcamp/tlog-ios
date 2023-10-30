@@ -2,8 +2,25 @@ import UIKit
 
 class CustomCommunityTILView: UIView {
     // TODO: 커뮤니티 페이지 연결 이후 private으로 변경하기
-    lazy var userView = CustomUserView()
-    lazy var tilView = CustomTILView()
+    lazy var userView = CustomUserView().then {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(_userProfileTapped))
+        $0.isUserInteractionEnabled = true
+        $0.addGestureRecognizer(tapGesture)
+    }
+
+    lazy var tilView = CustomTILView().then {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(_postTapped))
+        $0.isUserInteractionEnabled = true
+        $0.addGestureRecognizer(tapGesture)
+    }
+
+    var relativePublishedDateLabel: String? {
+        get { dateLabel.text }
+        set { dateLabel.text = newValue }
+    }
+    
+    var userProfileTapped: (() -> Void)?
+    var postTapped: (() -> Void)?
 
     private lazy var dateLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 12.5)
@@ -45,10 +62,18 @@ class CustomCommunityTILView: UIView {
 
         userView.pin.horizontally(10)
         tilView.pin.below(of: userView).horizontally().marginTop(-15)
-        dateLabel.pin.left(20).bottom(10)
+        dateLabel.pin.left(20).bottom(10).width(100)
         heartIcon.pin.right(20).bottom(10)
         likeView.pin.bottomRight().marginBottom(5).marginRight(15)
 
         tilView.resizeText()
+    }
+    
+    @objc private func _userProfileTapped() {
+        userProfileTapped?()
+    }
+    
+    @objc private func _postTapped() {
+        postTapped?()
     }
 }

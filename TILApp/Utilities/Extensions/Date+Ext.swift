@@ -14,7 +14,16 @@ extension Date {
 
     func format(_ dateFormat: String = "yyyy-MM-dd") -> String {
         let dateFormatter = DateFormatter()
+        dateFormatter.locale = .init(identifier: Locale.current.identifier)
+        dateFormatter.timeZone = .init(identifier: TimeZone.current.identifier)
         dateFormatter.dateFormat = dateFormat
         return dateFormatter.string(from: self)
+    }
+
+    func relativeFormat() -> String {
+        let dateFormatter = RelativeDateTimeFormatter()
+        dateFormatter.locale = .init(identifier: "ko_KR")
+        dateFormatter.dateTimeStyle = .named
+        return dateFormatter.localizedString(for: self, relativeTo: Date.now)
     }
 }

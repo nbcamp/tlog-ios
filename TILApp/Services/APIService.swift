@@ -112,6 +112,9 @@ enum APIRequest {
          getPost(Int),
          createPost(CreatePostInput),
          updatePost(Int, UpdatePostInput)
+
+    // Community
+    case getCommunity(String?)
 }
 
 extension APIRequest: TargetType {
@@ -159,6 +162,10 @@ extension APIRequest: TargetType {
             return "/post/\(id)"
         case .createPost:
             return "/post"
+
+        // Community
+        case .getCommunity:
+            return "/community"
         }
     }
 
@@ -173,7 +180,8 @@ extension APIRequest: TargetType {
              .getBlog,
              .getMainBlog,
              .getPosts,
-             .getPost:
+             .getPost,
+             .getCommunity:
             return .get
         case .signIn,
              .followUser,
@@ -226,6 +234,10 @@ extension APIRequest: TargetType {
             return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
         case .updatePost(_, let payload):
             return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
+        case .getCommunity(let query):
+            var params: [String: Any] = [:]
+            if let searchQuery = query { params.updateValue(searchQuery, forKey: "q") }
+            return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
         }
     }
 
