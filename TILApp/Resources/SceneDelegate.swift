@@ -11,15 +11,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = .init(windowScene: windowScene)
         window?.makeKeyAndVisible()
 
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = .systemBackground
-        window?.rootViewController = viewController
-
-        AuthViewModel.shared.withUser { [unowned self] _ in
-            self.window?.rootViewController = RootViewController()
-        } onError: { [unowned self] _ in
-            self.window?.rootViewController = SignInViewController()
-        }
+        window?.rootViewController = LoadingViewController()
+        AuthViewModel.shared.withUser()
     }
 
     func sceneDidDisconnect(_: UIScene) {}

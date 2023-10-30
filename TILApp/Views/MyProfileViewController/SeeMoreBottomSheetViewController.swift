@@ -3,7 +3,7 @@ import PinLayout
 import Then
 import UIKit
 
-protocol SeeMoreBottomSheetDelegate: class {
+protocol SeeMoreBottomSheetDelegate: AnyObject {
     func didSelectSeeMoreMenu(title: String)
 }
 
@@ -94,12 +94,16 @@ class SeeMoreBottomSheetViewController: UIViewController {
 
 extension SeeMoreBottomSheetViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: MoreTableViewCell.identifier, for: indexPath) as? MoreTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: MoreTableViewCell.identifier,
+            for: indexPath
+        ) as? MoreTableViewCell else {
             return UITableViewCell()
         }
 
         let seeMenuList = seeMoreMenus[indexPath.row]
         cell.configure(withTitle: seeMenuList.title, iconName: seeMenuList.icon)
+        cell.selectionStyle = .none
         return cell
     }
 
