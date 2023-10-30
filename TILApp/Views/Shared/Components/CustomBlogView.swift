@@ -72,7 +72,7 @@ class CustomBlogView: UIView {
         case .primary:
             primaryLabel.pin.right(to: chevronImage.edge.left).vCenter()
         case .normal:
-            break
+            primaryLabel.removeFromSuperview()
         }
     }
 }

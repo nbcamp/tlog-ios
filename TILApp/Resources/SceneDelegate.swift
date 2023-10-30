@@ -23,6 +23,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 let signInViewController = SignInViewController()
                 signInViewController.modalPresentationStyle = .fullScreen
                 window?.rootViewController?.present(signInViewController, animated: false, completion: nil)
+            } else {
+                APIService.shared.request(.getProfile, model: AuthUser.self) { model in
+                    _ = model
+                    print(model)
+                    AuthViewModel.shared.user = model
+                    print(AuthViewModel.shared.user)
+                } onError: { error in
+                    _ = error
+                    print(error)
+                }
             }
         }.store(in: &cancellables)
     }
