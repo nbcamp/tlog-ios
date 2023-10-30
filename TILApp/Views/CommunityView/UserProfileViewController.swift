@@ -1,22 +1,8 @@
 
 import UIKit
-// TODO: 데이터 연결시 구조체 삭제
-struct TILList {
-    let title: String
-    let content: String
-    let date: String
-}
 
 final class UserProfileViewController: UIViewController {
-    // TODO: 데이터 연결시 더미 데이터 삭제
-    let userTILList: [TILList] = [
-        .init(title: "작성글1", content: "오늘 오전엔 CustomComponent를 사용하는법을 익혔습니다.", date: "2023-10-25"),
-        .init(title: "작성글2", content: "오늘 오후엔 UIPresentationController를 학습했습니다.", date: "2023-10-25"),
-    ]
-    let userLikeTILList: [TILList] = [
-        .init(title: "좋아요누른 글1", content: "오늘은 좋아요를 눌러보겠습니다.", date: "2023-10-25"),
-        .init(title: "좋아요누른 글2", content: "금일 TLog를 사용하면서 TIL에대한 것을 알고 한번 사용해보도록 하려고 합니다.", date: "2023-10-25"),
-    ]
+
     private lazy var screenView = UIView().then {
         view.addSubview($0)
     }
@@ -160,7 +146,7 @@ final class UserProfileViewController: UIViewController {
         moreButton.menu = menu
     }
 
-    @objc func userSegmentedControlSelected(_ sender: CustomSegmentedControl) {
+    @objc private func userSegmentedControlSelected(_ sender: CustomSegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
             userProfileTableView.reloadData()
