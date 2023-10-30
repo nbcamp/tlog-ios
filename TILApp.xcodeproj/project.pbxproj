@@ -44,9 +44,10 @@
 		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
 		9B859B2B2AE26C2600025E8B /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */; };
 		9BE049B92AEB968E00A47CFC /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049B82AEB968E00A47CFC /* WebViewController.swift */; };
-		D20AD9022AE0AEF800CDEB2C /* CustomComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */; };
 		9BE049C02AED229600A47CFC /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049BF2AED229600A47CFC /* UserProfileViewController.swift */; };
 		9BE049C22AED60EE00A47CFC /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049C12AED60EE00A47CFC /* UserTableViewCell.swift */; };
+		AB75EDE82AEF9CBB00BC1BC9 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = AB75EDE72AEF9CBB00BC1BC9 /* XMLCoder */; };
+		AB8F2A1A2AEF9B260022D3E4 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = AB8F2A192AEF9B260022D3E4 /* FSCalendar */; };
 		D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9902AE106F000ED7028 /* BlogListViewController.swift */; };
 		D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */; };
 		D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */; };
@@ -113,7 +114,6 @@
 		9BE049BF2AED229600A47CFC /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		9BE049C12AED60EE00A47CFC /* UserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		D20AD8D02ADC5ECA00CDEB2C /* TILApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TILApp.entitlements; sourceTree = "<group>"; };
-		D20AD9012AE0AEF800CDEB2C /* CustomComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponents.swift; sourceTree = "<group>"; };
 		D24BB9902AE106F000ED7028 /* BlogListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListViewController.swift; sourceTree = "<group>"; };
 		D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListTableViewCell.swift; sourceTree = "<group>"; };
 		D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogEditViewController.swift; sourceTree = "<group>"; };
@@ -152,8 +152,10 @@
 				33DC8E002ADF84CC00580FA0 /* Then in Frameworks */,
 				3334E1F12AD91DA100D853D7 /* PinLayout in Frameworks */,
 				33DC8E032ADFC9CC00580FA0 /* CombineMoya in Frameworks */,
+				AB75EDE82AEF9CBB00BC1BC9 /* XMLCoder in Frameworks */,
 				3334E1F42AD91DCB00D853D7 /* FlexLayout in Frameworks */,
 				3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */,
+				AB8F2A1A2AEF9B260022D3E4 /* FSCalendar in Frameworks */,
 				33DC8E052ADFC9CC00580FA0 /* Moya in Frameworks */,
 				3334E1F62AD91DCB00D853D7 /* FlexLayoutYoga in Frameworks */,
 			);
@@ -167,7 +169,6 @@
 			children = (
 				3334E1A62AD6BC1800D853D7 /* TILApp */,
 				3334E1A52AD6BC1800D853D7 /* Products */,
-				9BE049BA2AEB96B100A47CFC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -393,6 +394,8 @@
 				33DC8DFF2ADF84CC00580FA0 /* Then */,
 				33DC8E022ADFC9CC00580FA0 /* CombineMoya */,
 				33DC8E042ADFC9CC00580FA0 /* Moya */,
+				AB8F2A192AEF9B260022D3E4 /* FSCalendar */,
+				AB75EDE72AEF9CBB00BC1BC9 /* XMLCoder */,
 			);
 			productName = TILApp;
 			productReference = 3334E1A42AD6BC1800D853D7 /* TILApp.app */;
@@ -427,6 +430,8 @@
 				3334E1F22AD91DCB00D853D7 /* XCRemoteSwiftPackageReference "FlexLayout" */,
 				33DC8DFE2ADF84CC00580FA0 /* XCRemoteSwiftPackageReference "Then" */,
 				33DC8E012ADFC9CC00580FA0 /* XCRemoteSwiftPackageReference "Moya" */,
+				AB8F2A182AEF9B260022D3E4 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				AB75EDE62AEF9CBB00BC1BC9 /* XCRemoteSwiftPackageReference "XMLCoder" */,
 			);
 			productRefGroup = 3334E1A52AD6BC1800D853D7 /* Products */;
 			projectDirPath = "";
@@ -796,6 +801,22 @@
 				minimumVersion = 15.0.3;
 			};
 		};
+		AB75EDE62AEF9CBB00BC1BC9 /* XCRemoteSwiftPackageReference "XMLCoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CoreOffice/XMLCoder";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.17.1;
+			};
+		};
+		AB8F2A182AEF9B260022D3E4 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WenchaoD/FSCalendar.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -833,6 +854,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 33DC8E012ADFC9CC00580FA0 /* XCRemoteSwiftPackageReference "Moya" */;
 			productName = Moya;
+		};
+		AB75EDE72AEF9CBB00BC1BC9 /* XMLCoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AB75EDE62AEF9CBB00BC1BC9 /* XCRemoteSwiftPackageReference "XMLCoder" */;
+			productName = XMLCoder;
+		};
+		AB8F2A192AEF9B260022D3E4 /* FSCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AB8F2A182AEF9B260022D3E4 /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			productName = FSCalendar;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
