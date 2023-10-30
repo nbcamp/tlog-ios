@@ -1,19 +1,18 @@
 //
-//  UserTableViewCell.swift
+//  MyProfileTableViewCell.swift
 //  TILApp
 //
-//  Created by Lee on 10/29/23.
+//  Created by Lee on 10/30/23.
 //
 
 import UIKit
 
-final class UserTableViewCell: UITableViewCell {
-    static let identifier = "UserCell"
-    let userTILView = CustomTILView()
-    
+final class MyProfileTableViewCell: UITableViewCell {
+    static let identifier = "MyCell"
+    let myTILView = CustomTILView()
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
 
         setUpUI()
     }
@@ -24,9 +23,7 @@ final class UserTableViewCell: UITableViewCell {
     }
 
     private func setUpUI() {
-        contentView.addSubview(userTILView)
-        userTILView.translatesAutoresizingMaskIntoConstraints = false
-
-        userTILView.pin.all(contentView.pin.safeArea)
+        contentView.addSubview(myTILView)
+        myTILView.pin.all(contentView.pin.safeArea)
     }
 }

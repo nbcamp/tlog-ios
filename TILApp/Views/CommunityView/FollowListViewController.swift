@@ -37,6 +37,11 @@ final class FollowListViewController: UIViewController {
         ("Blog 3", "TIL 마지막 작성일 | 2023-10-17"),
     ]
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
