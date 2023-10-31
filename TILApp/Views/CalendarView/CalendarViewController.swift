@@ -2,102 +2,21 @@ import FSCalendar
 import UIKit
 import XMLCoder
 
-struct RSS: Codable {
-//    let to: String
-    let channel: RSSChannel
-}
-
-struct RSSChannel: Codable {
-    let posts: [RSSPost]
-
-    enum CodingKeys: String, CodingKey {
-        case posts = "item"
-    }
-}
-
-struct RSSPost: Codable {
-    let title: String?
-    let content: String?
-    let pubDate: String?
-    let link: String?
-    let contentEncoded: String?
-
-    enum CodingKeys: String, CodingKey {
-        case title, pubDate, link
-        case contentEncoded = "content:encoded"
-        case content = "description"
-    }
-}
-struct CreatePostInput2: Codable {
-    let title: String
-    let content: String
-    let url: String
-
-    let publishedAt: Date
-}
-
-/**
- rss 는 데이터 잘 나옴
- 컴바인으로 뷰모델의 변화를 인식해 핸들링 가능 - 인스턴스 생성 - 상속하면 안됨 - model에 구조체 - 뷰모델이 클래스 생성해서 정리
- 클로저 함수 쓸때 self 쓸일 있으면 weak self 사용해서 뭐시깽 해야함 안하면 존나 강한 참조되서 레퍼런스 참조를 하고 있으면 메모리에서 삭제를 안해준다 심각한 문제구나;
-
- -
-     - 블로그 rss 등록 기능 재 확인 후 서버에 post요청 넣기
-     - 캘린더 셀 선규님꺼 같이 쓰기
-     - 겟 요청으로 계정내 가지고 있는 게시물 정보 긁어서 파싱하기
-     - xml 파서 등록된 블로그 별 rss 데이터 서버로 post요청 넣기 - 서버와 rss 받아온 데이터와 비교해서 차이나는 부분 서버로 전달 로직짜기
-     - 태그는 뭐 현재 잘 작동해서 걸러주니까 그 로직 보기 좋게 정리하고
-     - 펍데이터 좀 여러가지 케이스 두고 데이터 뽑힐때까지 돌아가는 로직 작성
- */
-/**
- extension UIImageView {
-     func setImage(_ image: UIImage?, duration: Double = 0.3) {
-         UIView.transition(with: self, duration: duration, options: .transitionCrossDissolve, animations: {
-             self.image = image
-         }, completion: nil)
-     }
-
-     func load(url: URL, completion: ((UIImage?) -> Void)? = nil) {
-         DispatchQueue.global().async { [weak self] in
-             guard let data = try? Data(contentsOf: url) else { completion?(nil); return }
-             guard let image = UIImage(data: data) else { completion?(nil); return }
-             DispatchQueue.main.async {
-                 self?.image = image
-                 completion?(image)
-             }
-         }
-     }
- }
-  */
-
-// UInt64
-// 매번 업데이트는 애바니까 til의 마지막 날짜를 저장해 놓고
-// iso8601
-
-// 시간 date타입과 string타입 전환간의 익스텐션 만듥
-// 저는 서버에서 왜 timestamp로 저장해야 하는지를 이해를 못하는중 - 그냥 문자열로 저장하면 안되나?
-// 마지막 발행일 저장
-// - 키워드가 바뀌면 rss내용 자체가 싹다 바뀌니까 이럴땐 처음부터 다 보낸다?
-// 블로그 별로 rss를 보내되 키워드
-var tag: [String] = ["테스트", "마작"]
-var blogUrl: String = "https://noobd.tistory.com"
-var blogRssUrl: [String] = ["https://skypine.tistory.com/rss"]
-var datesWithCatData: [CreatePostInput2] = []
-var monthDateFormat: String = ""
-var monthDatanum = ""
-var descriptionStr: [CreatePostInput2] = []
-var descriptionStr2: String?
-var serverBlogContent : [CreatePostInput2] = []
-// 앱 이름 "나 오늘 이거 배웠다" 510 오늘의 일과 공유
-// Rss 구현중
-// 디크립션 content
-// 시간
-// 더미데이터 비슷하게해서 적용해보기
-
-var tempRssModel: CreatePostInput2?
-
 class CalendarViewController: UIViewController {
-    private var rssList: RSS?
+    // TODO: 더미 데이터
+    
+    // 블로그 추가 텍스트 필드가 넣어줄 변수
+//    var blogUrl: String = "https://noobd.tistory.com"
+
+    private let rssViewModel = RssViewModel.shared
+    private lazy var rssList = rssViewModel.rss
+    // 뷰모델에서 가져오는 테이블 뷰 표시할 데이터
+    private lazy var datesWithCatTableData = rssViewModel.calendarTableData
+    private lazy var descriptionStr = rssViewModel.descriptionStr
+    // 캘린더 날짜에 표시해줄 데이터
+    fileprivate lazy var datesWithCat: [String] = rssViewModel.datesWithCat
+    
+    private var monthDatanum = ""
     lazy var calendarFlexView = UIView().then {
         view.addSubview($0)
         $0.backgroundColor = .white
@@ -107,11 +26,10 @@ class CalendarViewController: UIViewController {
         view.addSubview($0)
         $0.setup(withTitle: "제목", content: "내용\n내용", date: "2023-10-17")
     }
-
     // 현재 캘린더가 보여주고 있는 Page 트래킹
     lazy var currentPage = calendarView.currentPage
     // 여기 배열은 라이브러리가 달력 보여줄때 해당되는 내용 보고 적용해줌
-    fileprivate var datesWithCat: [String] = []
+    
     private let calendarResultContent = UILabel().then {
         $0.text = "5"
         $0.textColor = .black
@@ -190,7 +108,6 @@ class CalendarViewController: UIViewController {
 
         navigationController?.navigationBar.isHidden = true
 
-
     }
 
     override func viewDidLayoutSubviews() {
@@ -204,40 +121,34 @@ class CalendarViewController: UIViewController {
         calendarFlexView.flex.layout()
     }
 
-//    Could not build Objective-C module 'FlexLayoutYogaKit'
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
         tableView.delegate = self
         tableView.dataSource = self
-        let date = Date() // 2021-10-13 17:16:15 +0000
-        var unixTime = date.timeIntervalSince1970 // 1634145375.8035932
-        let unixTimeStr = String(unixTime) // "1634145375.8035932"
+  
+        calendarView.reloadData()
+        tableView.reloadData()
+        fightingMessage()
 
         let dateFormatter2 = DateFormatter()
         dateFormatter2.dateFormat = "yyyyMMdd"
-        // String to Date
-        let unixTime2 = Double(unixTimeStr) ?? 0.0 // 1634145375.8035932
-        let date2 = Date(timeIntervalSince1970: unixTime2) // 2021-10-13 17:16:15 +0000
-        unixTime = date2.timeIntervalSince1970
 
-        var separateUrl = blogUrl.components(separatedBy: "https://").joined()
-        separateUrl = separateUrl.components(separatedBy: "/rss").joined()
-        separateUrl = separateUrl.components(separatedBy: "/feed").joined()
-        let splitUrl = separateUrl.split(separator: "/")
-        // 명확? 사용자 네임이랑
-        if splitUrl[0].contains("tistory.com") {
-            blogRssUrl.append("https://" + splitUrl[0] + "/rss")
-        } else if splitUrl[0].contains("naver.com") {
-            blogRssUrl.append("https://" + "rss." + "blog.naver.com/" + splitUrl[1])
-        } else if splitUrl[0].contains("velog.io") {
-            blogRssUrl.append("https://" + "v2." + "velog.io/rss/" + splitUrl[1])
-        } else if splitUrl[0].contains("medium.com") {
-            blogRssUrl.append("https://" + "medium.com/feed/" + splitUrl[1])
-        }
-        blogRssUrl.map {
-            respondData(urlString: $0)
-        }
+//        var separateUrl = blogUrl.components(separatedBy: "https://").joined()
+//        separateUrl = separateUrl.components(separatedBy: "/rss").joined()
+//        separateUrl = separateUrl.components(separatedBy: "/feed").joined()
+//        let splitUrl = separateUrl.split(separator: "/")
+//        // 명확? 사용자 네임이랑
+//        if splitUrl[0].contains("tistory.com") {
+//            blogRssUrl.append("https://" + splitUrl[0] + "/rss")
+//        } else if splitUrl[0].contains("naver.com") {
+//            blogRssUrl.append("https://" + "rss." + "blog.naver.com/" + splitUrl[1])
+//        } else if splitUrl[0].contains("velog.io") {
+//            blogRssUrl.append("https://" + "v2." + "velog.io/rss/" + splitUrl[1])
+//        } else if splitUrl[0].contains("medium.com") {
+//            blogRssUrl.append("https://" + "medium.com/feed/" + splitUrl[1])
+//        }
+        
     }
 }
 
@@ -249,16 +160,16 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
         dateFormatter.dateFormat = "yyyyMMdd"
         let tableDateData = dateFormatter.string(from: date)
         // 날짜 눌렀을때 해당 날짜의 데이터만 테이블뷰 표시
-                datesWithCatData = descriptionStr.filter { calData in
-                    var convertStr = ""
+        print(datesWithCatTableData)
+        descriptionStr = datesWithCatTableData.filter { calData in
                     dateFormatter.dateFormat = "yyyyMMdd"
-
+                    print(tableDateData, dateFormatter.string(from: calData.publishedAt))
                     if(dateFormatter.string(from: calData.publishedAt) == tableDateData){
+                        
                         return true
                     }
                     return false
                 }
-                print(datesWithCatData)
                 tableView.reloadData()
     }
     // 오늘 날짜 자체 텍스트를 바꾸기
@@ -276,7 +187,6 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
     // 일요일에 해당되는 모든 날짜의 색상 red로 변경
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
         let day = Calendar.current.component(.weekday, from: date) - 1
-        var dateComponents = DateComponents()
         // 현재 다루는 셀의 date 값
         let imageDateFormatter = DateFormatter()
         imageDateFormatter.dateFormat = "yyyyMMdd"
@@ -287,7 +197,7 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
         // 이번달 정보로 지난달의 요일 색 변화
         let monthDataFormatter = DateFormatter()
         monthDataFormatter.dateFormat = "YYYYMM"
-        var monthDataStr = monthDataFormatter.string(from: calendar.currentPage)
+        let monthDataStr = monthDataFormatter.string(from: calendar.currentPage)
         //         무한 리로드 현상 막기
         if monthDatanum != monthDataStr {
             monthDatanum = monthDataStr
@@ -442,7 +352,7 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
 
 extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return datesWithCatData.count
+        return descriptionStr.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -452,15 +362,15 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        let dateStr = dateFormatter.string(from: datesWithCatData[index].publishedAt)
+        let dateStr = dateFormatter.string(from: descriptionStr[index].publishedAt)
       
-        cell.userTILView.setup(withTitle: datesWithCatData[index].title, content: datesWithCatData[index].content, date: dateStr)
+        cell.userTILView.setup(withTitle: descriptionStr[index].title, content: descriptionStr[index].content, date: dateStr)
         
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let alert = UIAlertController(title: "", message: datesWithCatData[indexPath.row].title, preferredStyle: UIAlertController.Style.alert)
+        let alert = UIAlertController(title: "", message: descriptionStr[indexPath.row].title, preferredStyle: UIAlertController.Style.alert)
         let deleteAction = UIAlertAction(title: "리로드", style: UIAlertAction.Style.destructive) { _ in
             tableView.reloadData()
         }
@@ -475,115 +385,10 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension CalendarViewController {
-    func respondData(urlString : String) {
-
-        guard let url = URL(string: urlString) else { return }
-        let task = URLSession.shared.dataTask(with: url){ data, response, error in
-            if let error = error {
-                print("Error: \(error)")
-            } else if let data = data, let response = response as? HTTPURLResponse, response.statusCode == 200 {
-                do {
-
-                    self.rssList = try XMLDecoder().decode(RSS.self, from: data)
-
-
-                    DispatchQueue.main.async { [self] in
-                        var createPostData : [CreatePostInput2]
-                        // rss 데이터 맵돌리기
-                        createPostData = rssList!.channel.posts.enumerated().map{ (index,indexData) in
-                            // pubDate 관련 변수
-
-                            let dateFormatter = DateFormatter()
-                            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss z"
-                            dateFormatter.locale = Locale(identifier:"en_US")
-
-                            var postTitle = indexData.title ?? ""
-                            var postUrl = indexData.link ?? ""
-                            var postPublishedAt : Date = dateFormatter.date(from: "2023-10-28 08:21:01 +0000")!
-
-                            dateFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss z"
-
-                            // title 데이터 가공
-                            if let convertTitle = indexData.title{
-                                postTitle = convertTitle
-                            }
-
-                            // pubDate 데이터 가공
-                            if let convertDate = dateFormatter.date(from: indexData.pubDate!) {
-                                postPublishedAt = convertDate
-                            }
-
-                            // link 데이터 가공
-                            if let convertLink = rssList!.channel.posts[index].link {
-                                let convertUrlString = convertLink.replacingOccurrences(of: "<[^>]+>|\t|\n", with: "", options: .regularExpression, range: nil)
-                                postUrl = convertUrlString
-                            }
-
-                            var content = indexData.content ?? indexData.contentEncoded
-
-                            if let unwrapContent = content {
-
-                                content = unwrapContent.replacingOccurrences(of: "<[^>]+>|\t|\n|;|&nbsp", with: "", options: .regularExpression, range: nil)
-                            }
-
-
-                            return .init(
-                                title: postTitle,
-                                content: content ?? "",
-                                url: postUrl,
-                                publishedAt: postPublishedAt
-                            )
-                        }
-                        createPostData = createPostData.filter{ filterIndex in
-                            let dateFormatter = DateFormatter()
-                            dateFormatter.dateFormat = "yyyyMMdd"
-                            var dateStr = ""
-                            var tagBool = false
-
-                            let convertStr = dateFormatter.string(from: filterIndex.publishedAt)
-
-                            dateStr = convertStr
-
-                            tag.map {
-
-                                if filterIndex.title.contains($0) {
-
-                                    datesWithCat.map { catDate in
-                                        if dateStr == catDate {
-                                            datesWithCat = datesWithCat.filter { $0 != catDate }
-                                        }
-                                    }
-                                    datesWithCat.append(dateStr)
-                                    datesWithCat.sort()
-
-                                    descriptionStr.append(filterIndex)
-                                    tagBool = true
-                                }
-                            }
-                            return tagBool
-                        }
-                        // 블로그 별로 나눠서 2개의 배열이 됨
-//                        print("-------------------------",descriptionStr,"-------------------------")
-                        calendarView.reloadData()
-                        datesWithCatData = descriptionStr
-                        //
-            
-                        tableView.reloadData()
-                        fightingMessage()
-                    }
-                } catch {
-                    print("Error parsing JSON response")
-                }
-            } else {
-                print("에러에러에러에러")
-            }
-        }
-        task.resume()
-    }
     func fightingMessage () {
         let imageDateFormatter = DateFormatter()
         imageDateFormatter.dateFormat = "yyyyMMdd"
-        if imageDateFormatter.string(from: Date()) == datesWithCat.last! {
+        if imageDateFormatter.string(from: Date()) == datesWithCat.last {
 
             if datesWithCat.count == 1 {
 
@@ -613,5 +418,4 @@ extension CalendarViewController {
             calendarResultContent.text = "조금만 더 힘내봐요!"
         }
     }
-
 }

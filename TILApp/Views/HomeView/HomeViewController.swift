@@ -58,6 +58,14 @@ final class HomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // 여기부터
+        // 등록한 블로그의 배열
+        var blogRssUrl: [String] = ["https://noobd.tistory.com/rss","https://skypine.tistory.com/rss"]
+        let rssViewModel = RssViewModel.shared
+        blogRssUrl.map{
+            rssViewModel.respondData(urlString: $0)
+        }
+        // 여까지 캘린더 뷰에서 바꿈
         view.backgroundColor = .systemBackground
         registerBlogButton.addTarget(self, action: #selector(registerBlogButtonTapped), for: .touchUpInside)
         configureUI()
