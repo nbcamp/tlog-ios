@@ -5,10 +5,15 @@ final class CommunityViewController: UIViewController {
 
     private var posts: [CommunityPost] = []
 
+    private lazy var refreshControl = UIRefreshControl().then {
+        $0.addTarget(self, action: #selector(refreshContent), for: .valueChanged)
+    }
+
     private lazy var tableView = UITableView().then {
         $0.dataSource = self
         $0.delegate = self
         $0.keyboardDismissMode = .onDrag
+        $0.refreshControl = refreshControl
         $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: "CommunityTableViewCell")
         view.addSubview($0)
     }
@@ -55,6 +60,22 @@ final class CommunityViewController: UIViewController {
             loadingView.isHidden = true
             tableView.reloadData()
         } onError: { error in
+            // TODO: 에러 처리
+            debugPrint(error)
+        }
+    }
+
+    @objc private func refreshContent() {
+        postViewModel.withCommunity { [weak self] posts in
+            guard let self else { return }
+            self.posts = posts
+            tableView.reloadData()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                guard let self else { return }
+                refreshControl.endRefreshing()
+            }
+        } onError: { error in
+            // TODO: 에러 처리
             debugPrint(error)
         }
     }
