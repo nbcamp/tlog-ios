@@ -15,7 +15,7 @@ final class APIService {
     private init() {}
 
     private let provider = MoyaProvider<APIRequest>(plugins: [
-        //        MoyaLoggingPlugin() // 디버그 용
+        //                MoyaLoggingPlugin() // 디버그 용
     ])
 
     func request(

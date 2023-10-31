@@ -2,10 +2,10 @@ import UIKit
 
 final class CommunityViewController: UIViewController {
     private let communityViewModel = CommunityViewModel.shared
+    private var items: [CommunityPost] { communityViewModel.items }
+    private var cancellables: Set<AnyCancellable> = []
 
-    private var items: [CommunityPost] = []
-
-    private lazy var refreshControl = UIRefreshControl().then {
+    lazy var refreshControl = UIRefreshControl().then {
         $0.addTarget(self, action: #selector(refreshContent), for: .valueChanged)
     }
 
@@ -28,16 +28,19 @@ final class CommunityViewController: UIViewController {
         view.addSubview($0)
     }
 
+    private lazy var footerLoadingView = UIActivityIndicatorView().then {
+        tableView.tableFooterView = $0
+        $0.frame = .init(x: 0, y: 0, width: tableView.bounds.width, height: 100)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
 
-        communityViewModel.load { [weak self] items in
+        communityViewModel.load { [weak self] _ in
             guard let self else { return }
-            print(items)
-            self.items = items
             loadingView.stopAnimating()
             loadingView.isHidden = true
             tableView.reloadData()
@@ -45,6 +48,18 @@ final class CommunityViewController: UIViewController {
             // TODO: 에러 처리
             debugPrint(error)
         }
+
+        communityViewModel.$completed
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completed in
+                guard let self else { return }
+                if completed {
+                    tableView.tableFooterView = nil
+                } else {
+                    tableView.tableFooterView = footerLoadingView
+                    footerLoadingView.startAnimating()
+                }
+            }.store(in: &cancellables)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -64,9 +79,8 @@ final class CommunityViewController: UIViewController {
     }
 
     @objc private func refreshContent() {
-        communityViewModel.refresh { [weak self] items in
+        communityViewModel.refresh { [weak self] _ in
             guard let self else { return }
-            self.items = items
             tableView.reloadData()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                 guard let self else { return }
@@ -136,15 +150,33 @@ extension CommunityViewController: UITableViewDataSource {
     }
 }
 
-extension CommunityViewController: UITableViewDelegate {}
+extension CommunityViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, willDisplay _: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let lastSectionIndex = tableView.numberOfSections - 1
+        let lastRowIndex = tableView.numberOfRows(inSection: 0) - 1
+        if indexPath.section == lastSectionIndex && indexPath.row == lastRowIndex {
+            communityViewModel.loadMore { [weak self] items in
+                guard let self else { return }
+                let startIndex = self.items.count - items.count // 15 - 5 = 10
+                let indexPathsToInsert = (startIndex ..< self.items.count).map { IndexPath(item: $0, section: 0) }
+                DispatchQueue.main.async {
+                    self.tableView.performBatchUpdates {
+                        self.tableView.insertRows(at: indexPathsToInsert, with: .automatic)
+                    }
+                }
+            } onError: { error in
+                // TODO: 에러처리
+                debugPrint(error)
+            }
+        }
+    }
+}
 
 extension CommunityViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let text = searchBar.text {
-            communityViewModel.search(query: text) { [weak self] items in
-                guard let self else { return }
-                self.items = items
-                tableView.reloadData()
+            communityViewModel.search(query: text) { [weak self] _ in
+                self?.tableView.reloadData()
             } onError: { error in
                 // TODO: 에러처리
                 debugPrint(error)
@@ -155,7 +187,7 @@ extension CommunityViewController: UISearchBarDelegate {
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
-            items = communityViewModel.cache
+            communityViewModel.reload()
             tableView.reloadData()
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
