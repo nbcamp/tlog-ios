@@ -3,6 +3,8 @@ import UIKit
 final class FollowListViewController: UIViewController {
     var selectedIndex = 0
 
+    private var scrollRatios: [Int: CGFloat] = [:]
+
     private let authViewModel = AuthViewModel.shared
     private let userViewModel = UserViewModel.shared
     private lazy var user = authViewModel.user
@@ -42,15 +44,29 @@ final class FollowListViewController: UIViewController {
         tableView.pin.top(to: segmentedControl.edge.bottom).horizontally().bottom()
     }
 
-    @objc func segmentedControlSelected(_: CustomSegmentedControl) {
-        switch segmentedControl.selectedSegmentIndex {
-        case 0:
-            tableView.reloadData()
-        case 1:
-            tableView.reloadData()
-        default:
-            break
+    @objc func segmentedControlSelected(_ control: CustomSegmentedControl) {
+        print(scrollRatios)
+        let selectedIndex = control.selectedSegmentIndex
+
+        tableView.reloadData()
+        tableView.layoutIfNeeded()
+
+        if let ratio = scrollRatios[selectedIndex] {
+            let totalScrollableHeight = tableView.contentSize.height - tableView.bounds.height
+            let yOffset = totalScrollableHeight * ratio
+            tableView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: false)
+        } else {
+            tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
         }
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let currentOffset = scrollView.contentOffset.y
+        let totalScrollableHeight = scrollView.contentSize.height - scrollView.bounds.height
+
+        var ratio = totalScrollableHeight > 0 ? currentOffset / totalScrollableHeight : 0
+        ratio = min(1, max(0, ratio))
+        scrollRatios[segmentedControl.selectedSegmentIndex] = ratio
     }
 }
 
@@ -76,7 +92,7 @@ extension FollowListViewController: UITableViewDataSource {
             : userViewModel.followings[indexPath.row]
 
         let variant: CustomFollowButton.Variant = userViewModel.isFollowed(user: data) ? .unfollow : .follow
-        
+
         cell.customUserView.setup(
             image: UIImage(),
             nicknameText: data.username,
@@ -88,7 +104,7 @@ extension FollowListViewController: UITableViewDataSource {
             guard let self = self, let cell = cell else { return }
 
             let currentVariant = cell.customUserView.variant
-            
+
             switch currentVariant {
             case .follow:
                 userViewModel.follow(to: data.id) { [weak self] in
@@ -107,7 +123,6 @@ extension FollowListViewController: UITableViewDataSource {
                 } onError: { error in
                     print(error)
                 }
-
             }
         }
         return cell
