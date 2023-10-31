@@ -1,9 +1,9 @@
 import UIKit
 
 final class CommunityViewController: UIViewController {
-    private let postViewModel = PostViewModel.shared
+    private let communityViewModel = CommunityViewModel.shared
 
-    private var posts: [CommunityPost] = []
+    private var items: [CommunityPost] = []
 
     private lazy var refreshControl = UIRefreshControl().then {
         $0.addTarget(self, action: #selector(refreshContent), for: .valueChanged)
@@ -33,7 +33,18 @@ final class CommunityViewController: UIViewController {
         view.backgroundColor = .systemBackground
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
-        loadCommunity()
+
+        communityViewModel.load { [weak self] items in
+            guard let self else { return }
+            print(items)
+            self.items = items
+            loadingView.stopAnimating()
+            loadingView.isHidden = true
+            tableView.reloadData()
+        } onError: { error in
+            // TODO: 에러 처리
+            debugPrint(error)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -52,23 +63,10 @@ final class CommunityViewController: UIViewController {
         loadingView.pin.center()
     }
 
-    private func loadCommunity(with query: String? = nil) {
-        postViewModel.withCommunity(byQuery: query) { [weak self] posts in
-            guard let self else { return }
-            self.posts = posts
-            loadingView.stopAnimating()
-            loadingView.isHidden = true
-            tableView.reloadData()
-        } onError: { error in
-            // TODO: 에러 처리
-            debugPrint(error)
-        }
-    }
-
     @objc private func refreshContent() {
-        postViewModel.withCommunity { [weak self] posts in
+        communityViewModel.refresh { [weak self] items in
             guard let self else { return }
-            self.posts = posts
+            self.items = items
             tableView.reloadData()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                 guard let self else { return }
@@ -87,7 +85,7 @@ final class CommunityViewController: UIViewController {
 
 extension CommunityViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return posts.count
+        return items.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -98,7 +96,7 @@ extension CommunityViewController: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        let item = posts[indexPath.row]
+        let item = items[indexPath.row]
 
 //         TODO: CommunityTableViewCell에 configure 함수 만들기
         cell.customCommunityTILView.userView.setup(
@@ -143,14 +141,22 @@ extension CommunityViewController: UITableViewDelegate {}
 extension CommunityViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let text = searchBar.text {
-            loadCommunity(with: text)
+            communityViewModel.search(query: text) { [weak self] items in
+                guard let self else { return }
+                self.items = items
+                tableView.reloadData()
+            } onError: { error in
+                // TODO: 에러처리
+                debugPrint(error)
+            }
         }
         searchBar.resignFirstResponder()
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
-            loadCommunity()
+            items = communityViewModel.cache
+            tableView.reloadData()
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
             }

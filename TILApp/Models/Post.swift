@@ -12,7 +12,7 @@ struct Post: Codable {
 
 struct GetPostsQuery: Codable {
     let userId: Int?
-    let query: String?
+    let q: String?
 }
 
 struct CreatePostInput: Codable {
