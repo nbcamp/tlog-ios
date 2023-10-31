@@ -8,35 +8,35 @@ final class CommunityViewController: UIViewController {
     private lazy var tableView = UITableView().then {
         $0.dataSource = self
         $0.delegate = self
+        $0.keyboardDismissMode = .onDrag
         $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: "CommunityTableViewCell")
+        view.addSubview($0)
     }
 
-    private var searchBar = UISearchBar()
-    private var loadingView = UIActivityIndicatorView().then {
+    private lazy var searchBar = UISearchBar().then {
+        $0.delegate = self
+        view.addSubview($0)
+    }
+
+    private lazy var loadingView = UIActivityIndicatorView().then {
         $0.startAnimating()
+        view.addSubview($0)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
-        view.addSubview(searchBar)
-        view.addSubview(tableView)
-        view.addSubview(loadingView)
-
         loadCommunity()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
         navigationController?.isNavigationBarHidden = true
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.isNavigationBarHidden = false
     }
 
     override func viewDidLayoutSubviews() {
@@ -45,8 +45,8 @@ final class CommunityViewController: UIViewController {
         loadingView.pin.center()
     }
 
-    private func loadCommunity(with _: String? = nil) {
-        postViewModel.withCommunity { [weak self] posts in
+    private func loadCommunity(with query: String? = nil) {
+        postViewModel.withCommunity(byQuery: query) { [weak self] posts in
             guard let self else { return }
             self.posts = posts
             loadingView.stopAnimating()
@@ -55,6 +55,10 @@ final class CommunityViewController: UIViewController {
         } onError: { error in
             debugPrint(error)
         }
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 
@@ -89,9 +93,9 @@ extension CommunityViewController: UITableViewDataSource {
         cell.selectionStyle = .none
 
         cell.customCommunityTILView.userProfileTapped = { [weak self] in
-//            guard let self else { return }
-            // TODO: print 제거, User Profile 화면 이동
-            print("User Profile Tapped")
+            guard let self else { return }
+            let userProfileViewController = UserProfileViewController()
+            navigationController?.pushViewController(userProfileViewController, animated: true)
         }
 
         cell.customCommunityTILView.postTapped = { [weak self] in
@@ -112,3 +116,21 @@ extension CommunityViewController: UITableViewDataSource {
 }
 
 extension CommunityViewController: UITableViewDelegate {}
+
+extension CommunityViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if let text = searchBar.text {
+            loadCommunity(with: text)
+        }
+        searchBar.resignFirstResponder()
+    }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            loadCommunity()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
+}
