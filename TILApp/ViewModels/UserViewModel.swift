@@ -86,7 +86,7 @@ final class UserViewModel {
         )
     }
 
-    func isFollowed(user: User) -> Bool {
-        return followings.contains(where: { $0 == user })
+    func isFollowed(userId: Int) -> Bool {
+        return followings.contains(where: { $0.id == userId })
     }
 }

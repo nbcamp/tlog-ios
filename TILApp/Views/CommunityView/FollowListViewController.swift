@@ -91,7 +91,7 @@ extension FollowListViewController: UITableViewDataSource {
             ? userViewModel.followers[indexPath.row]
             : userViewModel.followings[indexPath.row]
 
-        let variant: CustomFollowButton.Variant = userViewModel.isFollowed(user: data) ? .unfollow : .follow
+        let variant: CustomFollowButton.Variant = userViewModel.isFollowed(userId: data.id) ? .unfollow : .follow
 
         cell.customUserView.setup(
             image: UIImage(),
