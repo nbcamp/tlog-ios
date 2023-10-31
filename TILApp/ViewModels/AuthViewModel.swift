@@ -2,19 +2,34 @@ import Foundation
 
 final class AuthViewModel {
     static let shared: AuthViewModel = .init()
-    private init() {
-        isAuthenticated = UserDefaults.standard.string(forKey: Token.accessToken) != nil
-    }
+    private init() {}
 
     enum Token {
         static let accessToken = "Access Token"
     }
 
-    var user: AuthUser?
+    private(set) var user: AuthUser?
 
     var accessToken: String? { UserDefaults.standard.string(forKey: Token.accessToken) }
     var authenticated: Bool { accessToken != nil }
-    @Published var isAuthenticated: Bool
+    @Published var isAuthenticated: Bool = false
+    
+    func withUser(
+        onSuccess: ((_ user: AuthUser) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil
+    ) {
+        APIService.shared.request(.getProfile, model: AuthUser.self) { [weak self] model in
+            guard let self else { return }
+            user = model
+            isAuthenticated = true
+            onSuccess?(model)
+        } onError: { [weak self] error in
+            guard let self else { return }
+            user = nil
+            isAuthenticated = false
+            onError?(error)
+        }
+    }
 
     func signIn(
         _ input: SignInInput,

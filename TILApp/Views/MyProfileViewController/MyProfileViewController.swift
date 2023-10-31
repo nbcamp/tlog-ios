@@ -105,7 +105,7 @@ final class MyProfileViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
-        AuthViewModel.shared.profile(
+        authViewModel.profile(
             onSuccess: { [weak self] user in
                 self?.nicknameLabel.text = user.username
                 self?.postButton.setTitle("\(user.posts)\nposts", for: .normal)
@@ -257,9 +257,13 @@ extension MyProfileViewController: UITableViewDelegate {
 }
 
 extension MyProfileViewController: UIViewControllerTransitioningDelegate {
-    func presentationController(forPresented presented: UIViewController,
-                                presenting: UIViewController?, source _: UIViewController) -> UIPresentationController?
-    { return SeeMorePresentationController(presentedViewController: presented, presenting: presenting) }
+    func presentationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController?,
+        source: UIViewController
+    ) -> UIPresentationController? {
+        return SeeMorePresentationController(presentedViewController: presented, presenting: presenting)
+    }
 }
 
 extension MyProfileViewController: SeeMoreBottomSheetDelegate {
@@ -273,7 +277,12 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             navigationController?.hidesBottomBarWhenPushed = true
 
         } else if title == "로그아웃" {
-            authViewModel.signOut()
+            let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)
+            alertController.addAction(.init(title: "계속", style: .destructive, handler: { _ in
+                AuthViewModel.shared.signOut()
+            }))
+            alertController.addAction(.init(title: "취소", style: .cancel))
+            topMostViewController.present(alertController, animated: true)
         } else if title == "자주 묻는 질문" {
             print("자주 묻는 질문")
         } else if title == "개인 정보 처리 방침" {

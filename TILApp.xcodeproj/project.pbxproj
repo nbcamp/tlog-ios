@@ -37,6 +37,7 @@
 		33A4E82A2AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E8292AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift */; };
 		33A4E82C2AECBE3C00E3F55E /* MoreTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E82B2AECBE3C00E3F55E /* MoreTableViewCell.swift */; };
 		33A4E8302AEF740600E3F55E /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E82F2AEF740600E3F55E /* Community.swift */; };
+		33A4E8322AEFCA7100E3F55E /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E8312AEFCA7100E3F55E /* LoadingViewController.swift */; };
 		33DC8E002ADF84CC00580FA0 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8DFF2ADF84CC00580FA0 /* Then */; };
 		33DC8E032ADFC9CC00580FA0 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E022ADFC9CC00580FA0 /* CombineMoya */; };
 		33DC8E052ADFC9CC00580FA0 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E042ADFC9CC00580FA0 /* Moya */; };
@@ -109,6 +110,7 @@
 		33A4E8292AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeMoreBottomSheetViewController.swift; sourceTree = "<group>"; };
 		33A4E82B2AECBE3C00E3F55E /* MoreTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreTableViewCell.swift; sourceTree = "<group>"; };
 		33A4E82F2AEF740600E3F55E /* Community.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
+		33A4E8312AEFCA7100E3F55E /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 		33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkViewController.swift; sourceTree = "<group>"; };
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 			children = (
 				D2CDB6F32AEB665C00BFD8C2 /* Components */,
 				3334E1AB2AD6BC1800D853D7 /* RootViewController.swift */,
+				33A4E8312AEFCA7100E3F55E /* LoadingViewController.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -535,6 +538,7 @@
 				33A4E8242AECB4C700E3F55E /* UserViewModel.swift in Sources */,
 				3334E1DE2AD918CB00D853D7 /* HomeViewController.swift in Sources */,
 				9BB3AD6F2AEEC99F004A25DB /* MyProfileTableViewCell.swift in Sources */,
+				33A4E8322AEFCA7100E3F55E /* LoadingViewController.swift in Sources */,
 				D2CDB70B2AEB68DB00BFD8C2 /* CustomCommunityTILView.swift in Sources */,
 				9BE049C02AED229600A47CFC /* UserProfileViewController.swift in Sources */,
 				D29659F22AE80313000C28A6 /* EditTagViewController.swift in Sources */,

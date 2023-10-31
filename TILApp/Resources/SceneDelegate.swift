@@ -11,29 +11,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = .init(windowScene: windowScene)
         window?.makeKeyAndVisible()
 
-        window?.rootViewController = RootViewController()
+        window?.rootViewController = LoadingViewController()
     }
 
     func sceneDidDisconnect(_: UIScene) {}
 
     func sceneDidBecomeActive(_: UIScene) {
-        AuthViewModel.shared.$isAuthenticated.sink { [weak self] authenticated in
-            guard let self else { return }
-            if !authenticated {
-                let signInViewController = SignInViewController()
-                signInViewController.modalPresentationStyle = .fullScreen
-                window?.rootViewController?.present(signInViewController, animated: false, completion: nil)
-            } else {
-                APIService.shared.request(.getProfile, model: AuthUser.self) { model in
-                    _ = model
-                    print(model)
-                    AuthViewModel.shared.user = model
-                    print(AuthViewModel.shared.user)
-                } onError: { error in
-                    _ = error
-                    print(error)
-                }
-            }
+        AuthViewModel.shared.withUser()
+        AuthViewModel.shared.$isAuthenticated.sink { [unowned self] authenticated in
+            self.window?.rootViewController = authenticated ? RootViewController() : SignInViewController()
         }.store(in: &cancellables)
     }
 
