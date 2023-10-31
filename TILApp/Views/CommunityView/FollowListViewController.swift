@@ -102,7 +102,6 @@ extension FollowListViewController: UITableViewDataSource {
         case 1:
             let data = userViewModel.followings[indexPath.row]
             cell.customUserView.setup(image: UIImage(), nicknameText: data.username, contentText: "TIL 마지막 작성일 | ", variant: .unfollow)
-
             cell.customUserView.buttonTapHandler = { [weak cell] in
                 guard let cell else { return }
                 self.userViewModel.unfollow(to: data.id, onSuccess: { [weak self] in

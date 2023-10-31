@@ -16,7 +16,7 @@ class CustomUserView: UIView {
         set { customLabelView.nicknameText = newValue }
     }
 
-    var dateText: String {
+    var contentText: String {
         get { customLabelView.dateText }
         set { customLabelView.dateText = newValue }
     }
@@ -67,9 +67,9 @@ class CustomUserView: UIView {
     }
 
     func setup(image: UIImage, nicknameText: String, contentText: String, variant: CustomFollowButton.Variant) {
-        imageView.image = image
-        customLabelView.nicknameText = nicknameText
-        customLabelView.dateText = contentText
+        self.image = image
+        self.nicknameText = nicknameText
+        self.contentText = contentText
         self.variant = variant
     }
 }

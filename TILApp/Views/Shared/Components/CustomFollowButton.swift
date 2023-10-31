@@ -33,21 +33,21 @@ class CustomFollowButton: UIButton {
     private func setupButton() {
         layer.cornerRadius = 8
         layer.borderWidth = 0.5
-        layer.borderColor = UIColor(named: "AccentColor")?.cgColor
+        layer.borderColor = UIColor.accent.cgColor
         titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
 
         pin.width(70).height(30)
     }
 
     private func setupFollowButton() {
-        backgroundColor = UIColor(named: "AccentColor")
+        backgroundColor = .accent
         setTitleColor(UIColor.white, for: .normal)
         setTitle("팔로우", for: .normal)
     }
 
     private func setupUnfollowButton() {
         backgroundColor = UIColor.white
-        setTitleColor(UIColor(named: "AccentColor"), for: .normal)
+        setTitleColor(.accent, for: .normal)
         setTitle("언팔로우", for: .normal)
     }
 
