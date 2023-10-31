@@ -26,9 +26,9 @@ class CustomUserView: UIView {
         set { imageView.image = newValue }
     }
 
-    var buttonTapHandler: (() -> Void)? {
-        get { return button.tapHandler }
-        set { button.tapHandler = newValue }
+    var followButtonTapped: (() -> Void)? {
+        get { return button.buttonTapped }
+        set { button.buttonTapped = newValue }
     }
 
     private let imageView = UIImageView().then {

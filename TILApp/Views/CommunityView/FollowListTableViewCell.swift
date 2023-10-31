@@ -1,10 +1,3 @@
-//
-//  FollowListTableViewCell.swift
-//  TILApp
-//
-//  Created by 이재희 on 10/23/23.
-//
-
 import UIKit
 
 final class FollowListTableViewCell: UITableViewCell {

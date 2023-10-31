@@ -17,12 +17,12 @@ class CustomFollowButton: UIButton {
         }
     }
 
-    var tapHandler: (() -> Void)?
+    var buttonTapped: (() -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupButton()
-        addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        addTarget(self, action: #selector(_buttonTapped), for: .touchUpInside)
     }
 
     @available(*, unavailable)
@@ -51,7 +51,7 @@ class CustomFollowButton: UIButton {
         setTitle("언팔로우", for: .normal)
     }
 
-    @objc private func buttonTapped() {
-        tapHandler?()
+    @objc private func _buttonTapped() {
+        buttonTapped?()
     }
 }
