@@ -10,10 +10,6 @@ final class UserProfileViewController: UIViewController {
 
     private var posts: [Post] = []
 
-    let userTILList: [TILList] = [
-        .init(title: "작성글1", content: "오늘 오전엔 CustomComponent를 사용하는법을 익혔습니다.", date: "2023-10-25"),
-        .init(title: "작성글2", content: "오늘 오후엔 UIPresentationController를 학습했습니다.", date: "2023-10-25"),
-    ]
     let userLikeTILList: [TILList] = [
         .init(title: "좋아요누른 글1", content: "오늘은 좋아요를 눌러보겠습니다.", date: "2023-10-25"),
         .init(title: "좋아요누른 글2", content: "금일 TLog를 사용하면서 TIL에대한 것을 알고 한번 사용해보도록 하려고 합니다.", date: "2023-10-25"),
@@ -108,67 +104,58 @@ final class UserProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        dataUpdateUI()
+    }
 
-//        let yourUserId = 451
-//        UserViewModel.shared.find(by: yourUserId, onSuccess: { [weak self] user in
-//            self?.nicknameLabel.text = user.username
-//            self?.postButton.setTitle("\(user.posts)\nposts", for: .normal)
-//            self?.followersButton.setTitle("\(user.followers)\nfollowers", for: .normal)
-//            self?.followingButton.setTitle("\(user.followings)\nfollowings", for: .normal)
-//
-//        }, onError: { [weak self] error in
-//            print("사용자 정보를 가져오는 중 에러 발생: \(error.localizedDescription)")
-//        })
-//
-//        APIService.shared.request(.getMainBlog, model: Blog.self) { [weak self] blog in
-//            self?.userBlogURL.setTitle(blog.url, for: .normal)
-//            print("2222\(blog.url)")
-//        } onError: { [weak self] error in
-//            print("\(error)")
-//            print("2222\(blog.url)")
-//
-//            self?.userBlogURL.setTitle("메인블로그를 설정하지 않았습니다.", for: .normal)
-//        }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        navigationController?.isNavigationBarHidden = false
-
-        let yourUserId = 15
-        UserViewModel.shared.find(by: yourUserId, onSuccess: { [weak self] user in
-            self?.nicknameLabel.text = user.username
-            self?.postButton.setTitle("\(user.posts)\nposts", for: .normal)
-            self?.followersButton.setTitle("\(user.followers)\nfollowers", for: .normal)
-            self?.followingButton.setTitle("\(user.followings)\nfollowings", for: .normal)
-
-        }, onError: { [weak self] error in
-            print("사용자 정보를 가져오는 중 에러 발생: \(error.localizedDescription)")
-        })
-
-        APIService.shared.request(.getMainBlog, model: [Blog].self) { [weak self] _ in
-//            self?.userBlogURL.setTitle(blog.url, for: .normal)
-//            print("\(blog)")
-        } onError: { [weak self] error in
-            print("\(error)")
-
-            self?.userBlogURL.setTitle("메인블로그를 설정하지 않았습니다.", for: .normal)
-        }
-
-        PostViewModel.shared.withPosts(byUserId: yourUserId, onSuccess: { [weak self] posts in
-            self?.posts = posts
-            print(">>>>>>\(self?.posts)")
-            self?.userProfileTableView.reloadData()
-        }, onError: { error in
-            print("게시물을 가져오는 중 에러 발생: \(error.localizedDescription)")
-        })
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setUpUI()
         moreButton.showsMenuAsPrimaryAction = true
+    }
+
+    private func dataUpdateUI() {
+        let yourUserId = 12
+        UserViewModel.shared.find(by: yourUserId, onSuccess: { [weak self] user in
+            guard let self else { return }
+            nicknameLabel.text = user.username
+            postButton.setTitle("\(user.posts)\nposts", for: .normal)
+            followersButton.setTitle("\(user.followers)\nfollowers", for: .normal)
+            followingButton.setTitle("\(user.followings)\nfollowings", for: .normal)
+
+        }, onError: { [weak self] _ in
+            let alert = UIAlertController(title: "오류", message: "다시 시도 해주세요.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+        })
+        APIService.shared.request(.getMainBlog, model: [Blog].self) { [weak self] _ in
+            guard let self else { return }
+//            userBlogURL.setTitle(blog.url, for: .normal)
+//            print("\(blog)")
+        } onError: { [weak self] _ in
+            guard let self else { return }
+            let alert = UIAlertController(title: "알림", message: "사용자의 메인 블로그 확인이 어렵습니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+
+            userBlogURL.setTitle("메인블로그를 설정하지 않았습니다.", for: .normal)
+        }
+
+        PostViewModel.shared.withPosts(byUserId: yourUserId, onSuccess: { [weak self] posts in
+            guard let self else { return }
+            self.posts = posts
+
+            userProfileTableView.reloadData()
+        }, onError: { _ in
+            let alert = UIAlertController(title: "오류", message: "사용자의 TIL이 확인 되지 않습니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+        })
     }
 
     private func setUpUI() {
@@ -179,34 +166,36 @@ final class UserProfileViewController: UIViewController {
                 flex.addItem(countView).direction(.row).width(200).height(75).marginTop(5)
                 countView.flex.direction(.row)
                     .width(200).height(75).define { flex in
-                        flex.addItem(postButton).width(65).height(25)
+                        flex.addItem(postButton).width(70).height(25)
                         flex.addItem(followersButton).width(70).height(25)
                         flex.addItem(followingButton).width(70).height(25)
                     }
             }
         }
-        followButtonView.flex.addItem().direction(.row).width(300).height(50).marginLeft(20).define { flex in
-            flex.addItem(doingFollowButton).width(100).height(30)
+        followButtonView.flex.addItem().direction(.row).define { flex in
+            flex.addItem(doingFollowButton).width(100).height(30).direction(.row)
             flex.addItem(userBlogURL).width(180).marginBottom(20).marginLeft(10)
         }
+
         screenView.flex.layout()
         countView.flex.layout()
         followButtonView.flex.layout()
 
         screenView.pin.top(view.pin.safeArea).bottom(80%).left().right()
-        followButtonView.pin.top(18%).left().right().height(50)
-        calendarView.pin.top(28%).left().right().bottom(30%)
+        followButtonView.pin.top(to: screenView.edge.bottom).left().right().height(50).marginLeft(20).marginTop(30)
+        calendarView.pin.top(to: followButtonView.edge.bottom).left().right().bottom(30%)
         moreButton.pin.top(view.pin.safeArea).right(20)
         userSegmentedControl.pin.below(of: calendarView)
         userProfileTableView.pin.below(of: userSegmentedControl).bottom(view.pin.safeArea).left().right()
     }
 
     @objc private func moreButtonTapped() {
-        let reportAction = UIAction(title: "신고하기", image: UIImage(systemName: "flag.fill"), attributes: .destructive) { [weak self] _ in
-            let alertController = UIAlertController(title: "신고 접수 완료", message: "신고가 고객센터에 접수되었습니다.", preferredStyle: .alert)
+        let reportAction = UIAction(title: "차단하기", image: UIImage(systemName: "person.crop.circle.fill.badge.minus"), attributes: .destructive) { [weak self] _ in
+            let alertController = UIAlertController(title: "차단 완료", message: "차단되었습니다.", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            guard let self else { return }
 
-            self!.present(alertController, animated: true, completion: nil)
+            self.present(alertController, animated: true, completion: nil)
         }
 
         let menu = UIMenu(children: [reportAction])
@@ -246,13 +235,11 @@ extension UserProfileViewController: UITableViewDataSource {
         switch userSegmentedControl.selectedSegmentIndex {
         case 0:
             let post = posts[indexPath.row]
-            let dateString = DateFormatter.dateFormatter.string(from: post.publishedAt)
-            userPostCell.userTILView.setup(withTitle: post.title, content: post.content, date: dateString)
+            userPostCell.userTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
             return userPostCell
         case 1:
             let data = userLikeTILList[indexPath.row]
             userLikeCell.userTILView.setup(withTitle: data.title, content: data.content, date: data.date)
-            print("\(data)")
             return userLikeCell
         default: break
         }
@@ -266,12 +253,4 @@ extension UserProfileViewController: UITableViewDataSource {
 
 extension UserProfileViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
-}
-
-extension DateFormatter {
-    static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }()
 }

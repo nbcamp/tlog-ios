@@ -1,16 +1,14 @@
 import UIKit
 
 final class ProfileEditViewController: UIViewController {
-    private let userViewModel = UserViewModel.shared
-    private let authViewModel = AuthViewModel.shared
     private lazy var componentView = UIView().then {
         view.addSubview($0)
     }
 
     private lazy var editProfileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.circle.fill")
-        $0.tintColor = UIColor(named: "AccentColor")
-        $0.layer.borderColor = UIColor(named: "AccentColor")?.cgColor
+        $0.tintColor = UIColor.accent
+        $0.layer.borderColor = UIColor.accent.cgColor
         $0.layer.cornerRadius = 50
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
@@ -33,13 +31,15 @@ final class ProfileEditViewController: UIViewController {
 
     private lazy var nicknameTextFieldView = CustomTextFieldViewWithValidation().then {
         $0.titleText = "유저 닉네임"
-        $0.mainText = "123123123123123123"
+        $0.mainText = ""
         $0.placeholder = "닉네임을 입력하세요"
         $0.validationText = ""
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        view.backgroundColor = .systemBackground
+
         navigationController?.setNavigationBarHidden(false, animated: false)
         navigationController?.hidesBottomBarWhenPushed = true
     }
@@ -47,7 +47,7 @@ final class ProfileEditViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
+        
         navigationItem.title = "프로필 수정"
         let doneBarButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))
         navigationItem.rightBarButtonItem = doneBarButton
@@ -55,11 +55,16 @@ final class ProfileEditViewController: UIViewController {
         editProfileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped(_:))))
         AuthViewModel.shared.profile(
             onSuccess: { [weak self] user in
-                self?.nicknameTextFieldView.mainText = user.username
-
-            },
-            onError: { error in
-                print("프로필 정보를 가져오는 중 에러 발생: \(error.localizedDescription)")
+                guard let self else {return}
+                nicknameTextFieldView.mainText = user.username
+                
+            }, onError: { error in
+                let alert = UIAlertController(title: "오류", message: "다시 시도 해주세요.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default) { action in
+                    self.navigationController?.popViewController(animated: true)
+                })
+                
+                self.present(alert, animated: true, completion: nil)
             })
     }
 
@@ -100,20 +105,17 @@ final class ProfileEditViewController: UIViewController {
 //        present(imagePicker, animated: true, completion: nil)
     }
 
-    @objc private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
-    }
-
     @objc private func completeButtonTapped() {
         let newNickname = nicknameTextFieldView.mainText
         let updateInput = UpdateUserInput(username: newNickname, avatarUrl: nil)
-
-        authViewModel.update(updateInput, onSuccess: { [weak self] _ in
-            self?.navigationController?.popViewController(animated: true)
+        AuthViewModel.shared.update(updateInput, onSuccess: { [weak self] _ in
+            guard let self else { return }
+            navigationController?.popViewController(animated: true)
         }, onError: { [weak self] _ in
+            guard let self else { return }
             let alert = UIAlertController(title: "업데이트 실패", message: "다시 시도 해주세요.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-            self?.present(alert, animated: true, completion: nil)
+            present(alert, animated: true, completion: nil)
         })
     }
 
@@ -121,7 +123,7 @@ final class ProfileEditViewController: UIViewController {
         let alertController = UIAlertController(title: "회원 탈퇴", message: "정말로 회원 탈퇴를 하시겠습니까?", preferredStyle: .alert)
 
         let confirmAction = UIAlertAction(title: "확인", style: .destructive) { [weak self] _ in
-            self?.authViewModel.withdraw()
+            AuthViewModel.shared.withdraw()
             let alert = UIAlertController(title: "회원 탈퇴 성공", message: "\n다음에 또 이용해 주십시오.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
         }
