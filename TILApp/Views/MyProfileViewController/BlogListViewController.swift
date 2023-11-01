@@ -1,10 +1,3 @@
-//
-//  BlogListViewController.swift
-//  TILApp
-//
-//  Created by 이재희 on 10/19/23.
-//
-
 import UIKit
 
 final class BlogListViewController: UIViewController {
@@ -21,7 +14,8 @@ final class BlogListViewController: UIViewController {
         view.backgroundColor = .systemBackground
         title = "블로그 목록"
 
-        let addBlogButton = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addBlogButtonTapped))
+        let addBlogButton
+            = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addBlogButtonTapped))
         navigationItem.rightBarButtonItem = addBlogButton
 
         view.addSubview(tableView)
@@ -38,10 +32,8 @@ final class BlogListViewController: UIViewController {
         navigationController?.isNavigationBarHidden = false
         tabBarController?.tabBar.isHidden = true
 
-        blogViewModel.clearKeywords()
-        blogViewModel.load(onSuccess: { [weak self] _ in
-            self?.tableView.reloadData()
-        })
+        KeywordInputViewModel.shared.clear()
+        tableView.reloadData()
     }
 
     override func viewDidLayoutSubviews() {
@@ -61,7 +53,9 @@ extension BlogListViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CustomBlogCell", for: indexPath) as? BlogListTableViewCell else {
+        guard let cell
+            = tableView.dequeueReusableCell(withIdentifier: "CustomBlogCell", for: indexPath) as? BlogListTableViewCell
+        else {
             return UITableViewCell()
         }
 

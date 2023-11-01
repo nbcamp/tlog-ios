@@ -53,6 +53,8 @@
 		9BE049C22AED60EE00A47CFC /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049C12AED60EE00A47CFC /* UserTableViewCell.swift */; };
 		AB75EDE82AEF9CBB00BC1BC9 /* XMLCoder in Frameworks */ = {isa = PBXBuildFile; productRef = AB75EDE72AEF9CBB00BC1BC9 /* XMLCoder */; };
 		AB8F2A1A2AEF9B260022D3E4 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = AB8F2A192AEF9B260022D3E4 /* FSCalendar */; };
+		D20DC9E42AF206D8001F83D0 /* KeywordInputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20DC9E32AF206D8001F83D0 /* KeywordInputViewModel.swift */; };
+		D20DC9E62AF2098F001F83D0 /* KeywordInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20DC9E52AF2098F001F83D0 /* KeywordInput.swift */; };
 		D24BB9912AE106F000ED7028 /* BlogListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9902AE106F000ED7028 /* BlogListViewController.swift */; };
 		D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */; };
 		D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */; };
@@ -124,6 +126,8 @@
 		9BE049BF2AED229600A47CFC /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		9BE049C12AED60EE00A47CFC /* UserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		D20AD8D02ADC5ECA00CDEB2C /* TILApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TILApp.entitlements; sourceTree = "<group>"; };
+		D20DC9E32AF206D8001F83D0 /* KeywordInputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeywordInputViewModel.swift; sourceTree = "<group>"; };
+		D20DC9E52AF2098F001F83D0 /* KeywordInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeywordInput.swift; sourceTree = "<group>"; };
 		D24BB9902AE106F000ED7028 /* BlogListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListViewController.swift; sourceTree = "<group>"; };
 		D24BB9922AE107F800ED7028 /* BlogListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogListTableViewCell.swift; sourceTree = "<group>"; };
 		D24BB9942AE1104400ED7028 /* BlogEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogEditViewController.swift; sourceTree = "<group>"; };
@@ -226,6 +230,7 @@
 				33A4E8232AECB4C700E3F55E /* UserViewModel.swift */,
 				33A4E81B2AEBB14800E3F55E /* BlogViewModel.swift */,
 				33A4E8252AECB57000E3F55E /* PostViewModel.swift */,
+				D20DC9E32AF206D8001F83D0 /* KeywordInputViewModel.swift */,
 				33A4E83D2AF0ECD700E3F55E /* CommunityViewModel.swift */,
 			);
 			path = ViewModels;
@@ -239,6 +244,7 @@
 				3334E1C82AD911ED00D853D7 /* Blog.swift */,
 				3334E1CC2AD9126400D853D7 /* Post.swift */,
 				33A4E82F2AEF740600E3F55E /* Community.swift */,
+				D20DC9E52AF2098F001F83D0 /* KeywordInput.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -515,6 +521,7 @@
 				33A4E81C2AEBB14800E3F55E /* BlogViewModel.swift in Sources */,
 				D2CDB7152AEB69DB00BFD8C2 /* TestComponentsViewController.swift in Sources */,
 				D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */,
+				D20DC9E42AF206D8001F83D0 /* KeywordInputViewModel.swift in Sources */,
 				3334E1C92AD911ED00D853D7 /* Blog.swift in Sources */,
 				D2CDB6F92AEB671800BFD8C2 /* CustomFollowButton.swift in Sources */,
 				D2A4D1FB2AE5DF9000B510A3 /* FollowListTableViewCell.swift in Sources */,
@@ -540,6 +547,7 @@
 				D2CDB7032AEB680300BFD8C2 /* CustomTextFieldViewWithValidation.swift in Sources */,
 				33A4E8262AECB57000E3F55E /* PostViewModel.swift in Sources */,
 				D29659F02AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift in Sources */,
+				D20DC9E62AF2098F001F83D0 /* KeywordInput.swift in Sources */,
 				33A4E8302AEF740600E3F55E /* Community.swift in Sources */,
 				33A4E8282AECBDE300E3F55E /* SeeMorePresentationController.swift in Sources */,
 				33A4E8242AECB4C700E3F55E /* UserViewModel.swift in Sources */,

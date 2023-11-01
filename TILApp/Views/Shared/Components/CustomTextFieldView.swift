@@ -26,6 +26,11 @@ class CustomTextFieldView: UIView {
         get { textField.delegate }
         set { textField.delegate = newValue }
     }
+    
+    var keyboardType: UIKeyboardType {
+        get { textField.keyboardType }
+        set { textField.keyboardType = newValue }
+    }
 
     var readOnly: Bool = false {
         didSet {

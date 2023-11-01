@@ -4,12 +4,13 @@ final class BlogEditViewController: UIViewController {
     var id: Int = 0 {
         didSet {
             blog = blogViewModel.getBlog(blogId: id)
-            blogViewModel.initKeywords(blogId: id)
+            keywordInputViewModel.get(blog: blog)
         }
     }
 
     private lazy var blog: Blog = blogViewModel.getBlog(blogId: id)
     private let blogViewModel = BlogViewModel.shared
+    private let keywordInputViewModel = KeywordInputViewModel.shared
 
     private let contentScrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
@@ -73,33 +74,37 @@ final class BlogEditViewController: UIViewController {
         $0.pin.size($0.componentSize)
         $0.addTarget(self, action: #selector(deleteBlogButtonTapped), for: .touchUpInside)
     }
-    
+
     @objc private func deleteBlogButtonTapped() {
         let alertController = UIAlertController(
             title: "블로그 삭제",
             message: "\n블로그를 삭제하시겠습니까?",
             preferredStyle: .alert
         )
-        
+
         let cancelAction = UIAlertAction(
             title: "취소",
             style: .cancel,
             handler: nil
         )
         alertController.addAction(cancelAction)
-        
+
         let deleteAction = UIAlertAction(
             title: "삭제",
             style: .destructive,
             handler: { [weak self] _ in
                 guard let self else { return }
-                blogViewModel.deleteBlog(blogId: id)
-                blogViewModel.delete(blog)
-                navigationController?.popViewController(animated: true)
+
+                blogViewModel.delete(blog) {
+                    self.navigationController?.popViewController(animated: true)
+                } onError: { error in
+                    // TODO: 에러 처리
+                    print(error)
+                }
             }
         )
         alertController.addAction(deleteAction)
-        
+
         present(alertController, animated: true, completion: nil)
     }
 
@@ -123,26 +128,32 @@ final class BlogEditViewController: UIViewController {
         contentScrollView.addSubview(contentView)
         contentView.addSubview(rootFlexContainer)
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         view.setNeedsLayout()
-        
-        let blogKeywords = blog.keywords.map{ KeywordInput.init(from: $0) }
-        if blogKeywords != blogViewModel.keywords {
+
+        let blogKeywords = blog.keywords.map { KeywordInput(from: $0) }
+        if blogKeywords != keywordInputViewModel.keywords {
             updateDoneButtonState()
         }
     }
 
     @objc private func doneButtonTapped() {
-        blogViewModel.update(blog, .init(name: blogNameTextField.mainText, keywords: blogViewModel.keywords), onSuccess: { [weak self] updatedBlog in
+        blogViewModel.update(blog, .init(
+            name: blogNameTextField.mainText,
+            keywords: keywordInputViewModel.keywords
+        ), onSuccess: { [weak self] _ in
             guard let self else { return }
             print("블로그가 성공적으로 수정되었습니다.")
             if mainBlogButton.variant == .primary {
                 blogViewModel.setMainBlog(id) { [weak self] in
                     guard let self else { return }
                     navigationController?.popViewController(animated: true)
+                } onError: { error in
+                    // TODO: 에러 처리
+                    print(error)
                 }
             } else {
                 navigationController?.popViewController(animated: true)
@@ -151,9 +162,10 @@ final class BlogEditViewController: UIViewController {
             print("블로그 수정 중 오류 발생: \(error)")
         })
     }
-    
+
     private func updateDoneButtonState() {
-        navigationItem.rightBarButtonItem?.isEnabled = blogViewModel.keywords.count > 0 && blogNameTextField.isValid
+        navigationItem.rightBarButtonItem?.isEnabled
+            = keywordInputViewModel.keywords.count > 0 && blogNameTextField.isValid
     }
 
     override func viewDidLayoutSubviews() {
@@ -162,19 +174,21 @@ final class BlogEditViewController: UIViewController {
         rootFlexContainer.removeAllSubviews()
 
         rootFlexContainer.flex.define {
-            for (index, keyword) in blogViewModel.keywords.enumerated() {
+            for (index, keyword) in keywordInputViewModel.keywords.enumerated() {
                 let customTagView = CustomTagView()
                 customTagView.labelText = keyword.keyword
                 customTagView.tags = keyword.tags
                 $0.addItem(customTagView).marginTop(10)
                 customTagView.pin.size(customTagView.componentSize)
 
-                let tapGestureRecognizer = ContextTapGestureRecognizer(target: self, action: #selector(customTagViewTapped(_:)))
+                let tapGestureRecognizer
+                    = ContextTapGestureRecognizer(target: self, action: #selector(customTagViewTapped(_:)))
                 tapGestureRecognizer.context["index"] = index
                 customTagView.addGestureRecognizer(tapGestureRecognizer)
                 customTagView.isUserInteractionEnabled = true
 
-                customTagView.addTargetForButton(target: self, action: #selector(deleteTagButtonTapped), for: .touchUpInside)
+                customTagView
+                    .addTargetForButton(target: self, action: #selector(deleteTagButtonTapped), for: .touchUpInside)
             }
         }
 
@@ -217,7 +231,7 @@ final class BlogEditViewController: UIViewController {
         if let customTagView = sender.superview as? CustomTagView,
            let index = rootFlexContainer.subviews.firstIndex(of: customTagView)
         {
-            let keyword = blogViewModel.keywords[index]
+            let keyword = keywordInputViewModel.keywords[index]
             let alertController = UIAlertController(
                 title: "태그 삭제",
                 message: "\n\(keyword.keyword)\n\(keyword.tags.joined(separator: ", "))\n\n태그를 삭제하시겠습니까?",
@@ -234,7 +248,7 @@ final class BlogEditViewController: UIViewController {
                 title: "삭제",
                 style: .destructive,
                 handler: { _ in
-                    self.blogViewModel.removeKeyword(index: index)
+                    self.keywordInputViewModel.remove(index: index)
                     self.updateDoneButtonState()
                     self.view.setNeedsLayout()
                 }
@@ -256,12 +270,14 @@ extension BlogEditViewController: UITextFieldDelegate {
         return true
     }
 
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String
+    ) -> Bool {
         if let currentText = textField.text,
            let range = Range(range, in: currentText)
         {
             let updatedText = currentText.replacingCharacters(in: range, with: string)
-            
+
             if updatedText.isEmpty {
                 blogNameTextField.isValid = false
                 blogNameTextField.validationText = ""
@@ -273,10 +289,10 @@ extension BlogEditViewController: UITextFieldDelegate {
                 blogNameTextField.isValid = !isDuplicate
                 blogNameTextField.validationText = isDuplicate ? "이미 등록된 블로그 이름입니다." : "유효한 블로그 이름입니다."
             }
-            
+
             updateDoneButtonState()
         }
-        
+
         return true
     }
 }

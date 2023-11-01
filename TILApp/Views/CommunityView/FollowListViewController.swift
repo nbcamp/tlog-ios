@@ -44,6 +44,7 @@ final class FollowListViewController: UIViewController {
         tableView.pin.top(to: segmentedControl.edge.bottom).horizontally().bottom()
     }
 
+    // TODO: 스크롤 위치 에러 수정
     @objc func segmentedControlSelected(_ control: CustomSegmentedControl) {
         print(scrollRatios)
         let selectedIndex = control.selectedSegmentIndex
@@ -112,6 +113,7 @@ extension FollowListViewController: UITableViewDataSource {
                     cell.customUserView.variant = .unfollow
                     segmentedControl.setTitle("팔로잉 \(userViewModel.followings.count)", forSegmentAt: 1)
                 } onError: { error in
+                    // TODO: 에러 처리
                     print(error)
                 }
 
@@ -121,6 +123,7 @@ extension FollowListViewController: UITableViewDataSource {
                     cell.customUserView.variant = .follow
                     segmentedControl.setTitle("팔로잉 \(userViewModel.followings.count)", forSegmentAt: 1)
                 } onError: { error in
+                    // TODO: 에러 처리
                     print(error)
                 }
             }

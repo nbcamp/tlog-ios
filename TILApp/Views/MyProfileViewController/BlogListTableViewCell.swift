@@ -1,11 +1,3 @@
-//
-//  BlogListTableViewCell.swift
-//  TILApp
-//
-//  Created by 이재희 on 10/19/23.
-//
-
-import PinLayout
 import UIKit
 
 final class BlogListTableViewCell: UITableViewCell {

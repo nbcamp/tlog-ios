@@ -55,12 +55,11 @@ final class BlogViewModel {
             onError?(error)
         }
     }
-    
-    // TODO: 결과 받아와서 blogs에 적용하기
+
     func setMainBlog(_ id: Int, onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
         APIService.shared.request(.setMainBlog(id)) { [weak self] _ in
-            guard let self else { return }
-            
+            guard let self = self else { return }
+            updateMainBlog(id)
             onSuccess?()
         } onError: { error in
             onError?(error)
@@ -70,39 +69,43 @@ final class BlogViewModel {
     func getBlog(blogId: Int) -> Blog {
         return blogs.first { $0.id == blogId }!
     }
-    
-    func deleteBlog(blogId: Int) {
-        blogs.removeAll(where: { $0.id == blogId })
-    }
-    
+
     func hasBlogName(_ blogNameToCheck: String) -> Bool {
         return blogs.contains { $0.name == blogNameToCheck }
     }
-    
-    // TODO: 다 정리되면 위쪽으로 옮기기
-    private(set) var keywords: [KeywordInput] = []
 
-    func clearKeywords() {
-        keywords = []
-    }
-    
-    func initKeywords(blogId: Int) {
-        keywords = (getBlog(blogId: blogId).keywords.map{ KeywordInput.init(from: $0) })
+    func hasBlogURL(_ url: String) -> Bool {
+        return blogs.contains { $0.url == url }
     }
 
-    func addKeyword(_ keyword: KeywordInput) {
-        keywords.append(keyword)
-    }
-
-    func updateKeyword(_ index: Int, _ keyword: KeywordInput) {
-        keywords[index] = keyword
-    }
-
-    func removeKeyword(index: Int) {
-        keywords.remove(at: index)
-    }
-
-    func hasKeyword(_ keywordToCheck: String) -> Bool {
-        return keywords.contains { $0.keyword == keywordToCheck }
+    func updateMainBlog(_ id: Int) {
+        if let index = blogs.firstIndex(where: { $0.main }) {
+            let oldBlog = blogs[index]
+            let newBlog: Blog = .init(
+                id: oldBlog.id,
+                name: oldBlog.name,
+                url: oldBlog.url,
+                rss: oldBlog.rss,
+                main: false,
+                keywords: oldBlog.keywords,
+                lastPublishedAt: oldBlog.lastPublishedAt,
+                createdAt: oldBlog.createdAt
+            )
+            blogs[index] = newBlog
+        }
+        if let index = blogs.firstIndex(where: { $0.id == id }) {
+            let oldBlog = blogs[index]
+            let newBlog: Blog = .init(
+                id: oldBlog.id,
+                name: oldBlog.name,
+                url: oldBlog.url,
+                rss: oldBlog.rss,
+                main: true,
+                keywords: oldBlog.keywords,
+                lastPublishedAt: oldBlog.lastPublishedAt,
+                createdAt: oldBlog.createdAt
+            )
+            blogs[index] = newBlog
+        }
     }
 }
