@@ -16,6 +16,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.circle.fill")
+        $0.tintColor = .accent
         $0.layer.cornerRadius = 50
         $0.layer.borderColor = UIColor.accent.cgColor
     }
@@ -86,16 +87,10 @@ final class MyProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: false)
-        view.backgroundColor = .systemBackground
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
         // TODO: 불러오는 위치 변경하기
         UserViewModel.shared.withFollowers()
         UserViewModel.shared.withFollowings()
@@ -134,10 +129,8 @@ final class MyProfileViewController: UIViewController {
 
     @objc private func moreButtonTapped() {
         let vc = SeeMoreBottomSheetViewController()
-        vc.modalPresentationStyle = .custom
-        vc.transitioningDelegate = self
         vc.delegate = self
-        present(vc, animated: true, completion: nil)
+        present(vc, animated: true)
     }
 
     @objc private func followersButtonTapped() {
@@ -211,24 +204,12 @@ extension MyProfileViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
 }
 
-extension MyProfileViewController: UIViewControllerTransitioningDelegate {
-    func presentationController(
-        forPresented presented: UIViewController,
-        presenting: UIViewController?,
-        source _: UIViewController
-    ) -> UIPresentationController? {
-        return SeeMorePresentationController(presentedViewController: presented, presenting: presenting)
-    }
-}
-
 extension MyProfileViewController: SeeMoreBottomSheetDelegate {
     func didSelectSeeMoreMenu(title: String) {
         if title == "회원 정보 수정" {
             let profileEditViewController = ProfileEditViewController()
             profileEditViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(profileEditViewController, animated: true)
-            profileEditViewController.username = user?.username
-            profileEditViewController.userImage = user?.avatarUrl
             dismiss(animated: true, completion: nil)
         } else if title == "로그아웃" {
             let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)
