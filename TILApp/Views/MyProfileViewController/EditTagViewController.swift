@@ -158,10 +158,12 @@ extension EditTagViewController: UITextFieldDelegate {
             if textField.tag == 0 {
                 textField.resignFirstResponder()
             } else if textField.tag == 1 {
-                keyword.tags.append(text)
-                updateDoneButtonState()
+                if !keyword.tags.contains(text) {
+                    keyword.tags.append(text)
+                    updateDoneButtonState()
+                    collectionView.reloadData()
+                }
                 textField.text = ""
-                collectionView.reloadData()
             }
         }
         return true
