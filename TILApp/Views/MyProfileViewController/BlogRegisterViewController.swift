@@ -82,7 +82,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
 
         navigationController?.isNavigationBarHidden = false
         view.setNeedsLayout()
-        
+
         updateDoneButtonState()
     }
 
@@ -99,12 +99,14 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
                 $0.addItem(customTagView).marginTop(10)
                 customTagView.pin.size(customTagView.componentSize)
 
-                let tapGestureRecognizer = ContextTapGestureRecognizer(target: self, action: #selector(customTagViewTapped(_:)))
+                let tapGestureRecognizer
+                    = ContextTapGestureRecognizer(target: self, action: #selector(customTagViewTapped(_:)))
                 tapGestureRecognizer.context["index"] = index
                 customTagView.addGestureRecognizer(tapGestureRecognizer)
                 customTagView.isUserInteractionEnabled = true
 
-                customTagView.addTargetForButton(target: self, action: #selector(deleteTagButtonTapped), for: .touchUpInside)
+                customTagView
+                    .addTargetForButton(target: self, action: #selector(deleteTagButtonTapped), for: .touchUpInside)
             }
         }
 
@@ -175,9 +177,11 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         }
         return false
     }
-    
+
     private func updateDoneButtonState() {
-        navigationItem.rightBarButtonItem?.isEnabled = blogViewModel.keywords.count > 0 && blogNameTextField.isValid && blogURLTextField.isValid && blogRSSTextField.isValid
+        navigationItem.rightBarButtonItem?.isEnabled
+            = blogViewModel.keywords.count > 0 && blogNameTextField.isValid
+            && blogURLTextField.isValid && blogRSSTextField.isValid
     }
 }
 
@@ -191,7 +195,12 @@ extension BlogRegisterViewController: UITextFieldDelegate {
             } else if textField.tag == 1 {
                 textField.resignFirstResponder()
                 (contentView.viewWithTag(textField.tag + 1) as? UITextField)?.becomeFirstResponder()
-                // TODO: RSS로 자동변환 해주는 함수 연결하기
+                if let rssUrl = convertToRssUrl(from: text) {
+                    let rssTextField = contentView.viewWithTag(2) as? UITextField
+                    rssTextField?.text = rssUrl
+                    blogRSSTextField.isValid = true
+                    updateDoneButtonState()
+                }
             } else if textField.tag == 2 {
                 textField.resignFirstResponder()
             }
@@ -199,60 +208,87 @@ extension BlogRegisterViewController: UITextFieldDelegate {
         return true
     }
 
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if textField.tag == 0 {
-            if let currentText = textField.text, let range = Range(range, in: currentText) {
-                let updatedText = currentText.replacingCharacters(in: range, with: string)
+    func convertToRssUrl(from blogUrl: String) -> String? {
+        var separateUrl = blogUrl.components(separatedBy: "https://").joined()
+        separateUrl = separateUrl.components(separatedBy: "/rss").joined()
+        separateUrl = separateUrl.components(separatedBy: "/feed").joined()
+        let splitUrl = separateUrl.split(separator: "/")
 
-                if updatedText.isEmpty {
-                    blogNameTextField.isValid = false
-                    blogNameTextField.validationText = ""
-                } else {
-                    let isDuplicate = blogViewModel.hasBlogName(updatedText)
-                    blogNameTextField.isValid = !isDuplicate
-                    blogNameTextField.validationText = isDuplicate ? "이미 등록된 블로그 이름입니다." : "유효한 블로그 이름입니다."
-                }
-            }
-        } else if textField.tag == 1 {
-            if let currentText = textField.text, let range = Range(range, in: currentText) {
-                let updatedText = currentText.replacingCharacters(in: range, with: string)
+        if splitUrl[0].contains("tistory.com") {
+            return "https://" + splitUrl[0] + "/rss"
+        } else if splitUrl[0].contains("naver.com") {
+            return "https://" + "rss." + "blog.naver.com/" + splitUrl[1]
+        } else if splitUrl[0].contains("velog.io") {
+            return "https://" + "v2." + "velog.io/rss/" + splitUrl[1]
+        } else if splitUrl[0].contains("medium.com") {
+            return "https://" + "medium.com/feed/" + splitUrl[1]
+        }
+        return nil
+    }
 
-                if updatedText.isEmpty {
-                    blogURLTextField.isValid = false
-                    blogURLTextField.validationText = ""
-                } else {
-                    // URL 유효성 검사
-                    if isValidURL(updatedText) {
-                        blogURLTextField.isValid = true
-                        blogURLTextField.validationText = "유효한 블로그 주소입니다."
-                    } else {
-                        blogURLTextField.isValid = false
-                        blogURLTextField.validationText = "유효하지 않은 URL입니다."
-                    }
-                }
-            }
-        } else if textField.tag == 2 {
-            if let currentText = textField.text, let range = Range(range, in: currentText) {
-                let updatedText = currentText.replacingCharacters(in: range, with: string)
+    func textField(
+        _ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String
+    ) -> Bool {
+        if let currentText = textField.text, let textRange = Range(range, in: currentText) {
+            let updatedText = currentText.replacingCharacters(in: textRange, with: string)
 
-                if updatedText.isEmpty {
-                    blogRSSTextField.isValid = false
-                    blogRSSTextField.validationText = ""
-                } else {
-                    // TODO: RSS 유효성 검사?
-                    if isValidURL(updatedText) {
-                        blogRSSTextField.isValid = true
-                        blogRSSTextField.validationText = "유효한 블로그 RSS 주소입니다."
-                    } else {
-                        blogRSSTextField.isValid = false
-                        blogRSSTextField.validationText = "유효하지 않은 URL입니다."
-                    }
-                }
+            switch textField.tag {
+            case 0:
+                updateBlogNameField(with: updatedText)
+            case 1:
+                updateBlogURLField(with: updatedText)
+            case 2:
+                updateBlogRSSField(with: updatedText)
+            default:
+                break
             }
+
+            updateDoneButtonState()
         }
 
-        updateDoneButtonState()
-
         return true
+    }
+
+    func updateBlogNameField(with text: String) {
+        if text.isEmpty {
+            blogNameTextField.isValid = false
+            blogNameTextField.validationText = ""
+        } else {
+            let isDuplicate = blogViewModel.hasBlogName(text)
+            blogNameTextField.isValid = !isDuplicate
+            blogNameTextField.validationText = isDuplicate ? "이미 등록된 블로그 이름입니다." : "유효한 블로그 이름입니다."
+        }
+    }
+
+    func updateBlogURLField(with text: String) {
+        if text.isEmpty {
+            blogURLTextField.isValid = false
+            blogURLTextField.validationText = ""
+        } else {
+            // URL 유효성 검사
+            if isValidURL(text) {
+                blogURLTextField.isValid = true
+                blogURLTextField.validationText = "유효한 블로그 주소입니다."
+            } else {
+                blogURLTextField.isValid = false
+                blogURLTextField.validationText = "유효하지 않은 URL입니다."
+            }
+        }
+    }
+
+    func updateBlogRSSField(with text: String) {
+        if text.isEmpty {
+            blogRSSTextField.isValid = false
+            blogRSSTextField.validationText = ""
+        } else {
+            // TODO: RSS 유효성 검사?
+            if isValidURL(text) {
+                blogRSSTextField.isValid = true
+                blogRSSTextField.validationText = "유효한 블로그 RSS 주소입니다."
+            } else {
+                blogRSSTextField.isValid = false
+                blogRSSTextField.validationText = "유효하지 않은 URL입니다."
+            }
+        }
     }
 }

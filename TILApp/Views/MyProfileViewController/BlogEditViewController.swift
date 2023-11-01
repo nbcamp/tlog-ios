@@ -73,21 +73,21 @@ final class BlogEditViewController: UIViewController {
         $0.pin.size($0.componentSize)
         $0.addTarget(self, action: #selector(deleteBlogButtonTapped), for: .touchUpInside)
     }
-    
+
     @objc private func deleteBlogButtonTapped() {
         let alertController = UIAlertController(
             title: "블로그 삭제",
             message: "\n블로그를 삭제하시겠습니까?",
             preferredStyle: .alert
         )
-        
+
         let cancelAction = UIAlertAction(
             title: "취소",
             style: .cancel,
             handler: nil
         )
         alertController.addAction(cancelAction)
-        
+
         let deleteAction = UIAlertAction(
             title: "삭제",
             style: .destructive,
@@ -99,7 +99,7 @@ final class BlogEditViewController: UIViewController {
             }
         )
         alertController.addAction(deleteAction)
-        
+
         present(alertController, animated: true, completion: nil)
     }
 
@@ -123,26 +123,31 @@ final class BlogEditViewController: UIViewController {
         contentScrollView.addSubview(contentView)
         contentView.addSubview(rootFlexContainer)
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         view.setNeedsLayout()
-        
-        let blogKeywords = blog.keywords.map{ KeywordInput.init(from: $0) }
+
+        let blogKeywords = blog.keywords.map { KeywordInput(from: $0) }
         if blogKeywords != blogViewModel.keywords {
             updateDoneButtonState()
         }
     }
 
     @objc private func doneButtonTapped() {
-        blogViewModel.update(blog, .init(name: blogNameTextField.mainText, keywords: blogViewModel.keywords), onSuccess: { [weak self] updatedBlog in
+        blogViewModel.update(blog, .init(
+            name: blogNameTextField.mainText,
+            keywords: blogViewModel.keywords
+        ), onSuccess: { [weak self] _ in
             guard let self else { return }
             print("블로그가 성공적으로 수정되었습니다.")
             if mainBlogButton.variant == .primary {
                 blogViewModel.setMainBlog(id) { [weak self] in
                     guard let self else { return }
                     navigationController?.popViewController(animated: true)
+                } onError: { error in
+                    print(error)
                 }
             } else {
                 navigationController?.popViewController(animated: true)
@@ -151,7 +156,7 @@ final class BlogEditViewController: UIViewController {
             print("블로그 수정 중 오류 발생: \(error)")
         })
     }
-    
+
     private func updateDoneButtonState() {
         navigationItem.rightBarButtonItem?.isEnabled = blogViewModel.keywords.count > 0 && blogNameTextField.isValid
     }
@@ -169,12 +174,14 @@ final class BlogEditViewController: UIViewController {
                 $0.addItem(customTagView).marginTop(10)
                 customTagView.pin.size(customTagView.componentSize)
 
-                let tapGestureRecognizer = ContextTapGestureRecognizer(target: self, action: #selector(customTagViewTapped(_:)))
+                let tapGestureRecognizer
+                    = ContextTapGestureRecognizer(target: self, action: #selector(customTagViewTapped(_:)))
                 tapGestureRecognizer.context["index"] = index
                 customTagView.addGestureRecognizer(tapGestureRecognizer)
                 customTagView.isUserInteractionEnabled = true
 
-                customTagView.addTargetForButton(target: self, action: #selector(deleteTagButtonTapped), for: .touchUpInside)
+                customTagView
+                    .addTargetForButton(target: self, action: #selector(deleteTagButtonTapped), for: .touchUpInside)
             }
         }
 
@@ -256,12 +263,14 @@ extension BlogEditViewController: UITextFieldDelegate {
         return true
     }
 
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String
+    ) -> Bool {
         if let currentText = textField.text,
            let range = Range(range, in: currentText)
         {
             let updatedText = currentText.replacingCharacters(in: range, with: string)
-            
+
             if updatedText.isEmpty {
                 blogNameTextField.isValid = false
                 blogNameTextField.validationText = ""
@@ -273,10 +282,10 @@ extension BlogEditViewController: UITextFieldDelegate {
                 blogNameTextField.isValid = !isDuplicate
                 blogNameTextField.validationText = isDuplicate ? "이미 등록된 블로그 이름입니다." : "유효한 블로그 이름입니다."
             }
-            
+
             updateDoneButtonState()
         }
-        
+
         return true
     }
 }
