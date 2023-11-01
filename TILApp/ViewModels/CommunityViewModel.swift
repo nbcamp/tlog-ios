@@ -1,39 +1,41 @@
 import Dispatch
 
+protocol CommunityViewModelDelegate: AnyObject {
+    func itemsUpdated(_ viewModel: CommunityViewModel, items: [CommunityPost], range: Range<Int>)
+    func errorOccurred(_ viewModel: CommunityViewModel, error: Error)
+}
+
 final class CommunityViewModel {
     static let shared: CommunityViewModel = .init()
     private init() {}
 
-    @Published private(set) var initialized: Bool = false
-    @Published private(set) var loading: Bool = false
-    @Published private(set) var fetching: Bool = false
-    @Published private(set) var searching: Bool = false
-    @Published private(set) var refreshing: Bool = false
-    @Published private(set) var completed: Bool = false
+    weak var delegate: CommunityViewModelDelegate?
 
-    private var nextCursor: Int? {
-        didSet { completed = nextCursor == nil && !items.isEmpty }
-    }
+    private(set) var initialized: Bool = false
+    private(set) var loading: Bool = false
+    private(set) var fetching: Bool = false
+    private(set) var searching: Bool = false
+    private(set) var refreshing: Bool = false
+    private(set) var completed: Bool = false
 
+    private var nextCursor: Int?
     private var query: String?
 
     private(set) var items: [CommunityPost] = []
     private var cache: [CommunityPost] = []
 
-    func load(
-        onSuccess: (([CommunityPost]) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
+    func load(_ completion: ((Result<[CommunityPost], Error>) -> Void)? = nil) {
         Task {
             loading = false
             await _load(
                 limit: 10,
                 desc: true,
-                onSuccess: { [weak self] items in
-                    self?.cache = items
-                    onSuccess?(items)
-                },
-                onError: onError
+                { [weak self] result in
+                    if let self, case .success(let items) = result {
+                        cache = items
+                    }
+                    completion?(result)
+                }
             )
             loading = true
             completed = false
@@ -49,46 +51,39 @@ final class CommunityViewModel {
 
     func search(
         query: String?,
-        onSuccess: (([CommunityPost]) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
+        _ completion: ((Result<[CommunityPost], Error>) -> Void)? = nil
     ) {
         guard initialized else { return }
         Task {
-            nextCursor = nil
             searching = true
             self.query = query
             await _load(
                 limit: 10,
                 desc: true,
-                onSuccess: onSuccess,
-                onError: onError
+                completion
             )
             searching = false
+            nextCursor = nil
+            completed = false
         }
     }
 
-    func refresh(
-        onSuccess: (([CommunityPost]) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
+    func refresh(_ completion: ((Result<[CommunityPost], Error>) -> Void)? = nil) {
         guard initialized else { return }
         Task {
-            nextCursor = nil
             refreshing = true
             await _load(
                 limit: 10,
                 desc: true,
-                onSuccess: onSuccess,
-                onError: onError
+                completion
             )
             refreshing = false
+            nextCursor = nil
+            completed = false
         }
     }
 
-    func loadMore(
-        onSuccess: (([CommunityPost]) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
+    func loadMore(_ completion: ((Result<[CommunityPost], Error>) -> Void)? = nil) {
         guard initialized, !completed else { return }
         Task {
             fetching = false
@@ -96,8 +91,7 @@ final class CommunityViewModel {
                 next: true,
                 limit: 5,
                 desc: true,
-                onSuccess: onSuccess,
-                onError: onError
+                completion
             )
             fetching = true
         }
@@ -107,14 +101,13 @@ final class CommunityViewModel {
         next: Bool = false,
         limit: Int? = nil,
         desc: Bool? = nil,
-        onSuccess: (([CommunityPost]) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
+        _ completion: ((Result<[CommunityPost], Error>) -> Void)? = nil
     ) async {
         let result = await APIService.shared.request(
             .getCommunity(.init(
                 q: query,
                 limit: limit,
-                cursor: nextCursor,
+                cursor: next ? nextCursor : nil,
                 desc: desc
             )),
             model: [CommunityPost].self
@@ -122,16 +115,22 @@ final class CommunityViewModel {
 
         DispatchQueue.main.async { [unowned self] in
             switch result {
-            case .success(let items):
+            case .success(let newItems):
                 if next {
-                    self.items.append(contentsOf: items)
+                    let startIndex = items.count
+                    let endIndex = startIndex + newItems.count
+                    items.append(contentsOf: newItems)
+                    delegate?.itemsUpdated(self, items: newItems, range: startIndex ..< endIndex)
                 } else {
-                    self.items = items
+                    items = newItems
+                    delegate?.itemsUpdated(self, items: newItems, range: 0 ..< newItems.count)
                 }
                 nextCursor = items.last?.post.id
-                onSuccess?(items)
+                completed = nextCursor == nil && !items.isEmpty
+                completion?(.success(items))
             case .failure(let error):
-                onError?(error)
+                delegate?.errorOccurred(self, error: error)
+                completion?(.failure(error))
             }
         }
     }

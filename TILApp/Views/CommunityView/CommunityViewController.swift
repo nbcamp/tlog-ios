@@ -5,15 +5,11 @@ final class CommunityViewController: UIViewController {
     private var items: [CommunityPost] { communityViewModel.items }
     private var cancellables: Set<AnyCancellable> = []
 
-    lazy var refreshControl = UIRefreshControl().then {
-        $0.addTarget(self, action: #selector(refreshContent), for: .valueChanged)
-    }
-
     private lazy var tableView = UITableView().then {
         $0.dataSource = self
         $0.delegate = self
         $0.keyboardDismissMode = .onDrag
-        $0.refreshControl = refreshControl
+        $0.refreshControl = UIRefreshControl()
         $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: "CommunityTableViewCell")
         view.addSubview($0)
     }
@@ -38,28 +34,12 @@ final class CommunityViewController: UIViewController {
         view.backgroundColor = .systemBackground
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
-
+        communityViewModel.delegate = self
         communityViewModel.load { [weak self] _ in
             guard let self else { return }
             loadingView.stopAnimating()
             loadingView.isHidden = true
-            tableView.reloadData()
-        } onError: { error in
-            // TODO: 에러 처리
-            debugPrint(error)
         }
-
-        communityViewModel.$completed
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] completed in
-                guard let self else { return }
-                if completed {
-                    tableView.tableFooterView = nil
-                } else {
-                    tableView.tableFooterView = footerLoadingView
-                    footerLoadingView.startAnimating()
-                }
-            }.store(in: &cancellables)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -76,20 +56,6 @@ final class CommunityViewController: UIViewController {
         searchBar.pin.top(view.pin.safeArea).horizontally().height(60)
         tableView.pin.top(to: searchBar.edge.bottom).horizontally().bottom(view.pin.safeArea)
         loadingView.pin.center()
-    }
-
-    @objc private func refreshContent() {
-        communityViewModel.refresh { [weak self] _ in
-            guard let self else { return }
-            tableView.reloadData()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                guard let self else { return }
-                refreshControl.endRefreshing()
-            }
-        } onError: { error in
-            // TODO: 에러 처리
-            debugPrint(error)
-        }
     }
 
     @objc private func dismissKeyboard() {
@@ -155,19 +121,14 @@ extension CommunityViewController: UITableViewDelegate {
         let lastSectionIndex = tableView.numberOfSections - 1
         let lastRowIndex = tableView.numberOfRows(inSection: 0) - 1
         if indexPath.section == lastSectionIndex && indexPath.row == lastRowIndex {
-            communityViewModel.loadMore { [weak self] items in
-                guard let self else { return }
-                let startIndex = self.items.count - items.count // 15 - 5 = 10
-                let indexPathsToInsert = (startIndex ..< self.items.count).map { IndexPath(item: $0, section: 0) }
-                DispatchQueue.main.async {
-                    self.tableView.performBatchUpdates {
-                        self.tableView.insertRows(at: indexPathsToInsert, with: .automatic)
-                    }
-                }
-            } onError: { error in
-                // TODO: 에러처리
-                debugPrint(error)
-            }
+            communityViewModel.loadMore()
+        }
+    }
+
+    func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {
+        guard let refreshControl = tableView.refreshControl, refreshControl.isRefreshing else { return }
+        communityViewModel.refresh { _ in
+            refreshControl.endRefreshing()
         }
     }
 }
@@ -175,12 +136,7 @@ extension CommunityViewController: UITableViewDelegate {
 extension CommunityViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let text = searchBar.text {
-            communityViewModel.search(query: text) { [weak self] _ in
-                self?.tableView.reloadData()
-            } onError: { error in
-                // TODO: 에러처리
-                debugPrint(error)
-            }
+            communityViewModel.search(query: text)
         }
         searchBar.resignFirstResponder()
     }
@@ -193,5 +149,21 @@ extension CommunityViewController: UISearchBarDelegate {
                 searchBar.resignFirstResponder()
             }
         }
+    }
+}
+
+extension CommunityViewController: CommunityViewModelDelegate {
+    func itemsUpdated(_: CommunityViewModel, items _: [CommunityPost], range: Range<Int>) {
+        if range.lowerBound > 0 {
+            let indexPaths = range.map { IndexPath(row: $0, section: 0) }
+            tableView.insertRows(at: indexPaths, with: .automatic)
+        } else {
+            tableView.reloadData()
+        }
+    }
+
+    func errorOccurred(_: CommunityViewModel, error: Error) {
+        // TODO: 에러처리
+        debugPrint(error)
     }
 }

@@ -50,6 +50,7 @@ final class APIService {
                 }
                 return .failure(.statusCode(response))
             }
+            return .success(response)
         }
 
         return result
