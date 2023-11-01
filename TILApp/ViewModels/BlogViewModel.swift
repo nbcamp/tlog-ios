@@ -55,13 +55,16 @@ final class BlogViewModel {
             onError?(error)
         }
     }
-    
-    // TODO: 결과 받아와서 blogs에 적용하기
+
     func setMainBlog(_ id: Int, onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
         APIService.shared.request(.setMainBlog(id)) { [weak self] _ in
-            guard self != nil else { return }
-            
-            onSuccess?()
+            guard let self = self else { return }
+            load { [weak self] _ in
+                guard let self else { return }
+                onSuccess?()
+            } onError: { error in
+                print(error)
+            }
         } onError: { error in
             onError?(error)
         }
@@ -70,13 +73,8 @@ final class BlogViewModel {
     func getBlog(blogId: Int) -> Blog {
         return blogs.first { $0.id == blogId }!
     }
-    
-    func deleteBlog(blogId: Int) {
-        blogs.removeAll(where: { $0.id == blogId })
-    }
-    
+
     func hasBlogName(_ blogNameToCheck: String) -> Bool {
         return blogs.contains { $0.name == blogNameToCheck }
     }
-    
 }

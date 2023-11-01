@@ -94,9 +94,12 @@ final class BlogEditViewController: UIViewController {
             style: .destructive,
             handler: { [weak self] _ in
                 guard let self else { return }
-                blogViewModel.deleteBlog(blogId: id)
-                blogViewModel.delete(blog)
-                navigationController?.popViewController(animated: true)
+
+                blogViewModel.delete(blog) {
+                    self.navigationController?.popViewController(animated: true)
+                } onError: { error in
+                    print(error)
+                }
             }
         )
         alertController.addAction(deleteAction)
