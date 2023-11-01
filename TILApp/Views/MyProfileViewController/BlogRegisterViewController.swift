@@ -21,6 +21,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         $0.titleText = "블로그 주소"
         $0.placeholder = "블로그 주소를 입력해 주세요"
         $0.textFieldTag = 1
+        $0.keyboardType = .URL
         $0.delegate = self
         contentView.addSubview($0)
     }
@@ -29,6 +30,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         $0.titleText = "블로그 RSS 주소"
         $0.placeholder = "블로그 RSS 주소를 입력해 주세요"
         $0.textFieldTag = 2
+        $0.keyboardType = .URL
         $0.delegate = self
         contentView.addSubview($0)
     }
@@ -265,7 +267,7 @@ extension BlogRegisterViewController: UITextFieldDelegate {
             blogURLTextField.isValid = false
             blogURLTextField.validationText = ""
         } else {
-            // URL 유효성 검사
+            // TODO: URL 유효성 검사
             if isValidURL(text) {
                 blogURLTextField.isValid = true
                 blogURLTextField.validationText = "유효한 블로그 주소입니다."

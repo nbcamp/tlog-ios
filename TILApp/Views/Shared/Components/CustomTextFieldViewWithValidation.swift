@@ -25,6 +25,11 @@ class CustomTextFieldViewWithValidation: UIView {
         get { customTextFieldView.delegate }
         set { customTextFieldView.delegate = newValue }
     }
+    
+    var keyboardType: UIKeyboardType {
+        get { customTextFieldView.keyboardType }
+        set { customTextFieldView.keyboardType = newValue }
+    }
 
     var readOnly: Bool = false {
         didSet {
