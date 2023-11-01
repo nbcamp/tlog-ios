@@ -1,10 +1,3 @@
-//
-//  FollowListTableViewCell.swift
-//  TILApp
-//
-//  Created by 이재희 on 10/23/23.
-//
-
 import UIKit
 
 final class FollowListTableViewCell: UITableViewCell {
@@ -13,16 +6,12 @@ final class FollowListTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        setupView()
+        contentView.addSubview(customUserView)
     }
     
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupView() {
-        contentView.addSubview(customUserView)
     }
     
     override func layoutSubviews() {

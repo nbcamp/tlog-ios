@@ -30,9 +30,8 @@ final class UserViewModel {
                 UserViewModel.shared.find(by: userId) { [weak self] user in
                     guard let self else { return }
                     self.followings.append(user)
-                    print(followings.count)
+                    onSuccess?()
                 }
-                onSuccess?()
             },
             onError: onError
         )
@@ -48,8 +47,8 @@ final class UserViewModel {
             onSuccess: { [weak self] _ in
                 if let index = self?.followings.firstIndex(where: { $0.id == userId }) {
                     self?.followings.remove(at: index)
+                    onSuccess?()
                 }
-                onSuccess?()
             },
             onError: onError
         )
@@ -87,7 +86,7 @@ final class UserViewModel {
         )
     }
 
-    func isFollowed(user: User) -> Bool {
-        return followings.contains(where: { $0 == user })
+    func isFollowed(userId: Int) -> Bool {
+        return followings.contains(where: { $0.id == userId })
     }
 }

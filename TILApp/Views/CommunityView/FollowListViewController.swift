@@ -3,11 +3,16 @@ import UIKit
 final class FollowListViewController: UIViewController {
     var selectedIndex = 0
 
+    private var scrollRatios: [Int: CGFloat] = [:]
+
     private let authViewModel = AuthViewModel.shared
     private let userViewModel = UserViewModel.shared
     private lazy var user = authViewModel.user
 
-    private lazy var segmentedControl = CustomSegmentedControl(items: ["팔로워 \(user?.followers ?? 0)", "팔로잉 \(user?.followings ?? 0)"]).then {
+    private lazy var segmentedControl = CustomSegmentedControl(items: [
+        "팔로워 \(user?.followers ?? 0)",
+        "팔로잉 \(user?.followings ?? 0)"
+    ]).then {
         $0.selectedSegmentIndex = selectedIndex
         $0.addTarget(self, action: #selector(segmentedControlSelected(_:)), for: .valueChanged)
 
@@ -37,20 +42,31 @@ final class FollowListViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         segmentedControl.pin.top(view.pin.safeArea)
         tableView.pin.top(to: segmentedControl.edge.bottom).horizontally().bottom()
-        tableView.reloadData()
     }
 
-    @objc func segmentedControlSelected(_: CustomSegmentedControl) {
-        switch segmentedControl.selectedSegmentIndex {
-        case 0:
-            segmentedControl.setTitle("팔로워 \(userViewModel.followers.count)", forSegmentAt: 0)
-            tableView.reloadData()
-        case 1:
-            segmentedControl.setTitle("팔로잉 \(userViewModel.followings.count)", forSegmentAt: 1)
-            tableView.reloadData()
-        default:
-            break
+    @objc func segmentedControlSelected(_ control: CustomSegmentedControl) {
+        print(scrollRatios)
+        let selectedIndex = control.selectedSegmentIndex
+
+        tableView.reloadData()
+        tableView.layoutIfNeeded()
+
+        if let ratio = scrollRatios[selectedIndex] {
+            let totalScrollableHeight = tableView.contentSize.height - tableView.bounds.height
+            let yOffset = totalScrollableHeight * ratio
+            tableView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: false)
+        } else {
+            tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
         }
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let currentOffset = scrollView.contentOffset.y
+        let totalScrollableHeight = scrollView.contentSize.height - scrollView.bounds.height
+
+        var ratio = totalScrollableHeight > 0 ? currentOffset / totalScrollableHeight : 0
+        ratio = min(1, max(0, ratio))
+        scrollRatios[segmentedControl.selectedSegmentIndex] = ratio
     }
 }
 
@@ -68,55 +84,47 @@ extension FollowListViewController: UITableViewDataSource {
 
     // TODO: 마지막 작성일 추가하기
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FollowListTableViewCell") as? FollowListTableViewCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FollowListTableViewCell")
+            as? FollowListTableViewCell else { return UITableViewCell() }
 
-        switch segmentedControl.selectedSegmentIndex {
-        case 0:
-            let data = userViewModel.followers[indexPath.row]
-            let variant: CustomFollowButton.Variant = userViewModel.isFollowed(user: data) ? .unfollow : .follow
-            cell.customUserView.setup(image: UIImage(), nicknameText: data.username, contentText: "TIL 마지막 작성일 | ", variant: variant)
+        let data: User = segmentedControl.selectedSegmentIndex == 0
+            ? userViewModel.followers[indexPath.row]
+            : userViewModel.followings[indexPath.row]
 
-            cell.customUserView.buttonTapHandler = { [weak cell] in
-                guard let cell else { return }
+        let variant: CustomFollowButton.Variant = userViewModel.isFollowed(userId: data.id) ? .unfollow : .follow
 
-                if variant == .follow {
-                    self.userViewModel.follow(to: data.id, onSuccess: { [weak self] in
-                        guard let self else { return }
-                        cell.customUserView.variant = .unfollow
-                        segmentedControl.setTitle("팔로잉 \(userViewModel.followings.count)", forSegmentAt: 1)
-                    }, onError: { error in
-                        print(error)
-                    })
+        cell.customUserView.setup(
+            image: UIImage(),
+            nicknameText: data.username,
+            contentText: "TIL 마지막 작성일 | ",
+            variant: variant
+        )
 
-                } else {
-                    self.userViewModel.unfollow(to: data.id, onSuccess: { [weak self] in
-                        guard let self else { return }
-                        cell.customUserView.variant = .follow
-                        segmentedControl.setTitle("팔로잉 \(userViewModel.followings.count)", forSegmentAt: 1)
-                    }, onError: { error in
-                        print(error)
-                    })
+        cell.customUserView.followButtonTapped = { [weak self, weak cell] in
+            guard let self = self, let cell = cell else { return }
+
+            let currentVariant = cell.customUserView.variant
+
+            switch currentVariant {
+            case .follow:
+                userViewModel.follow(to: data.id) { [weak self] in
+                    guard let self else { return }
+                    cell.customUserView.variant = .unfollow
+                    segmentedControl.setTitle("팔로잉 \(userViewModel.followings.count)", forSegmentAt: 1)
+                } onError: { error in
+                    print(error)
                 }
-            }
-            return cell
-        case 1:
-            let data = userViewModel.followings[indexPath.row]
-            cell.customUserView.setup(image: UIImage(), nicknameText: data.username, contentText: "TIL 마지막 작성일 | ", variant: .unfollow)
 
-            cell.customUserView.buttonTapHandler = { [weak cell] in
-                guard let cell else { return }
-                self.userViewModel.unfollow(to: data.id, onSuccess: { [weak self] in
+            case .unfollow:
+                userViewModel.unfollow(to: data.id) { [weak self] in
                     guard let self else { return }
                     cell.customUserView.variant = .follow
                     segmentedControl.setTitle("팔로잉 \(userViewModel.followings.count)", forSegmentAt: 1)
-                }, onError: { error in
+                } onError: { error in
                     print(error)
-                })
+                }
             }
-            return cell
-        default: break
         }
-
         return cell
     }
 

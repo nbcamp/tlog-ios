@@ -16,7 +16,7 @@ class CustomUserView: UIView {
         set { customLabelView.nicknameText = newValue }
     }
 
-    var dateText: String {
+    var contentText: String {
         get { customLabelView.dateText }
         set { customLabelView.dateText = newValue }
     }
@@ -26,9 +26,9 @@ class CustomUserView: UIView {
         set { imageView.image = newValue }
     }
 
-    var buttonTapHandler: (() -> Void)? {
-        get { return button.tapHandler }
-        set { button.tapHandler = newValue }
+    var followButtonTapped: (() -> Void)? {
+        get { return button.buttonTapped }
+        set { button.buttonTapped = newValue }
     }
 
     private let imageView = UIImageView().then {
@@ -67,9 +67,9 @@ class CustomUserView: UIView {
     }
 
     func setup(image: UIImage, nicknameText: String, contentText: String, variant: CustomFollowButton.Variant) {
-        imageView.image = image
-        customLabelView.nicknameText = nicknameText
-        customLabelView.dateText = contentText
+        self.image = image
+        self.nicknameText = nicknameText
+        self.contentText = contentText
         self.variant = variant
     }
 }
