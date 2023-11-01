@@ -2,6 +2,7 @@ import UIKit
 
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
     private let blogViewModel = BlogViewModel.shared
+    private let keywordInputViewModel = KeywordInputViewModel.shared
 
     private let contentScrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
@@ -68,7 +69,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
             name: blogNameTextField.mainText,
             url: blogURLTextField.mainText,
             rss: blogRSSTextField.mainText,
-            keywords: blogViewModel.keywords
+            keywords: keywordInputViewModel.keywords
         ), onSuccess: { [weak self] _ in
             guard let self = self else { return }
             print("블로그가 성공적으로 생성되었습니다.")
@@ -76,7 +77,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         }, onError: { error in
             print("블로그 생성 중 오류 발생: \(error)")
         })
-        blogViewModel.clearKeywords()
+        keywordInputViewModel.clearKeywords()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -94,7 +95,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         rootFlexContainer.removeAllSubviews()
 
         rootFlexContainer.flex.define {
-            for (index, keyword) in blogViewModel.keywords.enumerated() {
+            for (index, keyword) in keywordInputViewModel.keywords.enumerated() {
                 let customTagView = CustomTagView()
                 customTagView.labelText = keyword.keyword
                 customTagView.tags = keyword.tags
@@ -143,7 +144,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         if let customTagView = sender.superview as? CustomTagView,
            let index = rootFlexContainer.subviews.firstIndex(of: customTagView)
         {
-            let keyword = blogViewModel.keywords[index]
+            let keyword = keywordInputViewModel.keywords[index]
             let alertController = UIAlertController(
                 title: "태그 삭제",
                 message: "\n\(keyword.keyword)\n\(keyword.tags.joined(separator: ", "))\n\n태그를 삭제하시겠습니까?",
@@ -160,7 +161,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
                 title: "삭제",
                 style: .destructive,
                 handler: { _ in
-                    self.blogViewModel.removeKeyword(index: index)
+                    self.keywordInputViewModel.removeKeyword(index: index)
                     self.updateDoneButtonState()
                     self.view.setNeedsLayout()
                 }
@@ -182,7 +183,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
 
     private func updateDoneButtonState() {
         navigationItem.rightBarButtonItem?.isEnabled
-            = blogViewModel.keywords.count > 0 && blogNameTextField.isValid
+            = keywordInputViewModel.keywords.count > 0 && blogNameTextField.isValid
             && blogURLTextField.isValid && blogRSSTextField.isValid
     }
 }

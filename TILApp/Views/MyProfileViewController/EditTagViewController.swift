@@ -21,7 +21,7 @@ final class EditTagViewController: UIViewController {
                 title = "키워드 등록"
             case .update:
                 title = "키워드 수정"
-                keyword = blogViewModel.keywords[selectedIndex]
+                keyword = keywordInputViewModel.keywords[selectedIndex]
             }
         }
     }
@@ -30,6 +30,7 @@ final class EditTagViewController: UIViewController {
     var keyword: KeywordInput = .init(keyword: "", tags: [])
 
     private let blogViewModel = BlogViewModel.shared
+    private let keywordInputViewModel = KeywordInputViewModel.shared
 
     private lazy var prefixTF = CustomTextFieldViewWithValidation().then {
         $0.titleText = "게시물 제목에 포함될 문자"
@@ -91,9 +92,9 @@ final class EditTagViewController: UIViewController {
         keyword.keyword = prefixTF.mainText
         switch variant {
         case .add:
-            blogViewModel.addKeyword(keyword)
+            keywordInputViewModel.addKeyword(keyword)
         case .update:
-            blogViewModel.updateKeyword(selectedIndex, keyword)
+            keywordInputViewModel.updateKeyword(selectedIndex, keyword)
         }
 
         navigationController?.popViewController(animated: true)
@@ -180,7 +181,7 @@ extension EditTagViewController: UITextFieldDelegate {
                     prefixTF.isValid = true
                     prefixTF.validationText = ""
                 } else {
-                    let isDuplicate = blogViewModel.hasKeyword(updatedText)
+                    let isDuplicate = keywordInputViewModel.hasKeyword(updatedText)
                     prefixTF.isValid = !isDuplicate
                     prefixTF.validationText = isDuplicate ? "중복된 키워드입니다." : "유효한 키워드입니다."
                 }

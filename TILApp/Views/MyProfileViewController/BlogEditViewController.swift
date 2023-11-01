@@ -4,12 +4,13 @@ final class BlogEditViewController: UIViewController {
     var id: Int = 0 {
         didSet {
             blog = blogViewModel.getBlog(blogId: id)
-            blogViewModel.initKeywords(blogId: id)
+            keywordInputViewModel.initKeywords(blogId: id)
         }
     }
 
     private lazy var blog: Blog = blogViewModel.getBlog(blogId: id)
     private let blogViewModel = BlogViewModel.shared
+    private let keywordInputViewModel = KeywordInputViewModel.shared
 
     private let contentScrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
@@ -130,7 +131,7 @@ final class BlogEditViewController: UIViewController {
         view.setNeedsLayout()
 
         let blogKeywords = blog.keywords.map { KeywordInput(from: $0) }
-        if blogKeywords != blogViewModel.keywords {
+        if blogKeywords != keywordInputViewModel.keywords {
             updateDoneButtonState()
         }
     }
@@ -138,7 +139,7 @@ final class BlogEditViewController: UIViewController {
     @objc private func doneButtonTapped() {
         blogViewModel.update(blog, .init(
             name: blogNameTextField.mainText,
-            keywords: blogViewModel.keywords
+            keywords: keywordInputViewModel.keywords
         ), onSuccess: { [weak self] _ in
             guard let self else { return }
             print("블로그가 성공적으로 수정되었습니다.")
@@ -158,7 +159,8 @@ final class BlogEditViewController: UIViewController {
     }
 
     private func updateDoneButtonState() {
-        navigationItem.rightBarButtonItem?.isEnabled = blogViewModel.keywords.count > 0 && blogNameTextField.isValid
+        navigationItem.rightBarButtonItem?.isEnabled
+            = keywordInputViewModel.keywords.count > 0 && blogNameTextField.isValid
     }
 
     override func viewDidLayoutSubviews() {
@@ -167,7 +169,7 @@ final class BlogEditViewController: UIViewController {
         rootFlexContainer.removeAllSubviews()
 
         rootFlexContainer.flex.define {
-            for (index, keyword) in blogViewModel.keywords.enumerated() {
+            for (index, keyword) in keywordInputViewModel.keywords.enumerated() {
                 let customTagView = CustomTagView()
                 customTagView.labelText = keyword.keyword
                 customTagView.tags = keyword.tags
@@ -224,7 +226,7 @@ final class BlogEditViewController: UIViewController {
         if let customTagView = sender.superview as? CustomTagView,
            let index = rootFlexContainer.subviews.firstIndex(of: customTagView)
         {
-            let keyword = blogViewModel.keywords[index]
+            let keyword = keywordInputViewModel.keywords[index]
             let alertController = UIAlertController(
                 title: "태그 삭제",
                 message: "\n\(keyword.keyword)\n\(keyword.tags.joined(separator: ", "))\n\n태그를 삭제하시겠습니까?",
@@ -241,7 +243,7 @@ final class BlogEditViewController: UIViewController {
                 title: "삭제",
                 style: .destructive,
                 handler: { _ in
-                    self.blogViewModel.removeKeyword(index: index)
+                    self.keywordInputViewModel.removeKeyword(index: index)
                     self.updateDoneButtonState()
                     self.view.setNeedsLayout()
                 }

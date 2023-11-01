@@ -59,7 +59,7 @@ final class BlogViewModel {
     // TODO: 결과 받아와서 blogs에 적용하기
     func setMainBlog(_ id: Int, onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
         APIService.shared.request(.setMainBlog(id)) { [weak self] _ in
-            guard let self else { return }
+            guard self != nil else { return }
             
             onSuccess?()
         } onError: { error in
@@ -79,30 +79,4 @@ final class BlogViewModel {
         return blogs.contains { $0.name == blogNameToCheck }
     }
     
-    // TODO: 다 정리되면 위쪽으로 옮기기
-    private(set) var keywords: [KeywordInput] = []
-
-    func clearKeywords() {
-        keywords = []
-    }
-    
-    func initKeywords(blogId: Int) {
-        keywords = (getBlog(blogId: blogId).keywords.map{ KeywordInput.init(from: $0) })
-    }
-
-    func addKeyword(_ keyword: KeywordInput) {
-        keywords.append(keyword)
-    }
-
-    func updateKeyword(_ index: Int, _ keyword: KeywordInput) {
-        keywords[index] = keyword
-    }
-
-    func removeKeyword(index: Int) {
-        keywords.remove(at: index)
-    }
-
-    func hasKeyword(_ keywordToCheck: String) -> Bool {
-        return keywords.contains { $0.keyword == keywordToCheck }
-    }
 }
