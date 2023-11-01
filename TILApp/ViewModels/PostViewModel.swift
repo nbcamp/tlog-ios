@@ -11,21 +11,8 @@ final class PostViewModel {
         onError: ((Error) -> Void)? = nil
     ) {
         APIService.shared.request(
-            .getPosts(.init(userId: userId, query: query)),
+            .getPosts(.init(userId: userId, q: query)),
             model: [Post].self,
-            onSuccess: onSuccess,
-            onError: onError
-        )
-    }
-
-    func withCommunity(
-        byQuery query: String? = nil,
-        onSuccess: ((_ posts: [CommunityPost]) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(
-            .getCommunity(query),
-            model: [CommunityPost].self,
             onSuccess: onSuccess,
             onError: onError
         )

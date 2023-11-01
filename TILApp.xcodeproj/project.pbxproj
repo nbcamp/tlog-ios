@@ -38,6 +38,8 @@
 		33A4E82C2AECBE3C00E3F55E /* MoreTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E82B2AECBE3C00E3F55E /* MoreTableViewCell.swift */; };
 		33A4E8302AEF740600E3F55E /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E82F2AEF740600E3F55E /* Community.swift */; };
 		33A4E8322AEFCA7100E3F55E /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E8312AEFCA7100E3F55E /* LoadingViewController.swift */; };
+		33A4E83C2AF0EB6300E3F55E /* converter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E83B2AF0EB6300E3F55E /* converter.swift */; };
+		33A4E83E2AF0ECD700E3F55E /* CommunityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E83D2AF0ECD700E3F55E /* CommunityViewModel.swift */; };
 		33DC8E002ADF84CC00580FA0 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8DFF2ADF84CC00580FA0 /* Then */; };
 		33DC8E032ADFC9CC00580FA0 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E022ADFC9CC00580FA0 /* CombineMoya */; };
 		33DC8E052ADFC9CC00580FA0 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 33DC8E042ADFC9CC00580FA0 /* Moya */; };
@@ -111,6 +113,8 @@
 		33A4E82B2AECBE3C00E3F55E /* MoreTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreTableViewCell.swift; sourceTree = "<group>"; };
 		33A4E82F2AEF740600E3F55E /* Community.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
 		33A4E8312AEFCA7100E3F55E /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
+		33A4E83B2AF0EB6300E3F55E /* converter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = converter.swift; sourceTree = "<group>"; };
+		33A4E83D2AF0ECD700E3F55E /* CommunityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityViewModel.swift; sourceTree = "<group>"; };
 		33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkViewController.swift; sourceTree = "<group>"; };
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
@@ -222,6 +226,7 @@
 				33A4E8232AECB4C700E3F55E /* UserViewModel.swift */,
 				33A4E81B2AEBB14800E3F55E /* BlogViewModel.swift */,
 				33A4E8252AECB57000E3F55E /* PostViewModel.swift */,
+				33A4E83D2AF0ECD700E3F55E /* CommunityViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -251,6 +256,7 @@
 			children = (
 				3334E1C52AD9112B00D853D7 /* Extensions */,
 				D2A1684B2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift */,
+				33A4E83B2AF0EB6300E3F55E /* converter.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -529,6 +535,7 @@
 				D2CDB6F72AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift in Sources */,
 				D2CDB7112AEB696E00BFD8C2 /* CustomTagHeaderView.swift in Sources */,
 				D2CDB7052AEB684100BFD8C2 /* CustomLabelView.swift in Sources */,
+				33A4E83E2AF0ECD700E3F55E /* CommunityViewModel.swift in Sources */,
 				D2CDB7012AEB67C000BFD8C2 /* CustomTextFieldView.swift in Sources */,
 				D2CDB7032AEB680300BFD8C2 /* CustomTextFieldViewWithValidation.swift in Sources */,
 				33A4E8262AECB57000E3F55E /* PostViewModel.swift in Sources */,
@@ -550,6 +557,7 @@
 				D2A1684C2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift in Sources */,
 				3334E1D72AD914EF00D853D7 /* User.swift in Sources */,
 				D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */,
+				33A4E83C2AF0EB6300E3F55E /* converter.swift in Sources */,
 				D2CDB70F2AEB693C00BFD8C2 /* CustomSegmentedControl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -15,7 +15,7 @@ final class APIService {
     private init() {}
 
     private let provider = MoyaProvider<APIRequest>(plugins: [
-        //        MoyaLoggingPlugin() // 디버그 용
+        //                MoyaLoggingPlugin() // 디버그 용
     ])
 
     func request(
@@ -38,6 +38,22 @@ final class APIService {
                 onError?(error)
             }
         }
+    }
+
+    func request(_ target: APIRequest) async -> Result<Response, MoyaError> {
+        let result = await provider.request(target)
+
+        if case .success(let response) = result {
+            guard let response = try? response.filterSuccessfulStatusCodes() else {
+                if let message = getErrorMessage(of: response) {
+                    return .failure(.underlying(APIError.error(message), response))
+                }
+                return .failure(.statusCode(response))
+            }
+            return .success(response)
+        }
+
+        return result
     }
 
     func request<Model: Decodable>(
@@ -64,6 +80,27 @@ final class APIService {
             case .failure(let error):
                 onError?(error)
             }
+        }
+    }
+
+    func request<Model: Decodable>(_ target: APIRequest, model: Model.Type) async -> Result<Model, MoyaError> {
+        let result = await provider.request(target)
+
+        switch result {
+        case .success(let response):
+            guard let response = try? response.filterSuccessfulStatusCodes() else {
+                if let message = getErrorMessage(of: response) {
+                    return .failure(.underlying(APIError.error(message), response))
+                }
+                return .failure(.statusCode(response))
+            }
+            guard let model = try? response.map(model, using: Coder.decoder) else {
+                printJsonAsString(json: response.data)
+                return .failure(.jsonMapping(response))
+            }
+            return .success(model)
+        case .failure(let error):
+            return .failure(error)
         }
     }
 
@@ -114,7 +151,7 @@ enum APIRequest {
          updatePost(Int, UpdatePostInput)
 
     // Community
-    case getCommunity(String?)
+    case getCommunity(GetCommunityQuery)
 }
 
 extension APIRequest: TargetType {
@@ -226,18 +263,19 @@ extension APIRequest: TargetType {
         case .updateBlog(_, let payload):
             return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
         case .getPosts(let query):
-            var params: [String: Any] = [:]
-            if let userId = query.userId { params.updateValue(userId, forKey: "userId") }
-            if let searchQuery = query.query { params.updateValue(searchQuery, forKey: "q") }
-            return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: toDictionary(from: query),
+                encoding: URLEncoding.queryString
+            )
         case .createPost(let payload):
             return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
         case .updatePost(_, let payload):
             return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
         case .getCommunity(let query):
-            var params: [String: Any] = [:]
-            if let searchQuery = query { params.updateValue(searchQuery, forKey: "q") }
-            return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: toDictionary(from: query),
+                encoding: URLEncoding.queryString
+            )
         }
     }
 
