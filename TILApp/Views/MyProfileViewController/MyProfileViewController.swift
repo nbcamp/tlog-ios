@@ -3,18 +3,9 @@ import UIKit
 final class MyProfileViewController: UIViewController {
     private let authViewModel = AuthViewModel.shared
     private lazy var user = authViewModel.user
-    struct TILList {
-        let title: String
-        let content: String
-        let date: String
-    }
-
-    let likeTILList: [TILList] = [
-        .init(title: "좋아요누른 글1", content: "오늘은 좋아요를 눌러보겠습니다.", date: "2023-10-25"),
-        .init(title: "좋아요누른 글2", content: "금일 TLog를 사용하면서 TIL에대한 것을 알고 한번 사용해보도록 하려고 합니다.", date: "2023-10-25"),
-    ]
-
+    // TODO: 데이터 연결 필요
     private var posts: [Post] = []
+    private var likePosts: [Post] = []
 
     private lazy var screenView = UIView().then {
         view.addSubview($0)
@@ -89,7 +80,7 @@ final class MyProfileViewController: UIViewController {
     }
 
     private lazy var myProfileTableView = UITableView().then {
-        $0.register(UITableViewCell.self, forCellReuseIdentifier: MyProfileTableViewCell.identifier)
+        $0.register(MyProfileTableViewCell.self, forCellReuseIdentifier: MyProfileTableViewCell.identifier)
         $0.delegate = self
         $0.dataSource = self
         view.addSubview($0)
@@ -218,7 +209,7 @@ extension MyProfileViewController: UITableViewDataSource {
         case 0:
             return posts.count
         case 1:
-            return likeTILList.count
+            return likePosts.count
         default: break
         }
         return 0
@@ -234,11 +225,9 @@ extension MyProfileViewController: UITableViewDataSource {
             myPostCell.myTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
             return myPostCell
         case 1:
-            let data = likeTILList[indexPath.row]
-            likeCell.myTILView.setup(withTitle: data.title, content: data.content, date: data.date)
-
+            let likePost = likePosts[indexPath.row]
+            likeCell.myTILView.setup(withTitle: likePost.title, content: likePost.content, date: likePost.publishedAt.format())
             return likeCell
-
         default: break
         }
         return myPostCell

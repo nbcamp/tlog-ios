@@ -8,12 +8,9 @@ final class UserProfileViewController: UIViewController {
         let date: String
     }
 
+    // TODO: 데이터 연결 필요
     private var posts: [Post] = []
-
-    let userLikeTILList: [TILList] = [
-        .init(title: "좋아요누른 글1", content: "오늘은 좋아요를 눌러보겠습니다.", date: "2023-10-25"),
-        .init(title: "좋아요누른 글2", content: "금일 TLog를 사용하면서 TIL에대한 것을 알고 한번 사용해보도록 하려고 합니다.", date: "2023-10-25"),
-    ]
+    private var userLikePosts: [Post] = []
 
     private lazy var screenView = UIView().then {
         view.addSubview($0)
@@ -204,6 +201,8 @@ final class UserProfileViewController: UIViewController {
         moreButton.menu = menu
     }
 
+
+    
     @objc private func userSegmentedControlSelected(_ sender: CustomSegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
@@ -222,7 +221,7 @@ extension UserProfileViewController: UITableViewDataSource {
         case 0:
             return posts.count
         case 1:
-            return userLikeTILList.count
+            return userLikePosts.count
         default: break
         }
         return 0
@@ -238,8 +237,8 @@ extension UserProfileViewController: UITableViewDataSource {
             userPostCell.userTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
             return userPostCell
         case 1:
-            let data = userLikeTILList[indexPath.row]
-            userLikeCell.userTILView.setup(withTitle: data.title, content: data.content, date: data.date)
+            let userLikePost = userLikePosts[indexPath.row]
+            userLikeCell.userTILView.setup(withTitle: userLikePost.title, content: userLikePost.content, date: userLikePost.publishedAt.format())
             return userLikeCell
         default: break
         }
