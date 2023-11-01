@@ -77,4 +77,8 @@ final class BlogViewModel {
     func hasBlogName(_ blogNameToCheck: String) -> Bool {
         return blogs.contains { $0.name == blogNameToCheck }
     }
+    
+    func hasBlogURL(_ url: String) -> Bool {
+        return blogs.contains { $0.url == url }
+    }
 }

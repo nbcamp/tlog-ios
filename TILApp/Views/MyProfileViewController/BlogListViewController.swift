@@ -33,9 +33,6 @@ final class BlogListViewController: UIViewController {
         tabBarController?.tabBar.isHidden = true
 
         KeywordInputViewModel.shared.clearKeywords()
-//        blogViewModel.load(onSuccess: { [weak self] _ in
-//            self?.tableView.reloadData()
-//        })
         tableView.reloadData()
     }
 

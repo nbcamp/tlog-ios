@@ -175,6 +175,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
     }
 
     private func isValidURL(_ urlString: String) -> Bool {
+        guard !urlString.hasSuffix("/") else { return false }
         if let url = URL(string: urlString) {
             return UIApplication.shared.canOpenURL(url)
         }
@@ -270,8 +271,9 @@ extension BlogRegisterViewController: UITextFieldDelegate {
         } else {
             // TODO: URL 유효성 검사
             if isValidURL(text) {
-                blogURLTextField.isValid = true
-                blogURLTextField.validationText = "유효한 블로그 주소입니다."
+                let isDuplicate = blogViewModel.hasBlogURL(text)
+                blogURLTextField.isValid = !isDuplicate
+                blogURLTextField.validationText = isDuplicate ? "이미 등록된 블로그 URL입니다." : "유효한 블로그 URL입니다."
             } else {
                 blogURLTextField.isValid = false
                 blogURLTextField.validationText = "유효하지 않은 URL입니다."
