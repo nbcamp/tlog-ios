@@ -59,12 +59,8 @@ final class BlogViewModel {
     func setMainBlog(_ id: Int, onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
         APIService.shared.request(.setMainBlog(id)) { [weak self] _ in
             guard let self = self else { return }
-            load { [weak self] _ in
-                guard let self else { return }
-                onSuccess?()
-            } onError: { error in
-                print(error)
-            }
+            updateMainBlog(id)
+            onSuccess?()
         } onError: { error in
             onError?(error)
         }
@@ -77,8 +73,39 @@ final class BlogViewModel {
     func hasBlogName(_ blogNameToCheck: String) -> Bool {
         return blogs.contains { $0.name == blogNameToCheck }
     }
-    
+
     func hasBlogURL(_ url: String) -> Bool {
         return blogs.contains { $0.url == url }
+    }
+
+    func updateMainBlog(_ id: Int) {
+        if let index = blogs.firstIndex(where: { $0.main }) {
+            let oldBlog = blogs[index]
+            let newBlog: Blog = .init(
+                id: oldBlog.id,
+                name: oldBlog.name,
+                url: oldBlog.url,
+                rss: oldBlog.rss,
+                main: false,
+                keywords: oldBlog.keywords,
+                lastPublishedAt: oldBlog.lastPublishedAt,
+                createdAt: oldBlog.createdAt
+            )
+            blogs[index] = newBlog
+        }
+        if let index = blogs.firstIndex(where: { $0.id == id }) {
+            let oldBlog = blogs[index]
+            let newBlog: Blog = .init(
+                id: oldBlog.id,
+                name: oldBlog.name,
+                url: oldBlog.url,
+                rss: oldBlog.rss,
+                main: true,
+                keywords: oldBlog.keywords,
+                lastPublishedAt: oldBlog.lastPublishedAt,
+                createdAt: oldBlog.createdAt
+            )
+            blogs[index] = newBlog
+        }
     }
 }

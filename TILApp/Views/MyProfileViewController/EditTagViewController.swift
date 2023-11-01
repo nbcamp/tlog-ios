@@ -92,9 +92,9 @@ final class EditTagViewController: UIViewController {
         keyword.keyword = prefixTF.mainText
         switch variant {
         case .add:
-            keywordInputViewModel.addKeyword(keyword)
+            keywordInputViewModel.add(keyword: keyword)
         case .update:
-            keywordInputViewModel.updateKeyword(selectedIndex, keyword)
+            keywordInputViewModel.update(index: selectedIndex, keyword: keyword)
         }
 
         navigationController?.popViewController(animated: true)
@@ -183,7 +183,7 @@ extension EditTagViewController: UITextFieldDelegate {
                     prefixTF.isValid = true
                     prefixTF.validationText = ""
                 } else {
-                    let isDuplicate = keywordInputViewModel.hasKeyword(updatedText)
+                    let isDuplicate = keywordInputViewModel.has(keywordToCheck: updatedText)
                     prefixTF.isValid = !isDuplicate
                     prefixTF.validationText = isDuplicate ? "중복된 키워드입니다." : "유효한 키워드입니다."
                 }

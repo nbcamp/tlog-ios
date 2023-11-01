@@ -4,7 +4,7 @@ final class BlogEditViewController: UIViewController {
     var id: Int = 0 {
         didSet {
             blog = blogViewModel.getBlog(blogId: id)
-            keywordInputViewModel.initKeywords(blogId: id)
+            keywordInputViewModel.get(blog: blog)
         }
     }
 
@@ -98,6 +98,7 @@ final class BlogEditViewController: UIViewController {
                 blogViewModel.delete(blog) {
                     self.navigationController?.popViewController(animated: true)
                 } onError: { error in
+                    // TODO: 에러 처리
                     print(error)
                 }
             }
@@ -151,6 +152,7 @@ final class BlogEditViewController: UIViewController {
                     guard let self else { return }
                     navigationController?.popViewController(animated: true)
                 } onError: { error in
+                    // TODO: 에러 처리
                     print(error)
                 }
             } else {
@@ -246,7 +248,7 @@ final class BlogEditViewController: UIViewController {
                 title: "삭제",
                 style: .destructive,
                 handler: { _ in
-                    self.keywordInputViewModel.removeKeyword(index: index)
+                    self.keywordInputViewModel.remove(index: index)
                     self.updateDoneButtonState()
                     self.view.setNeedsLayout()
                 }

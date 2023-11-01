@@ -77,7 +77,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         }, onError: { error in
             print("블로그 생성 중 오류 발생: \(error)")
         })
-        keywordInputViewModel.clearKeywords()
+        keywordInputViewModel.clear()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -161,7 +161,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
                 title: "삭제",
                 style: .destructive,
                 handler: { _ in
-                    self.keywordInputViewModel.removeKeyword(index: index)
+                    self.keywordInputViewModel.remove(index: index)
                     self.updateDoneButtonState()
                     self.view.setNeedsLayout()
                 }

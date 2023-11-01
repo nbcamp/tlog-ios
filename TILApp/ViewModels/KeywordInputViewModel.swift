@@ -6,27 +6,27 @@ final class KeywordInputViewModel {
     
     private(set) var keywords: [KeywordInput] = []
 
-    func clearKeywords() {
+    func clear() {
         keywords = []
     }
     
-    func initKeywords(blogId: Int) {
-        keywords = (BlogViewModel.shared.getBlog(blogId: blogId).keywords.map{ KeywordInput.init(from: $0) })
+    func get(blog: Blog) {
+        keywords = blog.keywords.map{ KeywordInput.init(from: $0) }
     }
 
-    func addKeyword(_ keyword: KeywordInput) {
+    func add(keyword: KeywordInput) {
         keywords.append(keyword)
     }
 
-    func updateKeyword(_ index: Int, _ keyword: KeywordInput) {
+    func update(index: Int, keyword: KeywordInput) {
         keywords[index] = keyword
     }
 
-    func removeKeyword(index: Int) {
+    func remove(index: Int) {
         keywords.remove(at: index)
     }
 
-    func hasKeyword(_ keywordToCheck: String) -> Bool {
+    func has(keywordToCheck: String) -> Bool {
         return keywords.contains { $0.keyword == keywordToCheck }
     }
 }
