@@ -1,11 +1,14 @@
 import UIKit
 
 final class ProfileEditViewController: UIViewController {
+    var username: String?
+    var userImage: String?
     private lazy var componentView = UIView().then {
         view.addSubview($0)
     }
 
     private lazy var editProfileImageView = UIImageView().then {
+        // TODO: 이미지 구현후 수정
         $0.image = UIImage(systemName: "person.circle.fill")
         $0.tintColor = UIColor.accent
         $0.layer.borderColor = UIColor.accent.cgColor
@@ -31,7 +34,7 @@ final class ProfileEditViewController: UIViewController {
 
     private lazy var nicknameTextFieldView = CustomTextFieldViewWithValidation().then {
         $0.titleText = "유저 닉네임"
-        $0.mainText = ""
+        $0.mainText = username ?? ""
         $0.placeholder = "닉네임을 입력하세요"
         $0.validationText = ""
     }
@@ -47,25 +50,12 @@ final class ProfileEditViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        
+
         navigationItem.title = "프로필 수정"
         let doneBarButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))
         navigationItem.rightBarButtonItem = doneBarButton
         editProfileImageView.isUserInteractionEnabled = true
         editProfileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped(_:))))
-        AuthViewModel.shared.profile(
-            onSuccess: { [weak self] user in
-                guard let self else {return}
-                nicknameTextFieldView.mainText = user.username
-                
-            }, onError: { error in
-                let alert = UIAlertController(title: "오류", message: "다시 시도 해주세요.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "확인", style: .default) { action in
-                    self.navigationController?.popViewController(animated: true)
-                })
-                
-                self.present(alert, animated: true, completion: nil)
-            })
     }
 
     override func viewDidLayoutSubviews() {
@@ -91,6 +81,7 @@ final class ProfileEditViewController: UIViewController {
         memberWithdrawalButton.pin.bottom(view.pin.safeArea).hCenter()
     }
 
+    // TODO: 이미지 업데이트 구현 후 주석 풀기
     @objc private func editProfileButtonTapped() {
 //        let imagePicker = UIImagePickerController()
 //        imagePicker.delegate = self
@@ -107,15 +98,14 @@ final class ProfileEditViewController: UIViewController {
 
     @objc private func completeButtonTapped() {
         let newNickname = nicknameTextFieldView.mainText
-        let updateInput = UpdateUserInput(username: newNickname, avatarUrl: nil)
+        let newAvatar = editProfileImageView.image
+        let updateInput = UpdateUserInput(username: newNickname, avatarUrl: nil) // TODO: nil 변경
         AuthViewModel.shared.update(updateInput, onSuccess: { [weak self] _ in
             guard let self else { return }
             navigationController?.popViewController(animated: true)
-        }, onError: { [weak self] _ in
-            guard let self else { return }
-            let alert = UIAlertController(title: "업데이트 실패", message: "다시 시도 해주세요.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-            present(alert, animated: true, completion: nil)
+        }, onError: { [weak self] error in
+            // TODO: 오류 함수 구현 후 재정의
+            debugPrint(error)
         })
     }
 

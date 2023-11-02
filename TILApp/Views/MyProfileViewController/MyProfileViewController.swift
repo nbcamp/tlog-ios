@@ -121,19 +121,20 @@ final class MyProfileViewController: UIViewController {
                 followersButton.setTitle("\(user.followers)\nfollowers", for: .normal)
                 followingButton.setTitle("\(user.followings)\nfollowings", for: .normal)
             },
-            onError: { [weak self] _ in
-                let alert = UIAlertController(title: "오류", message: "다시 시도 해주세요.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-            })
+            onError: { [weak self] error in
+                // TODO: 오류 함수 후 재정의
+                debugPrint(error)
+            }
+        )
 
         let yourUserId = 12
         PostViewModel.shared.withPosts(byUserId: yourUserId, onSuccess: { [weak self] posts in
             guard let self else { return }
             self.posts = posts
             myProfileTableView.reloadData()
-        }, onError: { _ in
-            let alert = UIAlertController(title: "오류", message: "다시 시도 해주세요.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+        }, onError: { [weak self] error in
+            // TODO: 오류 함수 후 재정의
+            debugPrint(error)
         })
     }
 
@@ -246,7 +247,7 @@ extension MyProfileViewController: UIViewControllerTransitioningDelegate {
     func presentationController(
         forPresented presented: UIViewController,
         presenting: UIViewController?,
-        source: UIViewController
+        source _: UIViewController
     ) -> UIPresentationController? {
         return SeeMorePresentationController(presentedViewController: presented, presenting: presenting)
     }
@@ -258,7 +259,8 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             let profileEditViewController = ProfileEditViewController()
             profileEditViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(profileEditViewController, animated: true)
-
+            profileEditViewController.username = user?.username
+            profileEditViewController.userImage = user?.avatarUrl
             dismiss(animated: true, completion: nil)
         } else if title == "로그아웃" {
             let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)
@@ -273,5 +275,4 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             // TODO: 노션
         }
     }
-
 }

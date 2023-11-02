@@ -2,12 +2,7 @@
 import UIKit
 
 final class UserProfileViewController: UIViewController {
-    struct TILList {
-        let title: String
-        let content: String
-        let date: String
-    }
-
+    var user: User?
     // TODO: 데이터 연결 필요
     private var posts: [Post] = []
     private var userLikePosts: [Post] = []
@@ -33,7 +28,7 @@ final class UserProfileViewController: UIViewController {
 
     private lazy var nicknameLabel = UILabel().then {
         $0.font = UIFont.boldSystemFont(ofSize: 20)
-        $0.text = "userNickname"
+        $0.text = "\(user?.username ?? "")"
         $0.sizeToFit()
     }
 
@@ -49,7 +44,7 @@ final class UserProfileViewController: UIViewController {
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("00\nposts", for: .normal)
+        $0.setTitle("\(user?.posts ?? 0)\nposts", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -61,14 +56,14 @@ final class UserProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("00\nfollowers", for: .normal)
+        $0.setTitle("\(user?.followers ?? 0)\nfollowers", for: .normal)
         $0.setTitleColor(.black, for: .normal)
     }
 
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("00\nfollowing", for: .normal)
+        $0.setTitle("\(user?.followings ?? 0)\nfollowing", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
@@ -85,6 +80,15 @@ final class UserProfileViewController: UIViewController {
         $0.titleLabel?.textAlignment = .left
         $0.setTitle("유저의 블로그 URL링크", for: .normal)
         $0.setTitleColor(.systemGray, for: .normal)
+        // TODO: 블로그 불러오기 구현 후 setTitle 수정
+//            APIService.shared.request(.getMainBlog, model: [Blog].self) { [weak self] _ in
+//                guard let self else { return }
+//                userBlogURL.setTitle(blog.url, for: .normal)
+//                print("\(blog)")
+//            } onError: { [weak self] error in
+//                // TODO: 오류 함수 구현 후 재정의
+//                debugPrint(error)
+//            }
     }
 
     private lazy var userSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요 목록"]).then {
@@ -99,15 +103,6 @@ final class UserProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        dataUpdateUI()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -117,42 +112,6 @@ final class UserProfileViewController: UIViewController {
         super.viewDidLayoutSubviews()
         setUpUI()
         moreButton.showsMenuAsPrimaryAction = true
-    }
-
-    private func dataUpdateUI() {
-        let yourUserId = 12
-        UserViewModel.shared.find(by: yourUserId, onSuccess: { [weak self] user in
-            guard let self else { return }
-            nicknameLabel.text = user.username
-            postButton.setTitle("\(user.posts)\nposts", for: .normal)
-            followersButton.setTitle("\(user.followers)\nfollowers", for: .normal)
-            followingButton.setTitle("\(user.followings)\nfollowings", for: .normal)
-
-        }, onError: { [weak self] _ in
-            let alert = UIAlertController(title: "오류", message: "다시 시도 해주세요.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-        })
-        APIService.shared.request(.getMainBlog, model: [Blog].self) { [weak self] _ in
-            guard let self else { return }
-//            userBlogURL.setTitle(blog.url, for: .normal)
-//            print("\(blog)")
-        } onError: { [weak self] _ in
-            guard let self else { return }
-            let alert = UIAlertController(title: "알림", message: "사용자의 메인 블로그 확인이 어렵습니다.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-
-            userBlogURL.setTitle("메인블로그를 설정하지 않았습니다.", for: .normal)
-        }
-
-        PostViewModel.shared.withPosts(byUserId: yourUserId, onSuccess: { [weak self] posts in
-            guard let self else { return }
-            self.posts = posts
-
-            userProfileTableView.reloadData()
-        }, onError: { _ in
-            let alert = UIAlertController(title: "오류", message: "사용자의 TIL이 확인 되지 않습니다.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-        })
     }
 
     private func setUpUI() {
@@ -187,6 +146,7 @@ final class UserProfileViewController: UIViewController {
     }
 
     @objc private func moreButtonTapped() {
+        // TODO: 차단하기 생각해보기
         let reportAction = UIAction(title: "차단하기", image: UIImage(systemName: "person.crop.circle.fill.badge.minus"), attributes: .destructive) { [weak self] _ in
             let alertController = UIAlertController(title: "차단 완료", message: "차단되었습니다.", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
@@ -201,8 +161,6 @@ final class UserProfileViewController: UIViewController {
         moreButton.menu = menu
     }
 
-
-    
     @objc private func userSegmentedControlSelected(_ sender: CustomSegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
