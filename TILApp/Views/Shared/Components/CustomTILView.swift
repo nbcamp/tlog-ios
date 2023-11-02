@@ -2,7 +2,8 @@ import UIKit
 
 class CustomTILView: UIView {
     private let titleLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 18)
+        $0.font = UIFont.systemFont(ofSize: 16)
+        $0.textColor = #colorLiteral(red: 0.1978010237, green: 0.208270371, blue: 0.2226796448, alpha: 1)
     }
 
     private let contentLabel = UILabel().then {
@@ -12,8 +13,8 @@ class CustomTILView: UIView {
     }
 
     private let dateLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 15)
-        $0.textColor = UIColor(white: 0.33, alpha: 1.0)
+        $0.font = UIFont.systemFont(ofSize: 14)
+        $0.textColor = .darkGray
         $0.textAlignment = .right
     }
 
@@ -47,7 +48,7 @@ class CustomTILView: UIView {
     }
 
     func resizeText() {
-        titleLabel.font = UIFont.systemFont(ofSize: 15)
+        titleLabel.font = UIFont.systemFont(ofSize: 14.5)
         dateLabel.font = UIFont.systemFont(ofSize: 14)
     }
 }
