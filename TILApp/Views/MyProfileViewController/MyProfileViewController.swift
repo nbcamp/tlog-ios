@@ -17,7 +17,6 @@ final class MyProfileViewController: UIViewController {
     private lazy var profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.circle.fill")
         $0.tintColor = .accent
-        $0.layer.cornerRadius = 50
         $0.layer.borderColor = UIColor.accent.cgColor
     }
 
@@ -111,14 +110,14 @@ final class MyProfileViewController: UIViewController {
     }
 
     private func setUpUI() {
-        screenView.flex.direction(.column).padding(20).define { flex in
+        screenView.flex.direction(.column).define { flex in
             flex.addItem().direction(.row).define { flex in
-                flex.addItem(profileImageView).width(100).height(100)
+                flex.addItem(profileImageView).width(100).height(100).cornerRadius(100 / 2)
                 flex.addItem().direction(.column).define { flex in
-                    flex.addItem(nicknameLabel).marginLeft(15)
-                    flex.addItem(countView).marginLeft(5)
+                    flex.addItem(nicknameLabel).marginLeft(15).marginTop(10)
+                    flex.addItem(countView)
                     countView.flex.direction(.row)
-                        .width(200).height(75).define { flex in
+                        .width(210).height(75).define { flex in
                             flex.addItem(postButton).width(70)
                             flex.addItem(followersButton).width(70)
                             flex.addItem(followingButton).width(70)
@@ -129,9 +128,9 @@ final class MyProfileViewController: UIViewController {
         screenView.flex.layout()
         countView.flex.layout()
 
-        screenView.pin.top(view.pin.safeArea).bottom(80%).left().right()
-        editBlogButton.pin.below(of: screenView).left(20).right(20).marginTop(15)
-        moreButton.pin.top(view.pin.safeArea).right(20)
+        screenView.pin.top(view.pin.safeArea).bottom(80%).left(20).right(20)
+        editBlogButton.pin.below(of: screenView).left(20).right(20).marginTop(10)
+        moreButton.pin.top(view.pin.safeArea).right(25).top(5)
         myProfileSegmentedControl.pin.below(of: editBlogButton).marginTop(10)
         myProfileTableView.pin.below(of: myProfileSegmentedControl).bottom(view.pin.safeArea).left().right()
     }

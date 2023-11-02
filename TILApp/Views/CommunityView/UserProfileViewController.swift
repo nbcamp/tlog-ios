@@ -119,12 +119,12 @@ final class UserProfileViewController: UIViewController {
             flex.addItem(profileImageView).width(100).height(100).marginLeft(10)
             flex.addItem().direction(.column).width(200).define { flex in
                 flex.addItem(nicknameLabel).width(200).height(25).marginLeft(20).marginTop(5)
-                flex.addItem(countView).direction(.row).width(200).height(75).marginTop(5)
+                flex.addItem(countView).direction(.row).width(200).height(75)
                 countView.flex.direction(.row)
-                    .width(200).height(75).define { flex in
-                        flex.addItem(postButton).width(70).height(25)
-                        flex.addItem(followersButton).width(70).height(25)
-                        flex.addItem(followingButton).width(70).height(25)
+                    .width(210).define { flex in
+                        flex.addItem(postButton).width(70)
+                        flex.addItem(followersButton).width(70)
+                        flex.addItem(followingButton).width(70)
                     }
             }
         }
