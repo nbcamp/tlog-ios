@@ -87,13 +87,22 @@ final class MyProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         // TODO: 불러오는 위치 변경하기
         UserViewModel.shared.withFollowers()
         UserViewModel.shared.withFollowings()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = true
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = false
     }
 
     override func viewDidLayoutSubviews() {
