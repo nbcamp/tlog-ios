@@ -101,41 +101,9 @@ final class MyProfileViewController: UIViewController {
         UserViewModel.shared.withFollowings()
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
-        navigationController?.setNavigationBarHidden(false, animated: false)
-    }
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setUpUI()
-    }
-
-    private func userDataUpdateUI() {
-        AuthViewModel.shared.profile(
-            onSuccess: { [weak self] user in
-                guard let self else { return }
-                nicknameLabel.text = user.username
-                postButton.setTitle("\(user.posts)\nposts", for: .normal)
-                followersButton.setTitle("\(user.followers)\nfollowers", for: .normal)
-                followingButton.setTitle("\(user.followings)\nfollowings", for: .normal)
-            },
-            onError: { [weak self] error in
-                // TODO: 오류 함수 후 재정의
-                debugPrint(error)
-            }
-        )
-
-        let yourUserId = 12
-        PostViewModel.shared.withPosts(byUserId: yourUserId, onSuccess: { [weak self] posts in
-            guard let self else { return }
-            self.posts = posts
-            myProfileTableView.reloadData()
-        }, onError: { [weak self] error in
-            // TODO: 오류 함수 후 재정의
-            debugPrint(error)
-        })
     }
 
     private func setUpUI() {
