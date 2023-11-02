@@ -10,12 +10,11 @@ import UIKit
 final class UserTableViewCell: UITableViewCell {
     static let identifier = "UserCell"
     let userTILView = CustomTILView()
-    
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-
-        setUpUI()
+        contentView.addSubview(userTILView)
     }
 
     @available(*, unavailable)
@@ -23,10 +22,8 @@ final class UserTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setUpUI() {
-        contentView.addSubview(userTILView)
-        userTILView.translatesAutoresizingMaskIntoConstraints = false
-
-        userTILView.pin.all(contentView.pin.safeArea)
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        userTILView.pin.all()
     }
 }
