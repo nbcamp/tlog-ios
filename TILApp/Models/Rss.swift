@@ -33,7 +33,8 @@ struct RSSPost: Codable {
         case content = "description"
     }
 }
-struct CreatePostInput2: Codable {
+// 애도 더미 CreatePostInput 에 맞춰 blogId가 생길 예정
+struct RssPostData: Codable {
     let title: String
     let content: String
     let url: String
