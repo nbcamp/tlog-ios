@@ -9,7 +9,7 @@ class CustomTagView: UIView {
 
     var tags: [String] = [] {
         didSet {
-            tagContentLabel.text = tags.joined(separator: " | ")
+            tagsCollectionView.tags = tags
         }
     }
 
@@ -30,10 +30,8 @@ class CustomTagView: UIView {
     private let titleContentLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14)
     }
-
-    private let tagContentLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14)
-    }
+    
+    private let tagsCollectionView = HorizontalTagsCollectionView()
 
     private let deleteButton = UIButton().then {
         $0.setTitle("삭제", for: .normal)
@@ -60,7 +58,7 @@ class CustomTagView: UIView {
             }
             flex.addItem().direction(.row).grow(1).define {
                 $0.addItem(tagLabel).marginRight(10)
-                $0.addItem(tagContentLabel).maxWidth(80%)
+                $0.addItem(tagsCollectionView).width(80%).height(22).marginTop(5)
             }
         }
 
