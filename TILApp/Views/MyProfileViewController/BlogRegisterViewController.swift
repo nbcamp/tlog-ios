@@ -38,7 +38,6 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
 
     private lazy var tagHeader = CustomTagHeaderView().then {
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
         $0.addTargetForButton(target: self, action: #selector(addTagButtonTapped), for: .touchUpInside)
     }
 

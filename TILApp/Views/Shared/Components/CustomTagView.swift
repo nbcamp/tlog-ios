@@ -1,9 +1,6 @@
 import UIKit
 
 class CustomTagView: UIView {
-    var componentSize: CGSize {
-        return CGSize(width: frame.width, height: height)
-    }
 
     var labelText: String {
         get { titleContentLabel.text ?? "" }
@@ -15,8 +12,6 @@ class CustomTagView: UIView {
             tagContentLabel.text = tags.joined(separator: " | ")
         }
     }
-
-    private let height: CGFloat = 67
 
     private let titleLabel = UILabel().then {
         $0.text = "제목"
@@ -58,7 +53,7 @@ class CustomTagView: UIView {
     }
 
     private func setupView() {
-        flex.direction(.column).justifyContent(.spaceBetween).padding(10).height(height).define { flex in
+        flex.direction(.column).justifyContent(.spaceBetween).padding(10).height(67).define { flex in
             flex.addItem().direction(.row).grow(1).define {
                 $0.addItem(titleLabel).marginRight(10)
                 $0.addItem(titleContentLabel).maxWidth(80%)
@@ -70,12 +65,13 @@ class CustomTagView: UIView {
         }
 
         addSubview(deleteButton)
+        pin.height(67)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.horizontally().height(height)
+        pin.horizontally()
         flex.layout()
         deleteButton.pin.width(30).height(30).vCenter().right(10)
 

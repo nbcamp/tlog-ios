@@ -39,13 +39,8 @@ class CustomTextFieldView: UIView {
         }
     }
 
-    var componentSize: CGSize {
-        return CGSize(width: frame.width, height: height)
-    }
-
     private let titleLabel = CustomTitleLabel()
     private let textField = CustomTextField()
-    private let height: CGFloat = 64
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -54,6 +49,7 @@ class CustomTextFieldView: UIView {
             $0.addItem(titleLabel).margin(0, 20).height(24)
             $0.addItem(textField).margin(0, 20).height(40)
         }
+        pin.height(64)
     }
 
     @available(*, unavailable)
@@ -64,7 +60,7 @@ class CustomTextFieldView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.width(100%).height(height)
+        pin.width(100%)
         flex.layout()
     }
 }

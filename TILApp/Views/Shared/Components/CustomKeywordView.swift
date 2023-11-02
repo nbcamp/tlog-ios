@@ -15,7 +15,7 @@ class CustomKeywordView: UIView {
                 customTagView.tags = keyword.tags
                 
                 $0.addItem(customTagView).marginTop(10)
-                customTagView.pin.size(customTagView.componentSize)
+                customTagView.pin.horizontally()
                 
                 let tapGestureRecognizer = ContextTapGestureRecognizer(target: target, action: tapSelector)
                 tapGestureRecognizer.context["index"] = index

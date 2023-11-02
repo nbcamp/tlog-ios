@@ -26,11 +26,6 @@ class CustomLargeBorderButton: UIButton {
         }
     }
 
-    private let height: CGFloat = 35
-    var componentSize: CGSize {
-        return CGSize(width: frame.width, height: height)
-    }
-
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -40,6 +35,8 @@ class CustomLargeBorderButton: UIButton {
         layer.cornerRadius = 12
         setTitleColor(.accent, for: .normal)
         titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        
+        pin.height(35)
     }
 
     @available(*, unavailable)
@@ -49,6 +46,6 @@ class CustomLargeBorderButton: UIButton {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.horizontally(20).height(height)
+        pin.horizontally(20)
     }
 }

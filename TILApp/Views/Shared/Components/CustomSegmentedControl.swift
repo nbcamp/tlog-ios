@@ -7,7 +7,8 @@ class CustomSegmentedControl: UISegmentedControl {
 
         backgroundColor = .systemBackground
         selectedSegmentIndex = 0
-
+        
+        pin.height(40)
     }
 
     @available(*, unavailable)
@@ -17,6 +18,6 @@ class CustomSegmentedControl: UISegmentedControl {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.width(100%).height(40)
+        pin.width(100%)
     }
 }

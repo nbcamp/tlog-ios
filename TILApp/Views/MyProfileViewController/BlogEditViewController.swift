@@ -22,7 +22,6 @@ final class BlogEditViewController: UIViewController {
     private lazy var mainBlogButton = CustomLargeBorderButton().then {
         $0.variant = blog.main ? .primary : .normal
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
         $0.addTarget(self, action: #selector(toMainButtonTapped), for: .touchUpInside)
     }
 
@@ -71,7 +70,6 @@ final class BlogEditViewController: UIViewController {
         $0.setTitleColor(.systemRed, for: .normal)
 
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
         $0.addTarget(self, action: #selector(deleteBlogButtonTapped), for: .touchUpInside)
     }
 
@@ -110,7 +108,6 @@ final class BlogEditViewController: UIViewController {
 
     private lazy var tagHeader = CustomTagHeaderView().then {
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
         $0.addTargetForButton(target: self, action: #selector(addTagButtonTapped), for: .touchUpInside)
     }
 
@@ -181,7 +178,7 @@ final class BlogEditViewController: UIViewController {
         contentView.pin.top(to: contentScrollView.edge.top).horizontally()
 
         mainBlogButton.pin.top(contentView.pin.safeArea).marginTop(10)
-        blogNameTextField.pin.horizontally().top(to: mainBlogButton.edge.bottom).marginTop(20)
+        blogNameTextField.pin.horizontally().top(to: mainBlogButton.edge.bottom).marginTop(15)
         blogURLTextField.pin.horizontally().top(to: blogNameTextField.edge.bottom).marginTop(5)
         blogRSSTextField.pin.horizontally().top(to: blogURLTextField.edge.bottom).marginTop(5)
         deleteDescriotionLabel.pin.top(to: blogRSSTextField.edge.bottom).horizontally(20).height(25).marginTop(5)

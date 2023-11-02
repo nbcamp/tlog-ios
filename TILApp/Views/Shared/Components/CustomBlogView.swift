@@ -47,6 +47,8 @@ class CustomBlogView: UIView {
 
         addSubview(customLabelView)
         addSubview(chevronImage)
+        
+        pin.height(67)
     }
 
     @available(*, unavailable)
@@ -57,7 +59,7 @@ class CustomBlogView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.width(100%).height(67)
+        pin.width(100%)
 
         chevronImage.pin.width(20).height(20).centerRight(20)
         customLabelView.pin.left(20).before(of: chevronImage).marginRight(70)
