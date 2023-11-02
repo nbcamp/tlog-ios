@@ -31,19 +31,15 @@ class CustomLabelView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        setupView()
+        flex.justifyContent(.center).define {
+            $0.addItem(nicknameLabel)
+            $0.addItem(dateLabel).marginTop(2)
+        }
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupView() {
-        flex.justifyContent(.center).define {
-            $0.addItem(nicknameLabel)
-            $0.addItem(dateLabel).marginTop(2)
-        }
     }
 
     override func layoutSubviews() {

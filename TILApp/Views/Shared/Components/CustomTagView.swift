@@ -58,8 +58,6 @@ class CustomTagView: UIView {
     }
 
     private func setupView() {
-        // backgroundColor = .systemBackground
-
         flex.direction(.column).justifyContent(.spaceBetween).padding(10).height(height).define { flex in
             flex.addItem().direction(.row).grow(1).define {
                 $0.addItem(titleLabel).marginRight(10)

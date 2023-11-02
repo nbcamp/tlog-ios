@@ -35,23 +35,9 @@ class CustomTILView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        titleLabel.pin
-            .top(15)
-            .left(20)
-            .width(240)
-            .height(22)
-
-        contentLabel.pin
-            .top(39)
-            .left(21)
-            .right(20)
-            .height(36)
-
-        dateLabel.pin
-            .top(17)
-            .right(20)
-            .width(90)
-            .height(20)
+        titleLabel.pin.top(15).left(20).width(240).height(22)
+        contentLabel.pin.top(39).left(21).right(20).height(36)
+        dateLabel.pin.top(17).right(20).width(90).height(20)
     }
 
     func setup(withTitle title: String, content: String, date: String) {

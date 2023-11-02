@@ -1,9 +1,3 @@
-//
-//  CustomTextFieldView.swift
-//  TILApp
-//
-//  Created by 이재희 on 10/27/23.
-//
 import UIKit
 
 class CustomTextFieldView: UIView {
@@ -56,21 +50,15 @@ class CustomTextFieldView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        setupView()
+        flex.define {
+            $0.addItem(titleLabel).margin(0, 20).height(24)
+            $0.addItem(textField).margin(0, 20).height(40)
+        }
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupView() {
-        // backgroundColor = .systemBackground
-
-        flex.define {
-            $0.addItem(titleLabel).margin(0, 20).height(24)
-            $0.addItem(textField).margin(0, 20).height(40)
-        }
     }
 
     override func layoutSubviews() {

@@ -33,21 +33,18 @@ class CustomLargeBorderButton: UIButton {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupButton()
+
+        backgroundColor = UIColor.white
+        layer.borderWidth = 0.5
+        layer.borderColor = UIColor.accent.cgColor
+        layer.cornerRadius = 12
+        setTitleColor(.accent, for: .normal)
+        titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupButton() {
-        backgroundColor = UIColor.white
-        layer.borderWidth = 0.5
-        layer.borderColor = UIColor(named: "AccentColor")?.cgColor
-        layer.cornerRadius = 12
-        setTitleColor(UIColor(named: "AccentColor"), for: .normal)
-        titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
     }
 
     override func layoutSubviews() {

@@ -35,29 +35,23 @@ class CustomBlogView: UIView {
     private let primaryLabel = UILabel().then {
         $0.text = "대표 블로그"
         $0.font = UIFont.systemFont(ofSize: 13)
-        $0.textColor = UIColor(named: "AccentColor")
+        $0.textColor = .accent
         $0.sizeToFit()
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        setupView()
+        chevronImage.tintColor = .accent
+        chevronImage.contentMode = .scaleAspectFit
+
+        addSubview(customLabelView)
+        addSubview(chevronImage)
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupView() {
-        // backgroundColor = .systemBackground
-
-        chevronImage.tintColor = UIColor(named: "AccentColor")
-        chevronImage.contentMode = .scaleAspectFit
-
-        addSubview(customLabelView)
-        addSubview(chevronImage)
     }
 
     override func layoutSubviews() {
