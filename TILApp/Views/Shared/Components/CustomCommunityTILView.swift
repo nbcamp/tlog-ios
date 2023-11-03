@@ -33,12 +33,16 @@ class CustomCommunityTILView: UIView {
         $0.sizeToFit()
         $0.pin.height(20)
     }
-
-    // TODO: heartIcon variant 만들기
-    private lazy var heartIcon = UIImageView().then {
-        $0.image = UIImage(systemName: "heart")?.withTintColor(.systemGray2, renderingMode: .alwaysOriginal)
+    
+    private lazy var heartButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "heart")?
+            .withTintColor(.systemGray2, renderingMode: .alwaysOriginal), for: .normal)
+        $0.setImage(UIImage(systemName: "heart.fill")?
+            .withTintColor(.red, renderingMode: .alwaysOriginal), for: .selected)
         $0.contentMode = .scaleAspectFit
         $0.pin.width(20).height(20)
+        
+        $0.addTarget(self, action: #selector(heartButtonTapped), for: .touchUpInside)
     }
 
     private let tagsCollectionView = HorizontalTagsCollectionView().then {
@@ -55,7 +59,7 @@ class CustomCommunityTILView: UIView {
         addSubview(tilView)
         addSubview(userView)
         addSubview(dateLabel)
-        addSubview(heartIcon)
+        addSubview(heartButton)
         addSubview(tagsCollectionView)
     }
 
@@ -70,7 +74,7 @@ class CustomCommunityTILView: UIView {
         userView.pin.horizontally(10).top(10)
         tilView.pin.below(of: userView).horizontally().marginTop(-15)
         dateLabel.pin.left(20).bottom(10)
-        heartIcon.pin.top(to: dateLabel.edge.top).right(20).bottom(10)
+        heartButton.pin.top(to: dateLabel.edge.top).right(20).bottom(10)
         tagsCollectionView.pin.after(of: dateLabel).top(to: dateLabel.edge.top).width(60%)
 
         tilView.resizeText()
@@ -83,10 +87,15 @@ class CustomCommunityTILView: UIView {
     @objc private func _postTapped() {
         postTapped?()
     }
+    
+    @objc private func heartButtonTapped() {
+        heartButton.isSelected.toggle()
+    }
 
+    // TODO: 팔로워 옆에 연속 작성 일수 추가해야 함
     func setup(user: User, post: Post) {
         userView.setup(image: UIImage(), nicknameText: user.username,
-                       contentText: "팔로워 \(user.followers)", variant: .follow)
+                       contentText: "팔로워 \(user.followers) | T+4", variant: .follow)
         tilView.setup(withTitle: post.title, content: post.content, date: "")
         tagsCollectionView.tags = post.tags
         dateLabel.text = post.publishedAt.relativeFormat()
