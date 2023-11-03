@@ -29,6 +29,7 @@
 		3334E1F42AD91DCB00D853D7 /* FlexLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F32AD91DCB00D853D7 /* FlexLayout */; };
 		3334E1F62AD91DCB00D853D7 /* FlexLayoutYoga in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F52AD91DCB00D853D7 /* FlexLayoutYoga */; };
 		3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F72AD91DCB00D853D7 /* FlexLayoutYogaKit */; };
+		3373D55F2AF4ECC30057A23B /* MoyaSugar in Frameworks */ = {isa = PBXBuildFile; productRef = 3373D55E2AF4ECC30057A23B /* MoyaSugar */; };
 		33A4E81C2AEBB14800E3F55E /* BlogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E81B2AEBB14800E3F55E /* BlogViewModel.swift */; };
 		33A4E81E2AEBB24A00E3F55E /* Exported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E81D2AEBB24A00E3F55E /* Exported.swift */; };
 		33A4E8242AECB4C700E3F55E /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E8232AECB4C700E3F55E /* UserViewModel.swift */; };
@@ -170,6 +171,7 @@
 				33DC8E032ADFC9CC00580FA0 /* CombineMoya in Frameworks */,
 				AB75EDE82AEF9CBB00BC1BC9 /* XMLCoder in Frameworks */,
 				3334E1F42AD91DCB00D853D7 /* FlexLayout in Frameworks */,
+				3373D55F2AF4ECC30057A23B /* MoyaSugar in Frameworks */,
 				3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */,
 				AB8F2A1A2AEF9B260022D3E4 /* FSCalendar in Frameworks */,
 				33DC8E052ADFC9CC00580FA0 /* Moya in Frameworks */,
@@ -420,6 +422,7 @@
 				33DC8E042ADFC9CC00580FA0 /* Moya */,
 				AB8F2A192AEF9B260022D3E4 /* FSCalendar */,
 				AB75EDE72AEF9CBB00BC1BC9 /* XMLCoder */,
+				3373D55E2AF4ECC30057A23B /* MoyaSugar */,
 			);
 			productName = TILApp;
 			productReference = 3334E1A42AD6BC1800D853D7 /* TILApp.app */;
@@ -456,6 +459,7 @@
 				33DC8E012ADFC9CC00580FA0 /* XCRemoteSwiftPackageReference "Moya" */,
 				AB8F2A182AEF9B260022D3E4 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				AB75EDE62AEF9CBB00BC1BC9 /* XCRemoteSwiftPackageReference "XMLCoder" */,
+				3373D55D2AF4ECC30057A23B /* XCRemoteSwiftPackageReference "MoyaSugar" */,
 			);
 			productRefGroup = 3334E1A52AD6BC1800D853D7 /* Products */;
 			projectDirPath = "";
@@ -817,6 +821,14 @@
 				minimumVersion = 2.0.2;
 			};
 		};
+		3373D55D2AF4ECC30057A23B /* XCRemoteSwiftPackageReference "MoyaSugar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jinyongp/MoyaSugar";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		33DC8DFE2ADF84CC00580FA0 /* XCRemoteSwiftPackageReference "Then" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/devxoul/Then";
@@ -871,6 +883,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3334E1F22AD91DCB00D853D7 /* XCRemoteSwiftPackageReference "FlexLayout" */;
 			productName = FlexLayoutYogaKit;
+		};
+		3373D55E2AF4ECC30057A23B /* MoyaSugar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3373D55D2AF4ECC30057A23B /* XCRemoteSwiftPackageReference "MoyaSugar" */;
+			productName = MoyaSugar;
 		};
 		33DC8DFF2ADF84CC00580FA0 /* Then */ = {
 			isa = XCSwiftPackageProductDependency;

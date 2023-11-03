@@ -1,5 +1,6 @@
 import Foundation
 import Moya
+import MoyaSugar
 
 enum APIError: Error {
     case error(_ reason: String)
@@ -10,37 +11,36 @@ private enum Coder {
     static let decoder = JSONDecoder().then { $0.dateDecodingStrategy = .secondsSince1970 }
 }
 
+typealias Handler<T, E: Error> = (_ result: APIResult<T>) -> Void
+typealias APIResult<T> = Result<T, MoyaError>
+typealias APIHandler<T> = Handler<T, MoyaError>
+
 final class APIService {
     static let shared: APIService = .init()
     private init() {}
 
-    private let provider = MoyaProvider<APIRequest>(plugins: [
-        //                MoyaLoggingPlugin() // 디버그 용
+    private let provider = MoyaSugarProvider<APIRequest>(plugins: [
+        NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
     ])
 
-    func request(
-        _ target: APIRequest,
-        onSuccess: ((_ response: Response) -> Void)? = nil,
-        onError: ((_ error: MoyaError) -> Void)? = nil
-    ) {
-        provider.request(target) { [weak self] result in
-            guard let self else { return }
+    func request(_ target: APIRequest, handler: @escaping APIHandler<Response>) {
+        provider.request(target) { [unowned self] result in
             switch result {
             case .success(let response):
                 guard let response = try? response.filterSuccessfulStatusCodes() else {
                     if let message = getErrorMessage(of: response) {
-                        onError?(.underlying(APIError.error(message), response)); return
+                        return handler(.failure(.underlying(APIError.error(message), response)))
                     }
-                    onError?(.statusCode(response)); return
+                    return handler(.failure(.statusCode(response)))
                 }
-                onSuccess?(response)
+                return handler(.success(response))
             case .failure(let error):
-                onError?(error)
+                return handler(.failure(error))
             }
         }
     }
 
-    func request(_ target: APIRequest) async -> Result<Response, MoyaError> {
+    func request(_ target: APIRequest) async -> APIResult<Response> {
         let result = await provider.request(target)
 
         if case .success(let response) = result {
@@ -56,34 +56,28 @@ final class APIService {
         return result
     }
 
-    func request<Model: Decodable>(
-        _ target: APIRequest,
-        model: Model.Type,
-        onSuccess: ((_ model: Model) -> Void)? = nil,
-        onError: ((_ error: MoyaError) -> Void)? = nil
-    ) {
-        provider.request(target) { [weak self] result in
-            guard let self else { return }
+    func request<Model: Decodable>(_ target: APIRequest, handler: @escaping APIHandler<Model>) {
+        provider.request(target) { [unowned self] result in
             switch result {
             case .success(let response):
                 guard let response = try? response.filterSuccessfulStatusCodes() else {
                     if let message = getErrorMessage(of: response) {
-                        onError?(.underlying(APIError.error(message), response)); return
+                        return handler(.failure(.underlying(APIError.error(message), response)))
                     }
-                    onError?(.statusCode(response)); return
+                    return handler(.failure(.statusCode(response)))
                 }
-                guard let model = try? response.map(model, using: Coder.decoder) else {
+                guard let model = try? response.map(Model.self, using: Coder.decoder) else {
                     printJsonAsString(json: response.data)
-                    onError?(.jsonMapping(response)); return
+                    return handler(.failure(.jsonMapping(response)))
                 }
-                onSuccess?(model)
+                return handler(.success(model))
             case .failure(let error):
-                onError?(error)
+                return handler(.failure(error))
             }
         }
     }
 
-    func request<Model: Decodable>(_ target: APIRequest, model: Model.Type) async -> Result<Model, MoyaError> {
+    func request<Model: Decodable>(_ target: APIRequest) async -> APIResult<Model> {
         let result = await provider.request(target)
 
         switch result {
@@ -94,7 +88,7 @@ final class APIService {
                 }
                 return .failure(.statusCode(response))
             }
-            guard let model = try? response.map(model, using: Coder.decoder) else {
+            guard let model = try? response.map(Model.self, using: Coder.decoder) else {
                 printJsonAsString(json: response.data)
                 return .failure(.jsonMapping(response))
             }
@@ -122,238 +116,133 @@ final class APIService {
 }
 
 enum APIRequest {
+    // Status Check
     case ping
 
-    // Users
-    case signIn(SignInInput),
-         getProfile,
-         getUser(Int),
-         updateUser(UpdateUserInput),
-         deleteUser,
-         followUser(Int),
-         unfollowUser(Int),
-         getFollowers,
-         getFollowings
+    // Authenticate
+    case signIn(_ input: SignInInput)
 
-    // Blogs
+    // My Profile
+    case getMyProfile,
+         updateMyProfile(_ input: UpdateUserInput),
+         withdrawMe
+
+    // My Blogs
     case getMyBlogs,
-         getBlog(Int),
-         getMainBlog,
-         setMainBlog(Int),
-         createBlog(CreateBlogInput),
-         updateBlog(Int, UpdateBlogInput),
-         deleteBlog(Int)
+         getMyBlog(_ blogId: Int),
+         createMyBlog(_ input: CreateBlogInput),
+         updateMyBlog(_ blogId: Int, _ input: UpdateBlogInput),
+         deleteMyBlog(_ blogId: Int)
 
-    // Posts
-    case getPosts(GetPostsQuery),
-         getPost(Int),
-         createPost(CreatePostInput),
-         updatePost(Int, UpdatePostInput)
+    // My Posts
+    case getMyPosts,
+         getMyPost(_ postId: Int)
+
+    // My Posts of Blog
+    case getMyBlogPosts(_ blogId: Int),
+         getMyBlogPost(_ blogId: Int, _ postId: Int),
+         createMyBlogPost(_ blogId: Int, _ input: CreatePostInput)
+
+    // My Liked Posts
+    case getMyLikedPosts,
+         likePost(_ postId: Int),
+         unlikePost(_ postId: Int)
+
+    // My Follow
+    case getMyFollowers,
+         getMyFollowings,
+         followUser(_ userId: Int),
+         unfollowUser(_ userId: Int),
+         deleteMyFollower(_ userId: Int)
+
+    // User's Information
+    case getUserProfile(_ userId: Int),
+         getUserBlogs(_ userId: Int),
+         getUserMainBlog(_ userId: Int),
+         getUserPosts(_ userId: Int),
+         getUserLikedPosts(_ userId: Int)
 
     // Community
-    case getCommunity(GetCommunityQuery)
+    case getCommunityPosts
 }
 
-extension APIRequest: TargetType {
-    var baseURL: URL { .init(string: "http://ec2-13-124-25-166.ap-northeast-2.compute.amazonaws.com:8080")! }
+extension APIRequest: SugarTargetType {
+    var baseURL: URL { .init(string: "http://localhost:8080")! }
 
-    var path: String {
+    var route: MoyaSugar.Route {
         switch self {
-        case .ping:
-            return "/"
+        // Status Check
+        case .ping: return .get("/")
 
-        // Users
-        case .signIn:
-            return "/auth/sign-in"
-        case .getUser(let id):
-            return "/user/\(id)"
-        case .getProfile, .updateUser(_), .deleteUser:
-            return "/user/profile"
-        case .followUser(let id):
-            return "/user/follow/\(id)"
-        case .unfollowUser(let id):
-            return "/user/unfollow/\(id)"
-        case .getFollowers:
-            return "/user/follower/list"
-        case .getFollowings:
-            return "/user/following/list"
+        // Authenticate
+        case .signIn: return .post("/auth/sign-in")
 
-        // Blogs
-        case .getMyBlogs:
-            return "/blog/list"
-        case .getMainBlog:
-            return "/blog/main"
-        case .setMainBlog(let id):
-            return "/blog/\(id)/main"
-        case .getBlog(let id),
-             .updateBlog(let id, _),
-             .deleteBlog(let id):
-            return "/blog/\(id)"
-        case .createBlog:
-            return "/blog"
+        // My Profile
+        case .getMyProfile: return .get("/my/profile")
+        case .updateMyProfile: return .patch("/my/profile")
+        case .withdrawMe: return .delete("/my/profile")
 
-        // Posts
-        case .getPosts:
-            return "/post/list"
-        case .getPost(let id), .updatePost(let id, _):
-            return "/post/\(id)"
-        case .createPost:
-            return "/post"
+        // My Blogs
+        case .getMyBlogs: return .get("/my/blogs")
+        case .createMyBlog: return .post("/my/blogs")
+        case .getMyBlog(let blogId): return .get("/my/blogs/\(blogId)")
+        case .updateMyBlog(let blogId, _): return .patch("/my/blogs/\(blogId)")
+        case .deleteMyBlog(let blogId): return .delete("/my/blogs/\(blogId)")
+
+        // My Posts
+        case .getMyPosts: return .get("/my/posts")
+        case .getMyPost(let postId): return .get("/my/posts/\(postId)")
+
+        // My Posts of Blog
+        case .getMyBlogPosts(let blogId): return .get("/my/blogs/\(blogId)/posts")
+        case .getMyBlogPost(let blogId, let postId): return .get("/my/blogs/\(blogId)/posts/\(postId)")
+        case .createMyBlogPost(let blogId, _): return .post("/my/blogs/\(blogId)/posts")
+
+        // My Liked Posts
+        case .getMyLikedPosts: return .get("/my/likes/posts")
+        case .likePost(let postId): return .post("/my/likes/posts/\(postId)")
+        case .unlikePost(let postId): return .delete("/my/likes/posts/\(postId)")
+
+        // My Follows
+        case .getMyFollowers: return .get("/my/followers")
+        case .getMyFollowings: return .get("/my/followings")
+        case .followUser(let userId): return .post("/my/followings/\(userId)")
+        case .unfollowUser(let userId): return .delete("/my/followings/\(userId)")
+        case .deleteMyFollower(let userId): return .delete("/my/followers/\(userId)")
+
+        // User's Information
+        case .getUserProfile(let userId): return .get("/users/\(userId)")
+        case .getUserBlogs(let userId): return .get("/users/\(userId)/blogs")
+        case .getUserMainBlog(let userId): return .get("/users/\(userId)/blogs/main")
+        case .getUserPosts(let userId): return .get("/users/\(userId)/posts")
+        case .getUserLikedPosts(let userId): return .get("/users/\(userId)/likes/posts")
 
         // Community
-        case .getCommunity:
-            return "/community"
+        case .getCommunityPosts: return .get("/community/posts")
         }
     }
 
-    var method: Moya.Method {
+    var parameters: MoyaSugar.Parameters? {
         switch self {
-        case .ping,
-             .getProfile,
-             .getUser,
-             .getFollowers,
-             .getFollowings,
-             .getMyBlogs,
-             .getBlog,
-             .getMainBlog,
-             .getPosts,
-             .getPost,
-             .getCommunity:
-            return .get
-        case .signIn,
-             .followUser,
-             .createBlog,
-             .createPost:
-            return .post
-        case .updateUser,
-             .updateBlog,
-             .setMainBlog,
-             .updatePost:
-            return .patch
-        case .deleteUser,
-             .deleteBlog,
-             .unfollowUser:
-            return .delete
+        case .signIn(let input): return toDict(input)
+        case .updateMyProfile(let input): return toDict(input)
+        case .createMyBlog(let input): return toDict(input)
+        case .updateMyBlog(_, let input): return toDict(input)
+        case .createMyBlogPost(_, let input): return toDict(input)
+        default: return .none
         }
     }
 
-    var task: Moya.Task {
-        switch self {
-        case .ping,
-             .getUser,
-             .getProfile,
-             .followUser,
-             .unfollowUser,
-             .getFollowers,
-             .getFollowings,
-             .getMyBlogs,
-             .getBlog,
-             .getMainBlog,
-             .setMainBlog,
-             .getPost,
-             .deleteUser,
-             .deleteBlog:
-            return .requestPlain
-        case .signIn(let payload):
-            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
-        case .updateUser(let payload):
-            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
-        case .createBlog(let payload):
-            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
-        case .updateBlog(_, let payload):
-            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
-        case .getPosts(let query):
-            return .requestParameters(
-                parameters: toDictionary(from: query),
-                encoding: URLEncoding.queryString
-            )
-        case .createPost(let payload):
-            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
-        case .updatePost(_, let payload):
-            return .requestCustomJSONEncodable(payload, encoder: Coder.encoder)
-        case .getCommunity(let query):
-            return .requestParameters(
-                parameters: toDictionary(from: query),
-                encoding: URLEncoding.queryString
-            )
-        }
+    private func toDict<T: Codable>(_ input: T) -> MoyaSugar.Parameters? {
+        JSONEncoding() => toDictionary(from: input, with: Coder.encoder)
     }
 
     var headers: [String: String]? {
         var headers: [String: String] = [:]
         headers.updateValue("application/json", forKey: "Content-type")
-
         if let accessToken = AuthViewModel.shared.accessToken {
             headers.updateValue("Bearer \(accessToken)", forKey: "Authorization")
         }
-
         return headers
-    }
-}
-
-final class MoyaLoggingPlugin: PluginType {
-    func willSend(_ request: RequestType, target: TargetType) {
-        guard let httpRequest = request.request else {
-            print("--> Invalid Request")
-            return
-        }
-        let url = httpRequest.description
-        let method = httpRequest.httpMethod ?? "Unknown Method"
-        var log = """
-        ------------------------------------------------------
-        [\(method)] \(url)
-
-        """
-        log.append("[API] \(target)\n")
-        if let headers = httpRequest.allHTTPHeaderFields, !headers.isEmpty {
-            log.append("header: \(headers)\n")
-        }
-        if let body = httpRequest.httpBody, let bodyString = String(bytes: body, encoding: String.Encoding.utf8) {
-            log.append("\(bodyString)\n")
-        }
-        log.append("------------------ END [\(method)] -------------------------")
-        print(log)
-    }
-
-    func didReceive(_ result: Result<Response, MoyaError>, target: TargetType) {
-        switch result {
-        case .success(let response):
-            onSucceed(response, target: target, isFromError: false)
-        case .failure(let error):
-            onFail(error, target: target)
-        }
-    }
-
-    func onFail(_ error: MoyaError, target: TargetType) {
-        if let response = error.response {
-            onSucceed(response, target: target, isFromError: true)
-            return
-        }
-        var log = "Network Error"
-        log.append("<-- \(error.errorCode) \(target)\n")
-        log.append("\(error.failureReason ?? error.errorDescription ?? "unknown error")\n")
-        log.append("<-- END HTTP")
-        print(log)
-    }
-
-    private func onSucceed(_ response: Response, target: TargetType, isFromError: Bool) {
-        let request = response.request
-        let url = request?.url?.absoluteString ?? "nil"
-        let statusCode = response.statusCode
-        var log = "------------------- Network Success -------------------\n"
-        log.append("""
-        [\(statusCode)] \(url)
-        ----------------------------------------------------
-
-        """)
-        log.append("API: \(target)\n")
-        response.response?.allHeaderFields.forEach {
-            log.append("\($0): \($1)\n")
-        }
-        if let string = String(bytes: response.data, encoding: String.Encoding.utf8) {
-            log.append("\(string)\n")
-        }
-        log.append("--------------- END HTTP (\(response.data.count)-byte body) ---------------")
-        print(log)
     }
 }
