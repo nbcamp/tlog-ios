@@ -227,10 +227,22 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             }))
             alertController.addAction(.init(title: "취소", style: .cancel))
             topMostViewController.present(alertController, animated: true)
+            
         } else if title == "자주 묻는 질문" {
             // TODO: 노션
+            let webViewController = WebViewController()
+            webViewController.postURL = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781?pvs=4"
+            webViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true, completion: nil)
         } else if title == "개인 정보 처리 방침" {
             // TODO: 노션
+            let webViewController = WebViewController()
+            webViewController.postURL = "https://plucky-fang-eae.notion.site/415be4c5a7994d50852067b5e8ad1fec"
+            webViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true, completion: nil)
+//      이용 약관: https://plucky-fang-eae.notion.site/TLog-415be4c5a7994d50852067b5e8ad1fec?pvs=4
         }
     }
 }

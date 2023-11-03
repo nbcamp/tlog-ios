@@ -46,19 +46,10 @@ final class WebViewController: UIViewController {
         $0.tintColor = .systemBlue
     }
 
-    private lazy var heartButton = UIBarButtonItem(
-        image: UIImage(systemName: "heart"),
-        style: .plain,
-        target: self,
-        action: #selector(heartButtonTapped)
-    ).then {
-        $0.tintColor = .accent
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        navigationItem.rightBarButtonItem = heartButton
+        addBottomToolBar()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -95,14 +86,6 @@ final class WebViewController: UIViewController {
 
     @objc private func reloadButtonTapped() {
         webView.reload()
-    }
-
-    @objc private func heartButtonTapped() {
-        isHeartFilled.toggle()
-        let imageName = isHeartFilled ? "heart.fill" : "heart"
-        heartButton.image = UIImage(systemName: imageName)
-        navigationItem.rightBarButtonItem = heartButton
-        // TODO: 커뮤니티페이지 의 하트버튼 셀이랑 같은값 전달
     }
 }
 
