@@ -20,10 +20,8 @@ final class HomeViewController: UIViewController {
     }
 
     private let growthImage = UIImageView(image: UIImage(named: "1")).then {
-        if let accentColor = UIColor(named: "AccentColor") {
-            $0.tintColor = accentColor
-            $0.layer.borderColor = accentColor.cgColor
-        }
+        $0.tintColor = .accent
+        $0.layer.borderColor = UIColor.accent.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 8
     }
@@ -43,15 +41,11 @@ final class HomeViewController: UIViewController {
     }
 
     private let isCompleteImageView = UIImageView().then {
-        if let accentColor = UIColor(named: "AccentColor") {
-            $0.tintColor = accentColor
-        }
+        $0.tintColor = .accent
     }
 
     private let registerBlogButton = CustomLargeButton().then {
-        if let accentColor = UIColor(named: "AccentColor") {
-            $0.backgroundColor = accentColor
-        }
+        $0.backgroundColor = .accent
         $0.setTitleColor(.white, for: .normal)
         $0.setTitle("블로그 등록하기", for: .normal)
         $0.sizeToFit()

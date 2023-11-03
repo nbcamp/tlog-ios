@@ -1,10 +1,3 @@
-//
-//  MyProfileTableViewCell.swift
-//  TILApp
-//
-//  Created by Lee on 10/30/23.
-//
-
 import UIKit
 
 final class MyProfileTableViewCell: UITableViewCell {
@@ -14,7 +7,7 @@ final class MyProfileTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        setUpUI()
+        contentView.addSubview(myTILView)
     }
 
     @available(*, unavailable)
@@ -22,8 +15,8 @@ final class MyProfileTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setUpUI() {
-        contentView.addSubview(myTILView)
-        myTILView.pin.all(contentView.pin.safeArea)
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        myTILView.pin.all()
     }
 }

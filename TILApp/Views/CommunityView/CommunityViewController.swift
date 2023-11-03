@@ -96,6 +96,7 @@ extension CommunityViewController: UITableViewDataSource {
         cell.customCommunityTILView.userProfileTapped = { [weak self] in
             guard let self else { return }
             let userProfileViewController = UserProfileViewController()
+            userProfileViewController.user = item.user
             navigationController?.pushViewController(userProfileViewController, animated: true)
         }
 

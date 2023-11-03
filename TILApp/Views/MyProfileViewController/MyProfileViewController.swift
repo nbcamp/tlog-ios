@@ -3,25 +3,9 @@ import UIKit
 final class MyProfileViewController: UIViewController {
     private let authViewModel = AuthViewModel.shared
     private lazy var user = authViewModel.user
-    struct TILList {
-        let title: String
-        let content: String
-        let date: String
-    }
-
-    let myTILList: [TILList] = [
-        .init(title: "작성글1", content: "오늘 오전엔 CustomComponent를 사용하는법을 익혔습니다.", date: "2023-10-25"),
-        .init(title: "작성글2", content: "오늘 오후엔 UIPresentationController를 학습했습니다.", date: "2023-10-25"),
-    ]
-    let likeTILList: [TILList] = [
-        .init(title: "좋아요누른 글1", content: "오늘은 좋아요를 눌러보겠습니다.", date: "2023-10-25"),
-        .init(title: "좋아요누른 글2", content: "금일 TLog를 사용하면서 TIL에대한 것을 알고 한번 사용해보도록 하려고 합니다.", date: "2023-10-25"),
-    ]
-
-    private let userViewModel = UserViewModel.shared
-    private let postViewModel = PostViewModel.shared
+    // TODO: 데이터 연결 필요
     private var posts: [Post] = []
-    private let accentColor = UIColor(named: "AccentColor")
+    private var likePosts: [Post] = []
 
     private lazy var screenView = UIView().then {
         view.addSubview($0)
@@ -32,8 +16,8 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.circle.fill")
-        $0.layer.cornerRadius = 50
-        $0.layer.borderColor = accentColor?.cgColor
+        $0.tintColor = .accent
+        $0.layer.borderColor = UIColor.accent.cgColor
     }
 
     private lazy var nicknameLabel = UILabel().then {
@@ -44,7 +28,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var moreButton = UIButton().then {
         $0.sizeToFit()
-        $0.tintColor = accentColor
+        $0.tintColor = .accent
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
         $0.imageEdgeInsets = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 25)
@@ -54,7 +38,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("\(user?.posts ?? 0)\npost", for: .normal)
+        $0.setTitle("\(user?.posts ?? 0)\n작성글", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -66,7 +50,7 @@ final class MyProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("\(user?.followers ?? 0)\nfollowers", for: .normal)
+        $0.setTitle("\(user?.followers ?? 0)\n팔로워", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
     }
@@ -74,7 +58,7 @@ final class MyProfileViewController: UIViewController {
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("\(user?.followings ?? 0)\nfollowing", for: .normal)
+        $0.setTitle("\(user?.followings ?? 0)\n팔로잉", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
@@ -83,7 +67,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var editBlogButton = CustomLargeButton().then {
         $0.sizeToFit()
-        $0.backgroundColor = accentColor
+        $0.backgroundColor = .accent
         $0.setTitle("블로그 관리", for: .normal)
         $0.layer.cornerRadius = 8
         view.addSubview($0)
@@ -96,50 +80,28 @@ final class MyProfileViewController: UIViewController {
     }
 
     private lazy var myProfileTableView = UITableView().then {
-        $0.register(UITableViewCell.self, forCellReuseIdentifier: MyProfileTableViewCell.identifier)
+        $0.register(MyProfileTableViewCell.self, forCellReuseIdentifier: MyProfileTableViewCell.identifier)
         $0.delegate = self
         $0.dataSource = self
         view.addSubview($0)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: false)
-        authViewModel.profile(
-            onSuccess: { [weak self] user in
-                self?.nicknameLabel.text = user.username
-                self?.postButton.setTitle("\(user.posts)\nposts", for: .normal)
-                self?.followersButton.setTitle("\(user.followers)\nfollowers", for: .normal)
-                self?.followingButton.setTitle("\(user.followings)\nfollowings", for: .normal)
-
-            },
-            onError: {[weak self] error in
-                print("프로필 정보를 가져오는 중 에러 발생: \(error.localizedDescription)")
-            })
-        let yourUserId = 1
-        PostViewModel.shared.withPosts(byUserId: yourUserId, onSuccess: { [weak self] posts in
-                self?.posts = posts
-            print(">>>>>>\(self?.posts)")
-            self?.myProfileTableView.reloadData()
-        }, onError: { error in
-            print("게시물을 가져오는 중 에러 발생: \(error.localizedDescription)")
-        })
-        
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
         // TODO: 불러오는 위치 변경하기
         UserViewModel.shared.withFollowers()
         UserViewModel.shared.withFollowings()
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = true
+    }
 
-        navigationController?.setNavigationBarHidden(false, animated: false)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = false
     }
 
     override func viewDidLayoutSubviews() {
@@ -148,17 +110,17 @@ final class MyProfileViewController: UIViewController {
     }
 
     private func setUpUI() {
-        screenView.flex.direction(.column).padding(20).define { flex in
+        screenView.flex.direction(.column).define { flex in
             flex.addItem().direction(.row).define { flex in
-                flex.addItem(profileImageView).width(100).height(100)
+                flex.addItem(profileImageView).width(100).height(100).cornerRadius(100 / 2)
                 flex.addItem().direction(.column).define { flex in
-                    flex.addItem(nicknameLabel).marginLeft(15)
-                    flex.addItem(countView).marginLeft(5)
+                    flex.addItem(nicknameLabel).marginLeft(15).marginTop(10)
+                    flex.addItem(countView)
                     countView.flex.direction(.row)
-                        .width(200).height(75).define { flex in
-                            flex.addItem(postButton).grow(1)
-                            flex.addItem(followersButton).grow(1)
-                            flex.addItem(followingButton).grow(1).marginLeft(5)
+                        .width(210).height(75).define { flex in
+                            flex.addItem(postButton).width(70)
+                            flex.addItem(followersButton).width(70)
+                            flex.addItem(followingButton).width(70)
                         }
                 }
             }
@@ -166,19 +128,17 @@ final class MyProfileViewController: UIViewController {
         screenView.flex.layout()
         countView.flex.layout()
 
-        screenView.pin.top(view.pin.safeArea).bottom(80%).left().right()
-        editBlogButton.pin.below(of: screenView).left(20).right(20).marginTop(15)
-        moreButton.pin.top(view.pin.safeArea).right(20)
+        screenView.pin.top(view.pin.safeArea).bottom(80%).left(20).right(20)
+        editBlogButton.pin.below(of: screenView).left(20).right(20).marginTop(10)
+        moreButton.pin.top(view.pin.safeArea).right(25).top(5)
         myProfileSegmentedControl.pin.below(of: editBlogButton).marginTop(10)
         myProfileTableView.pin.below(of: myProfileSegmentedControl).bottom(view.pin.safeArea).left().right()
     }
 
     @objc private func moreButtonTapped() {
         let vc = SeeMoreBottomSheetViewController()
-        vc.modalPresentationStyle = .custom
-        vc.transitioningDelegate = self
         vc.delegate = self
-        present(vc, animated: true, completion: nil)
+        present(vc, animated: true)
     }
 
     @objc private func followersButtonTapped() {
@@ -219,7 +179,7 @@ extension MyProfileViewController: UITableViewDataSource {
         case 0:
             return posts.count
         case 1:
-            return likeTILList.count
+            return likePosts.count
         default: break
         }
         return 0
@@ -232,16 +192,12 @@ extension MyProfileViewController: UITableViewDataSource {
         switch myProfileSegmentedControl.selectedSegmentIndex {
         case 0:
             let post = posts[indexPath.row]
-            let dateString = DateFormatter.dateFormatter.string(from: post.publishedAt)
-            myPostCell.myTILView.setup(withTitle: post.title, content: post.content, date: dateString)
+            myPostCell.myTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
             return myPostCell
         case 1:
-            let data = likeTILList[indexPath.row]
-            likeCell.myTILView.setup(withTitle: data.title, content: data.content, date: data.date)
-            print("\(data)")
-
+            let likePost = likePosts[indexPath.row]
+            likeCell.myTILView.setup(withTitle: likePost.title, content: likePost.content, date: likePost.publishedAt.format())
             return likeCell
-
         default: break
         }
         return myPostCell
@@ -256,26 +212,13 @@ extension MyProfileViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
 }
 
-extension MyProfileViewController: UIViewControllerTransitioningDelegate {
-    func presentationController(
-        forPresented presented: UIViewController,
-        presenting: UIViewController?,
-        source: UIViewController
-    ) -> UIPresentationController? {
-        return SeeMorePresentationController(presentedViewController: presented, presenting: presenting)
-    }
-}
-
 extension MyProfileViewController: SeeMoreBottomSheetDelegate {
     func didSelectSeeMoreMenu(title: String) {
         if title == "회원 정보 수정" {
             let profileEditViewController = ProfileEditViewController()
+            profileEditViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(profileEditViewController, animated: true)
-            navigationController?.hidesBottomBarWhenPushed = true
-
             dismiss(animated: true, completion: nil)
-            navigationController?.hidesBottomBarWhenPushed = true
-
         } else if title == "로그아웃" {
             let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)
             alertController.addAction(.init(title: "계속", style: .destructive, handler: { _ in
@@ -284,10 +227,9 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             alertController.addAction(.init(title: "취소", style: .cancel))
             topMostViewController.present(alertController, animated: true)
         } else if title == "자주 묻는 질문" {
-            print("자주 묻는 질문")
+            // TODO: 노션
         } else if title == "개인 정보 처리 방침" {
-            print("개인 정보 처리 방침")
+            // TODO: 노션
         }
     }
 }
-
