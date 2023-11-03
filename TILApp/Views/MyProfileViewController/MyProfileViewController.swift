@@ -16,7 +16,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.circle.fill")
-        $0.layer.cornerRadius = 50
+        $0.tintColor = .accent
         $0.layer.borderColor = UIColor.accent.cgColor
     }
 
@@ -86,19 +86,22 @@ final class MyProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: false)
-        view.backgroundColor = .systemBackground
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
         // TODO: 불러오는 위치 변경하기
         UserViewModel.shared.withFollowers()
         UserViewModel.shared.withFollowings()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = true
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = false
     }
 
     override func viewDidLayoutSubviews() {
@@ -107,14 +110,14 @@ final class MyProfileViewController: UIViewController {
     }
 
     private func setUpUI() {
-        screenView.flex.direction(.column).padding(20).define { flex in
+        screenView.flex.direction(.column).define { flex in
             flex.addItem().direction(.row).define { flex in
-                flex.addItem(profileImageView).width(100).height(100)
+                flex.addItem(profileImageView).width(100).height(100).cornerRadius(100 / 2)
                 flex.addItem().direction(.column).define { flex in
-                    flex.addItem(nicknameLabel).marginLeft(15)
-                    flex.addItem(countView).marginLeft(5)
+                    flex.addItem(nicknameLabel).marginLeft(15).marginTop(10)
+                    flex.addItem(countView)
                     countView.flex.direction(.row)
-                        .width(200).height(75).define { flex in
+                        .width(210).height(75).define { flex in
                             flex.addItem(postButton).width(70)
                             flex.addItem(followersButton).width(70)
                             flex.addItem(followingButton).width(70)
@@ -125,19 +128,17 @@ final class MyProfileViewController: UIViewController {
         screenView.flex.layout()
         countView.flex.layout()
 
-        screenView.pin.top(view.pin.safeArea).bottom(80%).left().right()
-        editBlogButton.pin.below(of: screenView).left(20).right(20).marginTop(15)
-        moreButton.pin.top(view.pin.safeArea).right(20)
+        screenView.pin.top(view.pin.safeArea).bottom(80%).left(20).right(20)
+        editBlogButton.pin.below(of: screenView).left(20).right(20).marginTop(10)
+        moreButton.pin.top(view.pin.safeArea).right(25).top(5)
         myProfileSegmentedControl.pin.below(of: editBlogButton).marginTop(10)
         myProfileTableView.pin.below(of: myProfileSegmentedControl).bottom(view.pin.safeArea).left().right()
     }
 
     @objc private func moreButtonTapped() {
         let vc = SeeMoreBottomSheetViewController()
-        vc.modalPresentationStyle = .custom
-        vc.transitioningDelegate = self
         vc.delegate = self
-        present(vc, animated: true, completion: nil)
+        present(vc, animated: true)
     }
 
     @objc private func followersButtonTapped() {
@@ -211,24 +212,12 @@ extension MyProfileViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
 }
 
-extension MyProfileViewController: UIViewControllerTransitioningDelegate {
-    func presentationController(
-        forPresented presented: UIViewController,
-        presenting: UIViewController?,
-        source _: UIViewController
-    ) -> UIPresentationController? {
-        return SeeMorePresentationController(presentedViewController: presented, presenting: presenting)
-    }
-}
-
 extension MyProfileViewController: SeeMoreBottomSheetDelegate {
     func didSelectSeeMoreMenu(title: String) {
         if title == "회원 정보 수정" {
             let profileEditViewController = ProfileEditViewController()
             profileEditViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(profileEditViewController, animated: true)
-            profileEditViewController.username = user?.username
-            profileEditViewController.userImage = user?.avatarUrl
             dismiss(animated: true, completion: nil)
         } else if title == "로그아웃" {
             let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)

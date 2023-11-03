@@ -1,10 +1,3 @@
-//
-//  MyProfileTableViewCell.swift
-//  TILApp
-//
-//  Created by Lee on 10/30/23.
-//
-
 import UIKit
 
 final class MyProfileTableViewCell: UITableViewCell {
