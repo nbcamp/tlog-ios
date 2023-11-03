@@ -1,11 +1,6 @@
 import UIKit
 
 class CustomTagHeaderView: UIView {
-    var componentSize: CGSize {
-        return CGSize(width: frame.width, height: height)
-    }
-
-    private let height: CGFloat = 30
 
     private let label = CustomTitleLabel().then {
         $0.text = "블로그 게시물 자동 태그 설정"
@@ -23,26 +18,22 @@ class CustomTagHeaderView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        setupView()
+        addSubview(label)
+        addSubview(line)
+        addSubview(button)
+        
+        pin.height(30)
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    private func setupView() {
-        // backgroundColor = .systemBackground
-
-        addSubview(label)
-        addSubview(line)
-        addSubview(button)
-    }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.width(100%).height(height)
+        pin.width(100%)
         label.pin.left(20)
         button.pin.right(20).width(24).height(24)
         line.pin.bottom(to: edge.bottom).horizontally(20).height(0.5)

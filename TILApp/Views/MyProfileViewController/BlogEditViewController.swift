@@ -17,12 +17,11 @@ final class BlogEditViewController: UIViewController {
     }
 
     private lazy var contentView = UIView()
-    private lazy var rootFlexContainer = UIView()
+    private lazy var customKeywordView = CustomKeywordView()
 
     private lazy var mainBlogButton = CustomLargeBorderButton().then {
         $0.variant = blog.main ? .primary : .normal
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
         $0.addTarget(self, action: #selector(toMainButtonTapped), for: .touchUpInside)
     }
 
@@ -71,7 +70,6 @@ final class BlogEditViewController: UIViewController {
         $0.setTitleColor(.systemRed, for: .normal)
 
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
         $0.addTarget(self, action: #selector(deleteBlogButtonTapped), for: .touchUpInside)
     }
 
@@ -110,7 +108,6 @@ final class BlogEditViewController: UIViewController {
 
     private lazy var tagHeader = CustomTagHeaderView().then {
         contentView.addSubview($0)
-        $0.pin.size($0.componentSize)
         $0.addTargetForButton(target: self, action: #selector(addTagButtonTapped), for: .touchUpInside)
     }
 
@@ -126,7 +123,7 @@ final class BlogEditViewController: UIViewController {
 
         view.addSubview(contentScrollView)
         contentScrollView.addSubview(contentView)
-        contentView.addSubview(rootFlexContainer)
+        contentView.addSubview(customKeywordView)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -171,32 +168,17 @@ final class BlogEditViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        rootFlexContainer.removeAllSubviews()
-
-        rootFlexContainer.flex.define {
-            for (index, keyword) in keywordInputViewModel.keywords.enumerated() {
-                let customTagView = CustomTagView()
-                customTagView.labelText = keyword.keyword
-                customTagView.tags = keyword.tags
-                $0.addItem(customTagView).marginTop(10)
-                customTagView.pin.size(customTagView.componentSize)
-
-                let tapGestureRecognizer
-                    = ContextTapGestureRecognizer(target: self, action: #selector(customTagViewTapped(_:)))
-                tapGestureRecognizer.context["index"] = index
-                customTagView.addGestureRecognizer(tapGestureRecognizer)
-                customTagView.isUserInteractionEnabled = true
-
-                customTagView
-                    .addTargetForButton(target: self, action: #selector(deleteTagButtonTapped), for: .touchUpInside)
-            }
-        }
+        customKeywordView.setKeywords(
+            keywordInputViewModel.keywords,
+            target: self, tapSelector: #selector(customTagViewTapped(_:)),
+            deleteSelector: #selector(deleteTagButtonTapped(_:))
+        )
 
         contentScrollView.pin.top(view.pin.safeArea).horizontally().bottom()
         contentView.pin.top(to: contentScrollView.edge.top).horizontally()
 
         mainBlogButton.pin.top(contentView.pin.safeArea).marginTop(10)
-        blogNameTextField.pin.horizontally().top(to: mainBlogButton.edge.bottom).marginTop(20)
+        blogNameTextField.pin.horizontally().top(to: mainBlogButton.edge.bottom).marginTop(15)
         blogURLTextField.pin.horizontally().top(to: blogNameTextField.edge.bottom).marginTop(5)
         blogRSSTextField.pin.horizontally().top(to: blogURLTextField.edge.bottom).marginTop(5)
         deleteDescriotionLabel.pin.top(to: blogRSSTextField.edge.bottom).horizontally(20).height(25).marginTop(5)
@@ -204,10 +186,10 @@ final class BlogEditViewController: UIViewController {
 
         tagHeader.pin.top(to: deleteBlogButton.edge.bottom).marginTop(20)
 
-        rootFlexContainer.pin.horizontally(20).top(to: tagHeader.edge.bottom).bottom().marginTop(-10)
-        rootFlexContainer.flex.layout(mode: .adjustHeight)
+        customKeywordView.pin.horizontally(20).top(to: tagHeader.edge.bottom).bottom().marginTop(-10)
+        customKeywordView.flex.layout(mode: .adjustHeight)
 
-        contentView.pin.top(to: contentScrollView.edge.top).horizontally().bottom(to: rootFlexContainer.edge.bottom)
+        contentView.pin.top(to: contentScrollView.edge.top).horizontally().bottom(to: customKeywordView.edge.bottom)
 
         contentScrollView.contentSize = CGSize(width: contentView.frame.width, height: contentView.frame.height)
     }
@@ -229,7 +211,7 @@ final class BlogEditViewController: UIViewController {
 
     @objc private func deleteTagButtonTapped(_ sender: UIButton) {
         if let customTagView = sender.superview as? CustomTagView,
-           let index = rootFlexContainer.subviews.firstIndex(of: customTagView)
+           let index = customKeywordView.subviews.firstIndex(of: customTagView)
         {
             let keyword = keywordInputViewModel.keywords[index]
             let alertController = UIAlertController(

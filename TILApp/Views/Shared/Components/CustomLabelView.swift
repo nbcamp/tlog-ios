@@ -1,10 +1,6 @@
 import UIKit
 
 class CustomLabelView: UIView {
-    var componentSize: CGSize {
-        return CGSize(width: frame.width, height: height)
-    }
-
     var nicknameText: String {
         get { nicknameLabel.text ?? "" }
         set { nicknameLabel.text = newValue }
@@ -26,12 +22,15 @@ class CustomLabelView: UIView {
         $0.sizeToFit()
     }
 
-    private let height: CGFloat = 67
-
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        setupView()
+        flex.justifyContent(.center).define {
+            $0.addItem(nicknameLabel)
+            $0.addItem(dateLabel).marginTop(2)
+        }
+        
+        pin.height(67)
     }
 
     @available(*, unavailable)
@@ -39,17 +38,9 @@ class CustomLabelView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupView() {
-        flex.justifyContent(.center).define {
-            $0.addItem(nicknameLabel)
-            $0.addItem(dateLabel).marginTop(2)
-        }
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.height(height)
         flex.layout()
     }
 }

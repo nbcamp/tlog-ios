@@ -26,14 +26,17 @@ class CustomLargeBorderButton: UIButton {
         }
     }
 
-    private let height: CGFloat = 35
-    var componentSize: CGSize {
-        return CGSize(width: frame.width, height: height)
-    }
-
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupButton()
+
+        backgroundColor = UIColor.white
+        layer.borderWidth = 0.5
+        layer.borderColor = UIColor.accent.cgColor
+        layer.cornerRadius = 12
+        setTitleColor(.accent, for: .normal)
+        titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        
+        pin.height(35)
     }
 
     @available(*, unavailable)
@@ -41,17 +44,8 @@ class CustomLargeBorderButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupButton() {
-        backgroundColor = UIColor.white
-        layer.borderWidth = 0.5
-        layer.borderColor = UIColor(named: "AccentColor")?.cgColor
-        layer.cornerRadius = 12
-        setTitleColor(UIColor(named: "AccentColor"), for: .normal)
-        titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
-        pin.horizontally(20).height(height)
+        pin.horizontally(20)
     }
 }

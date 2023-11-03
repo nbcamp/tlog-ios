@@ -1,9 +1,6 @@
 import UIKit
 
 class CustomTagView: UIView {
-    var componentSize: CGSize {
-        return CGSize(width: frame.width, height: height)
-    }
 
     var labelText: String {
         get { titleContentLabel.text ?? "" }
@@ -12,11 +9,9 @@ class CustomTagView: UIView {
 
     var tags: [String] = [] {
         didSet {
-            tagContentLabel.text = tags.joined(separator: " | ")
+            tagsCollectionView.tags = tags
         }
     }
-
-    private let height: CGFloat = 67
 
     private let titleLabel = UILabel().then {
         $0.text = "제목"
@@ -35,10 +30,8 @@ class CustomTagView: UIView {
     private let titleContentLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14)
     }
-
-    private let tagContentLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14)
-    }
+    
+    private let tagsCollectionView = HorizontalTagsCollectionView()
 
     private let deleteButton = UIButton().then {
         $0.setTitle("삭제", for: .normal)
@@ -58,26 +51,25 @@ class CustomTagView: UIView {
     }
 
     private func setupView() {
-        // backgroundColor = .systemBackground
-
-        flex.direction(.column).justifyContent(.spaceBetween).padding(10).height(height).define { flex in
+        flex.direction(.column).justifyContent(.spaceBetween).padding(10).height(67).define { flex in
             flex.addItem().direction(.row).grow(1).define {
                 $0.addItem(titleLabel).marginRight(10)
                 $0.addItem(titleContentLabel).maxWidth(80%)
             }
             flex.addItem().direction(.row).grow(1).define {
                 $0.addItem(tagLabel).marginRight(10)
-                $0.addItem(tagContentLabel).maxWidth(80%)
+                $0.addItem(tagsCollectionView).width(80%).height(22).marginTop(5)
             }
         }
 
         addSubview(deleteButton)
+        pin.height(67)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        pin.horizontally().height(height)
+        pin.horizontally()
         flex.layout()
         deleteButton.pin.width(30).height(30).vCenter().right(10)
 

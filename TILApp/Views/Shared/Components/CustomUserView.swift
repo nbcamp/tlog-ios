@@ -27,7 +27,7 @@ class CustomUserView: UIView {
     }
 
     var followButtonTapped: (() -> Void)? {
-        get { return button.buttonTapped }
+        get { button.buttonTapped }
         set { button.buttonTapped = newValue }
     }
 

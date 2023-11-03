@@ -2,7 +2,8 @@ import UIKit
 
 class CustomTILView: UIView {
     private let titleLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 18)
+        $0.font = UIFont.systemFont(ofSize: 16)
+        $0.textColor = #colorLiteral(red: 0.1978010237, green: 0.208270371, blue: 0.2226796448, alpha: 1)
     }
 
     private let contentLabel = UILabel().then {
@@ -12,8 +13,8 @@ class CustomTILView: UIView {
     }
 
     private let dateLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 15)
-        $0.textColor = UIColor(white: 0.33, alpha: 1.0)
+        $0.font = UIFont.systemFont(ofSize: 14)
+        $0.textColor = .darkGray
         $0.textAlignment = .right
     }
 
@@ -35,23 +36,9 @@ class CustomTILView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        titleLabel.pin
-            .top(15)
-            .left(20)
-            .width(240)
-            .height(22)
-
-        contentLabel.pin
-            .top(39)
-            .left(21)
-            .right(20)
-            .height(36)
-
-        dateLabel.pin
-            .top(17)
-            .right(20)
-            .width(90)
-            .height(20)
+        titleLabel.pin.top(15).left(20).width(240).height(22)
+        contentLabel.pin.top(39).left(21).right(20).height(36)
+        dateLabel.pin.top(17).right(20).width(90).height(20)
     }
 
     func setup(withTitle title: String, content: String, date: String) {
@@ -61,7 +48,7 @@ class CustomTILView: UIView {
     }
 
     func resizeText() {
-        titleLabel.font = UIFont.systemFont(ofSize: 15)
+        titleLabel.font = UIFont.systemFont(ofSize: 14.5)
         dateLabel.font = UIFont.systemFont(ofSize: 14)
     }
 }

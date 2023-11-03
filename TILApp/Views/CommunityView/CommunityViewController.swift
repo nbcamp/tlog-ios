@@ -2,6 +2,7 @@ import UIKit
 
 final class CommunityViewController: UIViewController {
     private let communityViewModel = CommunityViewModel.shared
+    private let userViewModel = UserViewModel.shared
     private var items: [CommunityPost] { communityViewModel.items }
     private var cancellables: Set<AnyCancellable> = []
 
@@ -78,19 +79,39 @@ extension CommunityViewController: UITableViewDataSource {
 
         let item = items[indexPath.row]
 
-//         TODO: CommunityTableViewCell에 configure 함수 만들기
-        cell.customCommunityTILView.userView.setup(
-            image: UIImage(),
-            nicknameText: item.user.username,
-            contentText: "팔로워 \(item.user.followers)",
-            variant: .follow
-        )
-        cell.customCommunityTILView.tilView.setup(
-            withTitle: item.post.title,
-            content: item.post.content,
-            date: ""
-        )
-        cell.customCommunityTILView.relativePublishedDateLabel = item.post.publishedAt.relativeFormat()
+        cell.customCommunityTILView.setup(user: item.user, post: item.post)
+        
+        let user = item.user
+        
+        let variant: CustomFollowButton.Variant = userViewModel.isFollowed(userId: user.id) ? .unfollow : .follow
+        cell.customCommunityTILView.variant = variant
+
+        cell.customCommunityTILView.followButtonTapped = { [weak self, weak cell] in
+            guard let self = self, let cell = cell else { return }
+
+            let currentVariant = cell.customCommunityTILView.variant
+
+            switch currentVariant {
+            case .follow:
+                userViewModel.follow(to: user.id) { [weak self] in
+                    guard let self else { return }
+                    cell.customCommunityTILView.variant = .unfollow
+                } onError: { error in
+                    // TODO: 에러 처리
+                    print(error)
+                }
+
+            case .unfollow:
+                userViewModel.unfollow(to: user.id) { [weak self] in
+                    guard let self else { return }
+                    cell.customCommunityTILView.variant = .follow
+                } onError: { error in
+                    // TODO: 에러 처리
+                    print(error)
+                }
+            }
+        }
+        
         cell.selectionStyle = .none
 
         cell.customCommunityTILView.userProfileTapped = { [weak self] in
@@ -113,7 +134,7 @@ extension CommunityViewController: UITableViewDataSource {
     }
 
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
-        return 161
+        return 180
     }
 }
 
