@@ -8,6 +8,9 @@ final class HorizontalTagsCollectionView:
             reloadData()
         }
     }
+    
+    var height: CGFloat = 22
+    var radius: CGFloat = 8
 
     init() {
         let layout = UICollectionViewFlowLayout()
@@ -39,7 +42,8 @@ final class HorizontalTagsCollectionView:
         guard let cell = collectionView
             .dequeueReusableCell(withReuseIdentifier: "TagCell", for: indexPath)
             as? TagCell else { return UICollectionViewCell() }
-        cell.label.text = tags[indexPath.item]
+        cell.text = tags[indexPath.item]
+        cell.radius = radius
         return cell
     }
 
@@ -51,7 +55,7 @@ final class HorizontalTagsCollectionView:
     ) -> CGSize {
         let tag = tags[indexPath.item]
         let size = tag.size(withAttributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13)])
-        return CGSize(width: size.width + 15, height: 22)
+        return CGSize(width: size.width + 15, height: height)
     }
 
     func collectionView(
@@ -64,16 +68,24 @@ final class HorizontalTagsCollectionView:
 }
 
 class TagCell: UICollectionViewCell {
-    let label = UILabel()
+    var radius: CGFloat = 8 {
+        didSet { layer.cornerRadius = radius }
+    }
+    var text = "" {
+        didSet { label.text = text }
+    }
+    
+    private lazy var label = UILabel().then {
+        $0.frame = contentView.bounds
+        $0.font = .systemFont(ofSize: 13)
+        $0.textColor = .darkGray
+        $0.textAlignment = .center
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
         contentView.addSubview(label)
-        label.frame = contentView.bounds
-        label.font = .systemFont(ofSize: 13)
-        label.textColor = .darkGray
-        label.textAlignment = .center
 
         backgroundColor = .systemGray6
         layer.cornerRadius = 8
