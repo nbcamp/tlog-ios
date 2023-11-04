@@ -229,20 +229,24 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             topMostViewController.present(alertController, animated: true)
             
         } else if title == "자주 묻는 질문" {
-            // TODO: 노션
             let webViewController = WebViewController()
-            webViewController.postURL = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781?pvs=4"
+            webViewController.postURL = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true, completion: nil)
         } else if title == "개인 정보 처리 방침" {
-            // TODO: 노션
             let webViewController = WebViewController()
-            webViewController.postURL = "https://plucky-fang-eae.notion.site/415be4c5a7994d50852067b5e8ad1fec"
+            webViewController.postURL = "https:plip.kr/pcc/96e3cd8c-700d-46a1-b007-37443c721874/privacy-policy"
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true, completion: nil)
-//      이용 약관: https://plucky-fang-eae.notion.site/TLog-415be4c5a7994d50852067b5e8ad1fec?pvs=4
+//          // TODO: 이용약관 어디에 띄워야하지?
+//            let webViewController = WebViewController()
+//            webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
+//            webViewController.hidesBottomBarWhenPushed = true
+//            navigationController?.pushViewController(webViewController, animated: true)
+//            dismiss(animated: true, completion: nil)
+
         }
     }
 }
