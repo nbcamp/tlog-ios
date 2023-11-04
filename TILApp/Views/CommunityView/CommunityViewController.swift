@@ -3,7 +3,7 @@ import UIKit
 final class CommunityViewController: UIViewController {
     private let communityViewModel = CommunityViewModel.shared
     private let userViewModel = UserViewModel.shared
-    private var items: [CommunityPost] { communityViewModel.items }
+    private var posts: [CommunityPost] { communityViewModel.items }
     private var cancellables: Set<AnyCancellable> = []
 
     private lazy var tableView = UITableView().then {
@@ -66,7 +66,7 @@ final class CommunityViewController: UIViewController {
 
 extension CommunityViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return items.count
+        return posts.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -77,55 +77,53 @@ extension CommunityViewController: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        let item = items[indexPath.row]
-
-        cell.customCommunityTILView.setup(user: item.user, post: item.post)
-        
-        let user = item.user
-        
-        let variant: CustomFollowButton.Variant = userViewModel.isFollowed(userId: user.id) ? .unfollow : .follow
-        cell.customCommunityTILView.variant = variant
-
+        let post = posts[indexPath.row]
+        cell.customCommunityTILView.setup(post: post)
+        if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
+            cell.customCommunityTILView.variant = .hidden
+        } else if userViewModel.isMyFollowing(user: post.user) {
+            cell.customCommunityTILView.variant = .unfollow
+        } else {
+            cell.customCommunityTILView.variant = .follow
+        }
         cell.customCommunityTILView.followButtonTapped = { [weak self, weak cell] in
-            guard let self = self, let cell = cell else { return }
-
-            let currentVariant = cell.customCommunityTILView.variant
-
-            switch currentVariant {
+            guard let self, let cell else { return }
+            switch cell.customCommunityTILView.variant {
             case .follow:
-                userViewModel.follow(to: user.id) { [weak self] in
+                userViewModel.follow(user: post.user) { [weak self] result in
                     guard let self else { return }
+                    guard case .success(let success) = result, success else {
+                        // TODO: 에러 처리
+                        return
+                    }
                     cell.customCommunityTILView.variant = .unfollow
-                } onError: { error in
-                    // TODO: 에러 처리
-                    print(error)
                 }
-
             case .unfollow:
-                userViewModel.unfollow(to: user.id) { [weak self] in
+                userViewModel.unfollow(user: post.user) { [weak self] result in
                     guard let self else { return }
+                    guard case .success(let success) = result, success else {
+                        // TODO: 에러 처리
+                        return
+                    }
                     cell.customCommunityTILView.variant = .follow
-                } onError: { error in
-                    // TODO: 에러 처리
-                    print(error)
                 }
+            case .hidden: break
             }
         }
-        
+
         cell.selectionStyle = .none
 
         cell.customCommunityTILView.userProfileTapped = { [weak self] in
             guard let self else { return }
             let userProfileViewController = UserProfileViewController()
-            userProfileViewController.user = item.user
+            userProfileViewController.user = post.user
             navigationController?.pushViewController(userProfileViewController, animated: true)
         }
 
         cell.customCommunityTILView.postTapped = { [weak self] in
             guard let self else { return }
             let webViewController = WebViewController()
-            webViewController.postURL = item.post.url
-            // TODO: bottom bar가 대체되지 않는 문제 수정
+            webViewController.postURL = post.url
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)
         }

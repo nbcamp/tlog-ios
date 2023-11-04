@@ -10,9 +10,9 @@ final class CommunityViewModel {
     private init() {}
 
     weak var delegate: CommunityViewModelDelegate?
-    
+
     typealias Handler = APIHandler<[CommunityPost]>
-    
+
     private let api = APIService.shared
 
     private(set) var initialized: Bool = false
@@ -49,7 +49,7 @@ final class CommunityViewModel {
         query = nil
     }
 
-    func search(query: String,  _ handler: Handler? = nil) {
+    func search(query: String, _ handler: Handler? = nil) {
         guard initialized else { return }
         Task {
             searching = true
@@ -104,8 +104,8 @@ final class CommunityViewModel {
             q: query,
             limit: limit,
             cursor: next ? nextCursor : nil,
-            desc: desc)
-        ), to: [CommunityPost].self)
+            desc: desc
+        )), to: [CommunityPost].self)
 
         DispatchQueue.main.async { [unowned self] in
             switch result {
@@ -119,7 +119,7 @@ final class CommunityViewModel {
                     items = newItems
                     delegate?.itemsUpdated(self, items: newItems, range: 0 ..< newItems.count)
                 }
-                nextCursor = items.last?.id
+                nextCursor = newItems.last?.id
                 completed = nextCursor == nil && !items.isEmpty
                 handler?(.success(items))
             case .failure(let error):
