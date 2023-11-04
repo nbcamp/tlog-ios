@@ -16,8 +16,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidDisconnect(_: UIScene) {}
 
     func sceneDidBecomeActive(_: UIScene) {
-        AuthViewModel.shared.withUser()
-        AuthViewModel.shared.$isAuthenticated.sink { [unowned self] authenticated in
+        AuthViewModel.shared.checkAuthorization()
+        AuthViewModel.shared.$isAuthenticated.dropFirst().sink { [unowned self] authenticated in
+            print("authenticated", authenticated)
             self.window?.rootViewController = authenticated ? RootViewController() : SignInViewController()
         }.store(in: &cancellables)
     }
