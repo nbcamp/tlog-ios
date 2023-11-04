@@ -2,91 +2,54 @@ final class UserViewModel {
     static let shared: UserViewModel = .init()
     private init() {}
 
-    private(set) var followers: [User] = []
-    private(set) var followings: [User] = []
+    private let api = APIService.shared
 
-    func find(
-        by userId: Int,
-        onSuccess: ((_ user: User) -> Void)? = nil,
-        onError: ((_ error: Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(
-            .getUser(userId),
-            model: User.self,
-            onSuccess: onSuccess,
-            onError: onError
-        )
+    private(set) var myFollowers: [User] = []
+    private(set) var myFollowings: [User] = []
+
+    func withProfile(user: User, _ handler: @escaping APIHandler<User>) {
+        api.request(.getUserProfile(user.id), to: User.self, handler)
     }
 
-    func follow(
-        to userId: Int,
-        onSuccess: (() -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(
-            .followUser(userId),
-            onSuccess: { [weak self] _ in
-                guard let self else { return }
-                UserViewModel.shared.find(by: userId) { [weak self] user in
-                    guard let self else { return }
-                    self.followings.append(user)
-                    onSuccess?()
-                }
-            },
-            onError: onError
-        )
+    func follow(user: User, _ handler: @escaping APIHandler<Bool>) {
+        api.request(.followUser(user.id)) { [unowned self] result in
+            if case .success = result {
+                myFollowings.append(user)
+            }
+            handler(.success(true))
+        }
     }
 
-    func unfollow(
-        to userId: Int,
-        onSuccess: (() -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(
-            .unfollowUser(userId),
-            onSuccess: { [weak self] _ in
-                if let index = self?.followings.firstIndex(where: { $0.id == userId }) {
-                    self?.followings.remove(at: index)
-                    onSuccess?()
-                }
-            },
-            onError: onError
-        )
+    func unfollow(user: User, _ handler: @escaping APIHandler<Bool>) {
+        api.request(.unfollowUser(user.id)) { [unowned self] _ in
+            if let index = myFollowings.firstIndex(where: { $0.id == user.id }) {
+                myFollowings.remove(at: index)
+                handler(.success(true))
+                return
+            }
+            handler(.success(false))
+        }
     }
 
-    func withFollowers(
-        onSuccess: ((_ followers: [User]) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(
-            .getFollowers,
-            model: [User].self,
-            onSuccess: { [weak self] model in
-                guard let self else { return }
-                followers = model
-                onSuccess?(model)
-            },
-            onError: onError
-        )
+    func withMyFollowers(_ handler: @escaping APIHandler<[User]>) {
+        api.request(.getMyFollowers, to: [User].self) { [unowned self] result in
+            if case let .success(model) = result {
+                myFollowers = model
+            }
+            handler(result)
+        }
     }
 
-    func withFollowings(
-        onSuccess: ((_ followings: [User]) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(
-            .getFollowings,
-            model: [User].self,
-            onSuccess: { [weak self] model in
-                guard let self else { return }
-                followings = model
-                onSuccess?(model)
-            },
-            onError: onError
-        )
+    func withMyFollowings(_ handler: @escaping APIHandler<[User]>) {
+        api.request(.getMyFollowings, to: [User].self) { [unowned self] result in
+            if case let .success(model) = result {
+                myFollowings = model
+            }
+            handler(result)
+        }
     }
 
-    func isFollowed(userId: Int) -> Bool {
-        return followings.contains(where: { $0.id == userId })
+    func isMyFollowing(user: User) -> Bool {
+        return myFollowings.contains(where: { $0.id == user.id })
     }
 }

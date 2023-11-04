@@ -1,7 +1,6 @@
 import Foundation
 
 func toDictionary<T: Encodable>(from object: T, with encoder: JSONEncoder = JSONEncoder()) -> [String: Any] {
-    encoder.dateEncodingStrategy = .secondsSince1970
     guard let data = try? encoder.encode(object) else { return [:] }
     return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]) ?? [:]
 }

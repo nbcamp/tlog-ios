@@ -56,7 +56,7 @@ final class APIService {
         return result
     }
 
-    func request<Model: Decodable>(_ target: APIRequest, handler: @escaping APIHandler<Model>) {
+    func request<Model: Decodable>(_ target: APIRequest, to _: Model.Type, _ handler: @escaping APIHandler<Model>) {
         provider.request(target) { [unowned self] result in
             switch result {
             case .success(let response):
@@ -77,7 +77,7 @@ final class APIService {
         }
     }
 
-    func request<Model: Decodable>(_ target: APIRequest) async -> APIResult<Model> {
+    func request<Model: Decodable>(_ target: APIRequest, to _: Model.Type) async -> APIResult<Model> {
         let result = await provider.request(target)
 
         switch result {
@@ -132,7 +132,9 @@ enum APIRequest {
          getMyBlog(_ blogId: Int),
          createMyBlog(_ input: CreateBlogInput),
          updateMyBlog(_ blogId: Int, _ input: UpdateBlogInput),
-         deleteMyBlog(_ blogId: Int)
+         deleteMyBlog(_ blogId: Int),
+         getMyMainBlog,
+         setMyMainBlog(_ blogId: Int)
 
     // My Posts
     case getMyPosts,
@@ -163,7 +165,7 @@ enum APIRequest {
          getUserLikedPosts(_ userId: Int)
 
     // Community
-    case getCommunityPosts
+    case getCommunityPosts(GetCommunityQuery)
 }
 
 extension APIRequest: SugarTargetType {
@@ -188,6 +190,8 @@ extension APIRequest: SugarTargetType {
         case .getMyBlog(let blogId): return .get("/my/blogs/\(blogId)")
         case .updateMyBlog(let blogId, _): return .patch("/my/blogs/\(blogId)")
         case .deleteMyBlog(let blogId): return .delete("/my/blogs/\(blogId)")
+        case .getMyMainBlog: return .get("/my/blogs/main")
+        case .setMyMainBlog(let blogId): return .patch("/my/blogs/\(blogId)/main")
 
         // My Posts
         case .getMyPosts: return .get("/my/posts")
@@ -224,17 +228,22 @@ extension APIRequest: SugarTargetType {
 
     var parameters: MoyaSugar.Parameters? {
         switch self {
-        case .signIn(let input): return toDict(input)
-        case .updateMyProfile(let input): return toDict(input)
-        case .createMyBlog(let input): return toDict(input)
-        case .updateMyBlog(_, let input): return toDict(input)
-        case .createMyBlogPost(_, let input): return toDict(input)
+        case .signIn(let input): return toBody(input)
+        case .updateMyProfile(let input): return toBody(input)
+        case .createMyBlog(let input): return toBody(input)
+        case .updateMyBlog(_, let input): return toBody(input)
+        case .createMyBlogPost(_, let input): return toBody(input)
+        case .getCommunityPosts(let query): return toParam(query)
         default: return .none
         }
     }
 
-    private func toDict<T: Codable>(_ input: T) -> MoyaSugar.Parameters? {
+    private func toBody<T: Codable>(_ input: T) -> MoyaSugar.Parameters? {
         JSONEncoding() => toDictionary(from: input, with: Coder.encoder)
+    }
+    
+    private func toParam<T: Codable>(_ input: T) -> MoyaSugar.Parameters? {
+        URLEncoding() => toDictionary(from: input, with: Coder.encoder)
     }
 
     var headers: [String: String]? {

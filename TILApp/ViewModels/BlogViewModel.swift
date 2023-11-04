@@ -4,65 +4,52 @@ final class BlogViewModel {
 
     private(set) var blogs: [Blog] = []
 
-    func load(
-        onSuccess: ((_ blogs: [Blog]) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(.getMyBlogs, model: [Blog].self) { [weak self] model in
-            guard let self else { return }
-            blogs = model
-            onSuccess?(blogs)
-        } onError: { error in
-            onError?(error)
-        }
-    }
-
-    func create(_ input: CreateBlogInput, onSuccess: (([Blog]) -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
-        APIService.shared.request(.createBlog(input), model: Blog.self) { [weak self] model in
-            guard let self else { return }
-            blogs.append(model)
-            onSuccess?(blogs)
-        } onError: { error in
-            onError?(error)
-        }
-    }
-
-    func update(
-        _ blog: Blog,
-        _ input: UpdateBlogInput,
-        onSuccess: ((Blog) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(.updateBlog(blog.id, input), model: Blog.self) { [weak self] model in
-            guard let self else { return }
-            if let index = (blogs.firstIndex { $0.id == blog.id }) {
-                blogs[index] = model
+    func load(_ handler: @escaping APIHandler<[Blog]>) {
+        APIService.shared.request(.getMyBlogs, to: [Blog].self) { [unowned self] result in
+            if case let .success(model) = result {
+                blogs = model
             }
-            onSuccess?(model)
-        } onError: { error in
-            onError?(error)
+            handler(result)
         }
     }
 
-    func delete(_ blog: Blog, onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
-        APIService.shared.request(.deleteBlog(blog.id)) { [weak self] _ in
-            guard let self else { return }
-            if let index = (blogs.firstIndex { $0.id == blog.id }) {
+    func create(_ input: CreateBlogInput, _ handler: @escaping APIHandler<Blog>) {
+        APIService.shared.request(.createMyBlog(input), to: Blog.self) { [unowned self] result in
+            if case let .success(model) = result {
+                blogs.append(model)
+            }
+            handler(result)
+        }
+    }
+
+    func update(blog: Blog, _ input: UpdateBlogInput, _ handler: @escaping APIHandler<Blog>) {
+        APIService.shared.request(.updateMyBlog(blog.id, input), to: Blog.self) { [unowned self] result in
+            if case let .success(model) = result {
+                if let index = (blogs.firstIndex(where: { $0.id == blog.id })) {
+                    blogs[index] = model
+                }
+            }
+            handler(result)
+        }
+    }
+
+    func delete(blog: Blog, _ handler: @escaping APIHandler<Bool>) {
+        APIService.shared.request(.deleteMyBlog(blog.id)) { [unowned self] result in
+            if let index = (blogs.firstIndex(where: { $0.id == blog.id })) {
                 blogs.remove(at: index)
+                handler(.success(true))
+                return
             }
-            onSuccess?()
-        } onError: { error in
-            onError?(error)
+            handler(.success(false))
         }
     }
 
-    func setMainBlog(_ id: Int, onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
-        APIService.shared.request(.setMainBlog(id)) { [weak self] _ in
-            guard let self = self else { return }
-            updateMainBlog(id)
-            onSuccess?()
-        } onError: { error in
-            onError?(error)
+    func setMainBlog(blog: Blog, _ handler: @escaping APIHandler<Blog>) {
+        APIService.shared.request(.setMyMainBlog(blog.id), to: Blog.self) { [unowned self] result in
+            if case let .success(model) = result {
+                updateMainBlog(blog: model)
+            }
+            handler(result)
         }
     }
 
@@ -78,34 +65,27 @@ final class BlogViewModel {
         return blogs.contains { $0.url == url }
     }
 
-    func updateMainBlog(_ id: Int) {
+    private func updateMainBlog(blog: Blog) {
         if let index = blogs.firstIndex(where: { $0.main }) {
-            let oldBlog = blogs[index]
-            let newBlog: Blog = .init(
-                id: oldBlog.id,
-                name: oldBlog.name,
-                url: oldBlog.url,
-                rss: oldBlog.rss,
-                main: false,
-                keywords: oldBlog.keywords,
-                lastPublishedAt: oldBlog.lastPublishedAt,
-                createdAt: oldBlog.createdAt
-            )
-            blogs[index] = newBlog
+            blogs[index] = blogs[index].withMain(false)
         }
-        if let index = blogs.firstIndex(where: { $0.id == id }) {
-            let oldBlog = blogs[index]
-            let newBlog: Blog = .init(
-                id: oldBlog.id,
-                name: oldBlog.name,
-                url: oldBlog.url,
-                rss: oldBlog.rss,
-                main: true,
-                keywords: oldBlog.keywords,
-                lastPublishedAt: oldBlog.lastPublishedAt,
-                createdAt: oldBlog.createdAt
-            )
-            blogs[index] = newBlog
+        if let index = blogs.firstIndex(where: { $0.id == blog.id }) {
+            blogs[index] = blog
         }
+    }
+}
+
+extension Blog {
+    func withMain(_ main: Bool) -> Blog {
+        return Blog(
+            id: self.id,
+            name: self.name,
+            url: self.url,
+            rss: self.rss,
+            main: main,
+            keywords: self.keywords,
+            lastPublishedAt: self.lastPublishedAt,
+            createdAt: self.createdAt
+        )
     }
 }
