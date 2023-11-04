@@ -1,6 +1,6 @@
 struct AuthUser: Codable {
     let id: Int
-    let username: String?
+    let username: String
     let avatarUrl: String?
     let posts: Int
     let followers: Int
@@ -8,7 +8,7 @@ struct AuthUser: Codable {
 }
 
 struct SignInInput: Codable {
-    let username: String?
+    let username: String
     let avatarUrl: String?
     let provider: String
     let providerId: String

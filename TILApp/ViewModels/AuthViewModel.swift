@@ -17,7 +17,6 @@ final class AuthViewModel {
     @Published var isAuthenticated: Bool = false
 
     func checkAuthorization(_ handler: APIHandler<AuthUser>? = nil) {
-        print(#function)
         api.request(.getMyProfile, to: AuthUser.self) { [unowned self] result in
             if case let .success(model) = result {
                 user = model
@@ -31,7 +30,6 @@ final class AuthViewModel {
     }
 
     func signIn(_ input: SignInInput, _ handler: @escaping APIHandler<SignInOutput>) {
-        print(#function)
         api.request(.signIn(input), to: SignInOutput.self) { [unowned self] result in
             if case let .success(model) = result {
                 UserDefaults.standard.set(model.accessToken, forKey: Token.accessToken)
@@ -46,7 +44,6 @@ final class AuthViewModel {
     }
 
     func signOut() {
-        print(#function)
         UserDefaults.standard.removeObject(forKey: Token.accessToken)
         isAuthenticated = false
         user = nil
