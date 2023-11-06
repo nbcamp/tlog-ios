@@ -93,9 +93,9 @@ class CustomCommunityTILView: UIView {
     }
 
     // TODO: 팔로워 옆에 연속 작성 일수 추가해야 함
-    func setup(user: User, post: Post) {
-        userView.setup(image: UIImage(), nicknameText: user.username,
-                       contentText: "팔로워 \(user.followers) | T+4", variant: .follow)
+    func setup(post: CommunityPost) {
+        userView.setup(image: UIImage(), nicknameText: post.user.username,
+                       contentText: "팔로워 \(post.user.followers) | T+4", variant: .follow)
         tilView.setup(withTitle: post.title, content: post.content, date: "")
         tagsCollectionView.tags = post.tags
         dateLabel.text = post.publishedAt.relativeFormat()

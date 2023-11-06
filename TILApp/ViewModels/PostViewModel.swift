@@ -4,55 +4,39 @@ final class PostViewModel {
     static let shared: PostViewModel = .init()
     private init() {}
 
-    func withPosts(
-        byUserId userId: Int? = nil,
-        byQuery query: String? = nil,
-        onSuccess: ((_ posts: [Post]) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(
-            .getPosts(.init(userId: userId, q: query)),
-            model: [Post].self,
-            onSuccess: onSuccess,
-            onError: onError
-        )
+    private let api = APIService.shared
+
+    private(set) var myPosts: [Post] = []
+    
+    func withMyPosts(_ handler: @escaping APIHandler<[Post]>) {
+        api.request(.getMyPosts, to: [Post].self) { [unowned self] result in
+            if case let .success(model) = result {
+                myPosts = model
+            }
+            handler(result)
+        }
+    }
+    
+    func withUserPosts(user: User, _ handler: @escaping APIHandler<[Post]>) {
+        api.request(.getUserPosts(user.id), to: [Post].self, handler)
     }
 
-    func create(
-        _ inputs: [CreatePostInput],
-        onSuccess: ((_ posts: [Post?]) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
+    func create(blog: Blog, _ inputs: [CreatePostInput], _ handler: @escaping APIHandler<[Post?]> ) {
         let group = DispatchGroup()
         var posts: [Post?] = .init(repeating: nil, count: inputs.count)
 
         for (index, input) in inputs.enumerated() {
             group.enter()
-            APIService.shared.request(.createPost(input), model: Post.self) { model in
-                posts[index] = model
-                group.leave()
-            } onError: { error in
-                onError?(error)
+            api.request(.createMyBlogPost(blog.id, input), to: Post.self) { result in
+                if case let .success(model) = result {
+                    posts[index] = model
+                }
                 group.leave()
             }
         }
 
         group.notify(queue: .main) {
-            onSuccess?(posts)
+            handler(.success(posts))
         }
-    }
-
-    func update(
-        _ post: Post,
-        _ input: UpdatePostInput,
-        onSuccess: ((_ post: Post) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(
-            .updatePost(post.id, input),
-            model: Post.self,
-            onSuccess: onSuccess,
-            onError: onError
-        )
     }
 }

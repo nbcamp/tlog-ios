@@ -4,6 +4,7 @@ class CustomFollowButton: UIButton {
     enum Variant {
         case follow
         case unfollow
+        case hidden
     }
 
     var variant: Variant = .follow {
@@ -13,6 +14,8 @@ class CustomFollowButton: UIButton {
                 setupFollowButton()
             case .unfollow:
                 setupUnfollowButton()
+            case .hidden:
+                isHidden = true
             }
         }
     }
@@ -40,12 +43,14 @@ class CustomFollowButton: UIButton {
     }
 
     private func setupFollowButton() {
+        isHidden = false
         backgroundColor = .accent
         setTitleColor(UIColor.white, for: .normal)
         setTitle("팔로우", for: .normal)
     }
 
     private func setupUnfollowButton() {
+        isHidden = false
         backgroundColor = UIColor.white
         setTitleColor(.accent, for: .normal)
         setTitle("언팔로우", for: .normal)

@@ -1,6 +1,8 @@
 import UIKit
 
 final class HomeViewController: UIViewController {
+    private var user: AuthUser? { AuthViewModel.shared.user }
+    
     private var TILPost = [1, 2, 3, 4]
     // TODO: 모델 추가후 변경하기
     private var userDidRegisterBlog: Bool = false // 로그인상태
@@ -67,8 +69,11 @@ final class HomeViewController: UIViewController {
         super.viewWillAppear(animated)
 
         navigationController?.isNavigationBarHidden = true
-        guard let username = AuthViewModel.shared.user?.username else { return }
-        hiLabel.text = "\(username)님, 안녕하세요!"
+        if let username = user?.username {
+            hiLabel.text = "\(username)님, 안녕하세요!"
+        } else {
+            hiLabel.text = "등록을 위해선 로그인이 필요해요!"
+        }
     }
 
     private func configureUI() {

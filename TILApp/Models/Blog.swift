@@ -25,5 +25,6 @@ struct CreateBlogInput: Codable {
 
 struct UpdateBlogInput: Codable {
     let name: String?
+    let main: Bool?
     let keywords: [KeywordInput]?
 }

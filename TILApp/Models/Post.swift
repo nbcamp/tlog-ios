@@ -16,7 +16,6 @@ struct GetPostsQuery: Codable {
 }
 
 struct CreatePostInput: Codable {
-    let blogId: Int
     let title: String
     let content: String
     let url: String

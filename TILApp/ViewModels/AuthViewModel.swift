@@ -3,6 +3,8 @@ import Foundation
 final class AuthViewModel {
     static let shared: AuthViewModel = .init()
     private init() {}
+    
+    private let api = APIService.shared
 
     enum Token {
         static let accessToken = "Access Token"
@@ -13,39 +15,31 @@ final class AuthViewModel {
     var accessToken: String? { UserDefaults.standard.string(forKey: Token.accessToken) }
     var authenticated: Bool { accessToken != nil }
     @Published var isAuthenticated: Bool = false
-    
-    func withUser(
-        onSuccess: ((_ user: AuthUser) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(.getProfile, model: AuthUser.self) { [weak self] model in
-            guard let self else { return }
-            user = model
-            isAuthenticated = true
-            onSuccess?(model)
-        } onError: { [weak self] error in
-            guard let self else { return }
-            user = nil
-            isAuthenticated = false
-            onError?(error)
+
+    func checkAuthorization(_ handler: APIHandler<AuthUser>? = nil) {
+        api.request(.getMyProfile, to: AuthUser.self) { [unowned self] result in
+            if case let .success(model) = result {
+                user = model
+                isAuthenticated = true
+            } else {
+                user = nil
+                isAuthenticated = false
+            }
+            handler?(result)
         }
     }
 
-    func signIn(
-        _ input: SignInInput,
-        onSuccess: ((_ user: AuthUser) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(.signIn(input), model: SignInOutput.self) { [weak self] model in
-            guard let self else { return }
-            UserDefaults.standard.set(model.accessToken, forKey: Token.accessToken)
-            isAuthenticated = true
-            user = model.user
-            onSuccess?(model.user)
-        } onError: { [weak self] error in
-            guard let self else { return }
-            user = nil
-            onError?(error)
+    func signIn(_ input: SignInInput, _ handler: @escaping APIHandler<SignInOutput>) {
+        api.request(.signIn(input), to: SignInOutput.self) { [unowned self] result in
+            if case let .success(model) = result {
+                UserDefaults.standard.set(model.accessToken, forKey: Token.accessToken)
+                isAuthenticated = true
+                user = model.user
+            } else {
+                isAuthenticated = false
+                user = nil
+            }
+            handler(result)
         }
     }
 
@@ -55,41 +49,22 @@ final class AuthViewModel {
         user = nil
     }
 
-    func profile(
-        onSuccess: ((_ user: AuthUser) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(
-            .getProfile, model: AuthUser.self,
-            onSuccess: { [weak self] model in
-                guard let self else { return }
+    func update(_ input: UpdateUserInput, _ handler: @escaping APIHandler<AuthUser>) {
+        api.request(.updateMyProfile(input), to: AuthUser.self) { [unowned self] result in
+            if case let .success(model) = result {
                 user = model
-                onSuccess?(model)
-            }, onError: onError
-        )
+            } else {
+                isAuthenticated = false
+                user = nil
+            }
+            handler(result)
+        }
     }
 
-    func update(
-        _ input: UpdateUserInput,
-        onSuccess: ((_ user: AuthUser) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
-        APIService.shared.request(
-            .updateUser(input),
-            model: AuthUser.self,
-            onSuccess: { [weak self] model in
-                guard let self else { return }
-                user = model
-                onSuccess?(model)
-            }, onError: onError
-        )
-    }
-
-    func withdraw(onSuccess: (() -> Void)? = nil, onError: ((Error) -> Void)? = nil) {
-        APIService.shared.request(.deleteUser, onSuccess: {[weak self] _ in
-            guard let self else { return }
+    func withdraw(_ handler: (() -> Void)? = nil) {
+        api.request(.withdrawMe) { [unowned self] _ in
             signOut()
-            onSuccess?()
-        }, onError: onError)
+            handler?()
+        }
     }
 }

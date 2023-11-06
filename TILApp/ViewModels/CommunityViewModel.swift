@@ -11,6 +11,10 @@ final class CommunityViewModel {
 
     weak var delegate: CommunityViewModelDelegate?
 
+    typealias Handler = APIHandler<[CommunityPost]>
+
+    private let api = APIService.shared
+
     private(set) var initialized: Bool = false
     private(set) var loading: Bool = false
     private(set) var fetching: Bool = false
@@ -24,19 +28,15 @@ final class CommunityViewModel {
     private(set) var items: [CommunityPost] = []
     private var cache: [CommunityPost] = []
 
-    func load(_ completion: ((Result<[CommunityPost], Error>) -> Void)? = nil) {
+    func load(_ handler: Handler? = nil) {
         Task {
             loading = false
-            await _load(
-                limit: 10,
-                desc: true,
-                { [weak self] result in
-                    if let self, case .success(let items) = result {
-                        cache = items
-                    }
-                    completion?(result)
+            await _load(limit: 10, desc: true) { [unowned self] result in
+                if case .success(let items) = result {
+                    cache = items
                 }
-            )
+                handler?(result)
+            }
             loading = true
             completed = false
             initialized = true
@@ -49,10 +49,7 @@ final class CommunityViewModel {
         query = nil
     }
 
-    func search(
-        query: String?,
-        _ completion: ((Result<[CommunityPost], Error>) -> Void)? = nil
-    ) {
+    func search(query: String, _ handler: Handler? = nil) {
         guard initialized else { return }
         Task {
             searching = true
@@ -60,7 +57,7 @@ final class CommunityViewModel {
             await _load(
                 limit: 10,
                 desc: true,
-                completion
+                handler
             )
             searching = false
             nextCursor = nil
@@ -68,14 +65,14 @@ final class CommunityViewModel {
         }
     }
 
-    func refresh(_ completion: ((Result<[CommunityPost], Error>) -> Void)? = nil) {
+    func refresh(_ handler: Handler? = nil) {
         guard initialized else { return }
         Task {
             refreshing = true
             await _load(
                 limit: 10,
                 desc: true,
-                completion
+                handler
             )
             refreshing = false
             nextCursor = nil
@@ -83,7 +80,7 @@ final class CommunityViewModel {
         }
     }
 
-    func loadMore(_ completion: ((Result<[CommunityPost], Error>) -> Void)? = nil) {
+    func loadMore(_ handler: Handler? = nil) {
         guard initialized, !completed else { return }
         Task {
             fetching = false
@@ -91,7 +88,7 @@ final class CommunityViewModel {
                 next: true,
                 limit: 5,
                 desc: true,
-                completion
+                handler
             )
             fetching = true
         }
@@ -101,17 +98,14 @@ final class CommunityViewModel {
         next: Bool = false,
         limit: Int? = nil,
         desc: Bool? = nil,
-        _ completion: ((Result<[CommunityPost], Error>) -> Void)? = nil
+        _ handler: Handler? = nil
     ) async {
-        let result = await APIService.shared.request(
-            .getCommunity(.init(
-                q: query,
-                limit: limit,
-                cursor: next ? nextCursor : nil,
-                desc: desc
-            )),
-            model: [CommunityPost].self
-        )
+        let result = await api.request(.getCommunityPosts(.init(
+            q: query,
+            limit: limit,
+            cursor: next ? nextCursor : nil,
+            desc: desc
+        )), to: [CommunityPost].self)
 
         DispatchQueue.main.async { [unowned self] in
             switch result {
@@ -125,12 +119,12 @@ final class CommunityViewModel {
                     items = newItems
                     delegate?.itemsUpdated(self, items: newItems, range: 0 ..< newItems.count)
                 }
-                nextCursor = items.last?.post.id
+                nextCursor = newItems.last?.id
                 completed = nextCursor == nil && !items.isEmpty
-                completion?(.success(items))
+                handler?(.success(items))
             case .failure(let error):
                 delegate?.errorOccurred(self, error: error)
-                completion?(.failure(error))
+                handler?(.failure(error))
             }
         }
     }
