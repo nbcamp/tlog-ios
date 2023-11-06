@@ -60,14 +60,8 @@ final class CommunityViewController: UIViewController {
         loadingView.pin.center()
     }
 
-    @objc private func heartButtonTapped() {
-        isHeartFilled.toggle()
-        let imageName = isHeartFilled ? "heart.fill" : "heart"
-        if let webViewController = navigationController?.topViewController as? WebViewController {
-            if let heartButton = webViewController.navigationItem.rightBarButtonItem?.customView as? UIButton {
-                heartButton.setImage(UIImage(systemName: imageName), for: .normal)
-            }
-        }
+    @objc private func heartButtonTapped(_ sender: UIButton) {
+        sender.isSelected.toggle()
     }
 }
 
@@ -134,8 +128,11 @@ extension CommunityViewController: UITableViewDataSource {
             let webViewController = WebViewController()
             webViewController.postURL = post.url
             let heartIconButton = UIButton(type: .system)
-            heartIconButton.setImage(UIImage(systemName: "heart"), for: .normal)
-            heartIconButton.tintColor = .accent
+            heartIconButton.setImage(UIImage(systemName: "heart")?
+                .withTintColor(.systemGray2, renderingMode: .alwaysOriginal), for: .normal)
+            heartIconButton.setImage(UIImage(systemName: "heart.fill")?
+                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .selected)
+            heartIconButton.tintColor = .clear
             heartIconButton.addTarget(self, action: #selector(self.heartButtonTapped), for: .touchUpInside)
             let heartBarButton = UIBarButtonItem(customView: heartIconButton)
             webViewController.navigationItem.rightBarButtonItem = heartBarButton

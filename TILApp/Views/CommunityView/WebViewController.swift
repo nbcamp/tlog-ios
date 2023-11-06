@@ -49,7 +49,6 @@ final class WebViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        addBottomToolBar()
     }
 
     override func viewWillAppear(_ animated: Bool) {
