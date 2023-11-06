@@ -17,13 +17,11 @@ final class BlogListViewController: UIViewController {
         let addBlogButton
             = UIBarButtonItem(title: "추가", style: .plain, target: self, action: #selector(addBlogButtonTapped))
         navigationItem.rightBarButtonItem = addBlogButton
-
         view.addSubview(tableView)
 
-        // TODO: 나중에 지우기
-        blogViewModel.load(onSuccess: { [weak self] _ in
+        blogViewModel.load { [weak self] _ in
             self?.tableView.reloadData()
-        })
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {

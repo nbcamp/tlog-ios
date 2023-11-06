@@ -1,18 +1,8 @@
-func toDictionary(from object: Any) -> [String: Any] {
-    var result: [String: Any] = [:]
-    let mirror = Mirror(reflecting: object)
-    for (key, value) in mirror.children {
-        guard let key else { continue }
-        switch value {
-        case Optional<Any>.none:
-            continue
-        case Optional<Any>.some(let value):
-            result[key] = value
-        default:
-            result[key] = value
-        }
-    }
-    return result
+import Foundation
+
+func toDictionary<T: Encodable>(from object: T, with encoder: JSONEncoder = JSONEncoder()) -> [String: Any] {
+    guard let data = try? encoder.encode(object) else { return [:] }
+    return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]) ?? [:]
 }
 
 func convertToRssUrl(from blogUrl: String) -> String? {
