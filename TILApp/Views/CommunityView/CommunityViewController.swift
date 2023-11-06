@@ -108,7 +108,8 @@ extension CommunityViewController: UITableViewDataSource {
                     }
                     cell.customCommunityTILView.variant = .follow
                 }
-            case .hidden: break
+            default:
+                break
             }
         }
 

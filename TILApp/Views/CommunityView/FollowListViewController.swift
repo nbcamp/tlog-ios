@@ -141,7 +141,8 @@ extension FollowListViewController: UITableViewDataSource {
                     cell.customUserView.variant = .follow
                     segmentedControl.setTitle("팔로잉 \(userViewModel.myFollowings.count)", forSegmentAt: 1)
                 }
-            case .hidden: break
+            default:
+                break
             }
         }
         return cell

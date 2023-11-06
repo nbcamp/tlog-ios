@@ -231,6 +231,11 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             // TODO: 노션
         } else if title == "개인 정보 처리 방침" {
             // TODO: 노션
+        } else if title == "차단한 사용자 관리" {
+            let blockedUserViewController = BlockedUserViewController()
+            blockedUserViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(blockedUserViewController, animated: true)
+            dismiss(animated: true, completion: nil)
         }
     }
 }

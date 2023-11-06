@@ -147,7 +147,10 @@ final class UserProfileViewController: UIViewController {
 
     @objc private func moreButtonTapped() {
         // TODO: 차단하기 생각해보기
-        let reportAction = UIAction(title: "차단하기", image: UIImage(systemName: "person.crop.circle.fill.badge.minus"), attributes: .destructive) { [weak self] _ in
+        let reportAction = UIAction(
+            title: "차단하기",
+            image: UIImage(systemName: "eye.slash"))
+        { [weak self] _ in
             let alertController = UIAlertController(title: "차단 완료", message: "차단되었습니다.", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
             guard let self else { return }
@@ -155,7 +158,31 @@ final class UserProfileViewController: UIViewController {
             self.present(alertController, animated: true, completion: nil)
         }
 
-        let menu = UIMenu(children: [reportAction])
+        let reportSpamAction = UIAction(
+            title: "신고하기",
+            image: UIImage(systemName: "flag.fill"),
+            attributes: .destructive)
+        { [weak self] _ in
+            let alertController = UIAlertController(title: "신고하기", message: "신고 사유를 입력해주세요", preferredStyle: .alert)
+
+            alertController.addTextField { textField in
+                textField.placeholder = "ex) 부적절한 게시물을 올려요."
+            }
+
+            let submitAction = UIAlertAction(title: "제출", style: .default) { _ in
+                if let reason = alertController.textFields?.first?.text {
+                    // TODO: 서버로 보내기
+                    print("신고 사유: \(reason)")
+                }
+            }
+            alertController.addAction(submitAction)
+            alertController.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+
+            guard let self else { return }
+            self.present(alertController, animated: true, completion: nil)
+        }
+
+        let menu = UIMenu(children: [reportAction, reportSpamAction])
 
         moreButton.showsMenuAsPrimaryAction = true
         moreButton.menu = menu

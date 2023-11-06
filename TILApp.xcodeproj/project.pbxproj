@@ -69,6 +69,9 @@
 		D2A4D1F92AE5DD4000B510A3 /* FollowListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */; };
 		D2A4D1FB2AE5DF9000B510A3 /* FollowListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */; };
 		D2A4D1FD2AE60EDC00B510A3 /* CommunityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */; };
+		D2BEB5072AF8B78700C1BF30 /* BlockedUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BEB5062AF8B78700C1BF30 /* BlockedUserViewController.swift */; };
+		D2BEB5092AF8BB9C00C1BF30 /* CustomBlockedUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BEB5082AF8BB9C00C1BF30 /* CustomBlockedUserView.swift */; };
+		D2BEB50B2AF8BE5200C1BF30 /* BlockedUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BEB50A2AF8BE5200C1BF30 /* BlockedUserTableViewCell.swift */; };
 		D2CDB6F52AEB66A900BFD8C2 /* CustomLargeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6F42AEB66A900BFD8C2 /* CustomLargeButton.swift */; };
 		D2CDB6F72AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6F62AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift */; };
 		D2CDB6F92AEB671800BFD8C2 /* CustomFollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CDB6F82AEB671800BFD8C2 /* CustomFollowButton.swift */; };
@@ -143,6 +146,9 @@
 		D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListViewController.swift; sourceTree = "<group>"; };
 		D2A4D1FA2AE5DF9000B510A3 /* FollowListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListTableViewCell.swift; sourceTree = "<group>"; };
 		D2A4D1FC2AE60EDC00B510A3 /* CommunityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityTableViewCell.swift; sourceTree = "<group>"; };
+		D2BEB5062AF8B78700C1BF30 /* BlockedUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserViewController.swift; sourceTree = "<group>"; };
+		D2BEB5082AF8BB9C00C1BF30 /* CustomBlockedUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBlockedUserView.swift; sourceTree = "<group>"; };
+		D2BEB50A2AF8BE5200C1BF30 /* BlockedUserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserTableViewCell.swift; sourceTree = "<group>"; };
 		D2CDB6F42AEB66A900BFD8C2 /* CustomLargeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLargeButton.swift; sourceTree = "<group>"; };
 		D2CDB6F62AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLargeBorderButton.swift; sourceTree = "<group>"; };
 		D2CDB6F82AEB671800BFD8C2 /* CustomFollowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFollowButton.swift; sourceTree = "<group>"; };
@@ -349,6 +355,8 @@
 				D29659F12AE80313000C28A6 /* EditTagViewController.swift */,
 				33A4E8292AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift */,
 				33A4E82B2AECBE3C00E3F55E /* MoreTableViewCell.swift */,
+				D2BEB5062AF8B78700C1BF30 /* BlockedUserViewController.swift */,
+				D2BEB50A2AF8BE5200C1BF30 /* BlockedUserTableViewCell.swift */,
 			);
 			path = MyProfileViewController;
 			sourceTree = "<group>";
@@ -391,6 +399,7 @@
 				D2CDB7122AEB699000BFD8C2 /* CustomTagView.swift */,
 				D20DC9E72AF3878A001F83D0 /* CustomKeywordView.swift */,
 				D20DC9E92AF3AA9E001F83D0 /* HorizontalTagsCollectionView.swift */,
+				D2BEB5082AF8BB9C00C1BF30 /* CustomBlockedUserView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -547,14 +556,17 @@
 				D2CDB6F52AEB66A900BFD8C2 /* CustomLargeButton.swift in Sources */,
 				D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */,
 				D2CDB6F72AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift in Sources */,
+				D2BEB50B2AF8BE5200C1BF30 /* BlockedUserTableViewCell.swift in Sources */,
 				D2CDB7112AEB696E00BFD8C2 /* CustomTagHeaderView.swift in Sources */,
 				D2CDB7052AEB684100BFD8C2 /* CustomLabelView.swift in Sources */,
 				33A4E83E2AF0ECD700E3F55E /* CommunityViewModel.swift in Sources */,
 				D20DC9E82AF3878A001F83D0 /* CustomKeywordView.swift in Sources */,
 				D2CDB7012AEB67C000BFD8C2 /* CustomTextFieldView.swift in Sources */,
+				D2BEB5092AF8BB9C00C1BF30 /* CustomBlockedUserView.swift in Sources */,
 				D2CDB7032AEB680300BFD8C2 /* CustomTextFieldViewWithValidation.swift in Sources */,
 				33A4E8262AECB57000E3F55E /* PostViewModel.swift in Sources */,
 				D29659F02AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift in Sources */,
+				D2BEB5072AF8B78700C1BF30 /* BlockedUserViewController.swift in Sources */,
 				D20DC9E62AF2098F001F83D0 /* KeywordInput.swift in Sources */,
 				D20DC9EA2AF3AA9E001F83D0 /* HorizontalTagsCollectionView.swift in Sources */,
 				33A4E8302AEF740600E3F55E /* Community.swift in Sources */,
