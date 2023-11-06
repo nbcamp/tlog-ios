@@ -58,10 +58,6 @@ final class CommunityViewController: UIViewController {
         tableView.pin.top(to: searchBar.edge.bottom).horizontally().bottom(view.pin.safeArea)
         loadingView.pin.center()
     }
-
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
-    }
 }
 
 extension CommunityViewController: UITableViewDataSource {

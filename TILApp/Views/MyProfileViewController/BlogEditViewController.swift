@@ -110,6 +110,7 @@ final class BlogEditViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        hideKeyboardWhenTappedAround()
 
         title = "블로그 수정"
         view.backgroundColor = .systemBackground

@@ -51,6 +51,7 @@ final class ProfileEditViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        hideKeyboardWhenTappedAround()
 
         navigationItem.title = "프로필 수정"
         let doneBarButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))

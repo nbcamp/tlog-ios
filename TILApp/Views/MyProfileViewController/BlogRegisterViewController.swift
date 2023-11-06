@@ -49,6 +49,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        hideKeyboardWhenTappedAround()
 
         title = "블로그 등록"
         view.backgroundColor = .systemBackground
