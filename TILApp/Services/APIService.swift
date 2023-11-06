@@ -143,7 +143,7 @@ enum APIRequest {
 }
 
 extension APIRequest: SugarTargetType {
-    var baseURL: URL { .init(string: "http://localhost:8080")! }
+    var baseURL: URL { .init(string: "http://ec2-13-124-25-166.ap-northeast-2.compute.amazonaws.com:8080")! }
 
     var route: MoyaSugar.Route {
         switch self {
