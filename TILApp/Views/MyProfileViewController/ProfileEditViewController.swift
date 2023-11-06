@@ -3,6 +3,7 @@ import UIKit
 final class ProfileEditViewController: UIViewController {
     var username: String?
     var userImage: String?
+    
     private lazy var componentView = UIView().then {
         view.addSubview($0)
     }
@@ -43,7 +44,7 @@ final class ProfileEditViewController: UIViewController {
         super.viewWillAppear(animated)
         view.backgroundColor = .systemBackground
 
-        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.isNavigationBarHidden = false
         navigationController?.hidesBottomBarWhenPushed = true
     }
 
@@ -99,30 +100,29 @@ final class ProfileEditViewController: UIViewController {
     @objc private func completeButtonTapped() {
         let newNickname = nicknameTextFieldView.mainText
         let newAvatar = editProfileImageView.image
-        let updateInput = UpdateUserInput(username: newNickname, avatarUrl: nil) // TODO: nil 변경
-        AuthViewModel.shared.update(updateInput, onSuccess: { [weak self] _ in
+        // TODO: avatarURL 변경
+        AuthViewModel.shared.update(.init(username: newNickname, avatarUrl: nil)) { [weak self] result in
             guard let self else { return }
+            if case let .failure(error) = result {
+                // TODO: 에러처리
+                debugPrint(error)
+                return
+            }
             navigationController?.popViewController(animated: true)
-        }, onError: { [weak self] error in
-            // TODO: 오류 함수 구현 후 재정의
-            debugPrint(error)
-        })
+        }
     }
 
     @objc private func memberWithdrawalTapped() {
-        let alertController = UIAlertController(title: "회원 탈퇴", message: "정말로 회원 탈퇴를 하시겠습니까?", preferredStyle: .alert)
-
-        let confirmAction = UIAlertAction(title: "확인", style: .destructive) { [weak self] _ in
+        let alertController = UIAlertController(
+            title: "회원 탈퇴",
+            message: "정말로 회원 탈퇴를 하시겠어요?\n회원 탈퇴 시 저장한 블로그와 게시글이 모두 삭제되어 복구할 수 없습니다.",
+            preferredStyle: .alert
+        )
+        alertController.addAction(.init(title: "탈퇴", style: .destructive) { _ in
             AuthViewModel.shared.withdraw()
-            let alert = UIAlertController(title: "회원 탈퇴 성공", message: "\n다음에 또 이용해 주십시오.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-        }
-        alertController.addAction(confirmAction)
-
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        alertController.addAction(cancelAction)
-
-        present(alertController, animated: true, completion: nil)
+        })
+        alertController.addAction(.init(title: "취소", style: .cancel, handler: nil))
+        present(alertController, animated: true)
     }
 
     private func validateNickname() {

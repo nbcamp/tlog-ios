@@ -2,7 +2,13 @@ import UIKit
 
 final class MyProfileViewController: UIViewController {
     private let authViewModel = AuthViewModel.shared
-    private lazy var user = authViewModel.user
+    private var user: AuthUser? {
+        didSet {
+            // TODO: 아바타 이미지 추가
+            nicknameLabel.text = user?.username
+        }
+    }
+
     // TODO: 데이터 연결 필요
     private var posts: [Post] = []
     private var likePosts: [Post] = []
@@ -89,19 +95,12 @@ final class MyProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        // TODO: 불러오는 위치 변경하기
-        UserViewModel.shared.withFollowers()
-        UserViewModel.shared.withFollowings()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        user = authViewModel.user
         navigationController?.isNavigationBarHidden = true
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = false
     }
 
     override func viewDidLayoutSubviews() {
@@ -217,8 +216,10 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
         if title == "회원 정보 수정" {
             let profileEditViewController = ProfileEditViewController()
             profileEditViewController.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(profileEditViewController, animated: true)
-            dismiss(animated: true, completion: nil)
+            profileEditViewController.username = user?.username
+            dismiss(animated: true) { [weak self] in
+                self?.navigationController?.pushViewController(profileEditViewController, animated: true)
+            }
         } else if title == "로그아웃" {
             let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)
             alertController.addAction(.init(title: "계속", style: .destructive, handler: { _ in
