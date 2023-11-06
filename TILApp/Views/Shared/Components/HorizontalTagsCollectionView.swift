@@ -72,7 +72,10 @@ class TagCell: UICollectionViewCell {
         didSet { layer.cornerRadius = radius }
     }
     var text = "" {
-        didSet { label.text = text }
+        didSet {
+            label.text = text
+            label.sizeToFit()
+        }
     }
     
     private lazy var label = UILabel().then {
