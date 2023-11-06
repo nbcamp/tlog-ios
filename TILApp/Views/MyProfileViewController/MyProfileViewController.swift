@@ -129,7 +129,7 @@ final class MyProfileViewController: UIViewController {
 
         screenView.pin.top(view.pin.safeArea).bottom(80%).left(20).right(20)
         editBlogButton.pin.below(of: screenView).left(20).right(20).marginTop(10)
-        moreButton.pin.top(view.pin.safeArea).right(25).top(5)
+        moreButton.pin.top(view.pin.safeArea).right(25).marginTop(5)
         myProfileSegmentedControl.pin.below(of: editBlogButton).marginTop(10)
         myProfileTableView.pin.below(of: myProfileSegmentedControl).bottom(view.pin.safeArea).left().right()
     }
@@ -217,9 +217,8 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             let profileEditViewController = ProfileEditViewController()
             profileEditViewController.hidesBottomBarWhenPushed = true
             profileEditViewController.username = user?.username
-            dismiss(animated: true) { [weak self] in
-                self?.navigationController?.pushViewController(profileEditViewController, animated: true)
-            }
+            navigationController?.pushViewController(profileEditViewController, animated: true)
+            dismiss(animated: true)
         } else if title == "로그아웃" {
             let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)
             alertController.addAction(.init(title: "계속", style: .destructive, handler: { _ in
@@ -228,9 +227,23 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             alertController.addAction(.init(title: "취소", style: .cancel))
             topMostViewController.present(alertController, animated: true)
         } else if title == "자주 묻는 질문" {
-            // TODO: 노션
+            let webViewController = WebViewController()
+            webViewController.postURL = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
+            webViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true, completion: nil)
         } else if title == "개인 정보 처리 방침" {
-            // TODO: 노션
+            let webViewController = WebViewController()
+            webViewController.postURL = "https:plip.kr/pcc/96e3cd8c-700d-46a1-b007-37443c721874/privacy-policy"
+            webViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true, completion: nil)
+        } else if title == "이용 약관" {
+            let webViewController = WebViewController()
+            webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
+            webViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true, completion: nil)
         } else if title == "차단한 사용자 관리" {
             let blockedUserViewController = BlockedUserViewController()
             blockedUserViewController.hidesBottomBarWhenPushed = true

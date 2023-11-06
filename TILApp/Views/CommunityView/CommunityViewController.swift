@@ -5,6 +5,7 @@ final class CommunityViewController: UIViewController {
     private let userViewModel = UserViewModel.shared
     private var posts: [CommunityPost] { communityViewModel.items }
     private var cancellables: Set<AnyCancellable> = []
+    private var isHeartFilled = false
 
     private lazy var tableView = UITableView().then {
         $0.dataSource = self
@@ -57,6 +58,10 @@ final class CommunityViewController: UIViewController {
         searchBar.pin.top(view.pin.safeArea).horizontally().height(60)
         tableView.pin.top(to: searchBar.edge.bottom).horizontally().bottom(view.pin.safeArea)
         loadingView.pin.center()
+    }
+
+    @objc private func heartButtonTapped(_ sender: UIButton) {
+        sender.isSelected.toggle()
     }
 }
 
@@ -122,6 +127,16 @@ extension CommunityViewController: UITableViewDataSource {
             guard let self else { return }
             let webViewController = WebViewController()
             webViewController.postURL = post.url
+            let heartIconButton = UIButton(type: .system)
+            heartIconButton.setImage(UIImage(systemName: "heart")?
+                .withTintColor(.systemGray2, renderingMode: .alwaysOriginal), for: .normal)
+            heartIconButton.setImage(UIImage(systemName: "heart.fill")?
+                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .selected)
+            heartIconButton.tintColor = .clear
+            heartIconButton.addTarget(self, action: #selector(self.heartButtonTapped), for: .touchUpInside)
+            let heartBarButton = UIBarButtonItem(customView: heartIconButton)
+            webViewController.navigationItem.rightBarButtonItem = heartBarButton
+
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)
         }

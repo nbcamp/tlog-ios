@@ -31,6 +31,10 @@ final class SignInViewController: UIViewController {
         view.addSubview(authorizationButton)
         view.addSubview(label)
         view.addSubview(privacyLabel)
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(privacyLabelTapped))
+        privacyLabel.isUserInteractionEnabled = true
+        privacyLabel.addGestureRecognizer(tapGestureRecognizer)
     }
 
     override func viewDidLayoutSubviews() {
@@ -52,6 +56,13 @@ final class SignInViewController: UIViewController {
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
         authorizationController.performRequests()
+    }
+    
+    @objc private func privacyLabelTapped() {
+        let webViewController = WebViewController()
+        webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
+        webViewController.hidesBottomBarWhenPushed = true
+        present(webViewController, animated: true)
     }
 }
 
