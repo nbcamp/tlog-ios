@@ -55,7 +55,7 @@ class SeeMoreBottomSheetViewController: UIViewController {
     }
 
     private func setUpUI() {
-        view.pin.top(45%)
+        view.pin.top(40%)
         backgroundView.pin.all(view.pin.safeArea)
         handleView.pin.topCenter().marginTop(15)
         moreTableView.pin.below(of: handleView).bottom().left().right().marginTop(25)
