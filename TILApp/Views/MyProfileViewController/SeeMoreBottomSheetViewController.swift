@@ -15,7 +15,6 @@ class SeeMoreBottomSheetViewController: UIViewController {
         .init(title: "자주 묻는 질문", icon: "questionmark.app"),
         .init(title: "이용 약관", icon: "checkmark.shield"),
         .init(title: "개인 정보 처리 방침", icon: "exclamationmark.shield"),
-        .init(title: "차단 목록", icon: "person.slash.fill"),
         .init(title: "로그아웃", icon: "rectangle.portrait.and.arrow.forward"),
     ]
     weak var delegate: SeeMoreBottomSheetDelegate?

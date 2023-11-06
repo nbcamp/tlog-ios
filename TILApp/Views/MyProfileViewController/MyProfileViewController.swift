@@ -217,9 +217,8 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             let profileEditViewController = ProfileEditViewController()
             profileEditViewController.hidesBottomBarWhenPushed = true
             profileEditViewController.username = user?.username
-            dismiss(animated: true) { [weak self] in
-                self?.navigationController?.pushViewController(profileEditViewController, animated: true)
-            }
+            navigationController?.pushViewController(profileEditViewController, animated: true)
+            dismiss(animated: true)
         } else if title == "로그아웃" {
             let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)
             alertController.addAction(.init(title: "계속", style: .destructive, handler: { _ in
@@ -227,7 +226,6 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             }))
             alertController.addAction(.init(title: "취소", style: .cancel))
             topMostViewController.present(alertController, animated: true)
-
         } else if title == "자주 묻는 질문" {
             let webViewController = WebViewController()
             webViewController.postURL = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
@@ -246,8 +244,6 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true, completion: nil)
-        } else if title == "차단 목록" {
-            // TODO: 차단 목록 뷰 페이지 전환
         }
     }
 }
