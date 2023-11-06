@@ -247,11 +247,7 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true, completion: nil)
         } else if title == "차단 목록" {
-            let webViewController = WebViewController()
-            webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
-            webViewController.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(webViewController, animated: true)
-            dismiss(animated: true, completion: nil)
+            // TODO: 차단 목록 뷰 페이지 전환
         }
     }
 }
