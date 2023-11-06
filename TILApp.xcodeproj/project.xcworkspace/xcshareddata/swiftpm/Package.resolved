@@ -37,6 +37,15 @@
       }
     },
     {
+      "identity" : "moyasugar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jinyongp/MoyaSugar",
+      "state" : {
+        "branch" : "master",
+        "revision" : "cbc0b665529d127457b934881945962328fe5701"
+      }
+    },
+    {
       "identity" : "pinlayout",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/layoutBox/PinLayout",

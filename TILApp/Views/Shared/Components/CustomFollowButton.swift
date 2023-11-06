@@ -60,6 +60,7 @@ class CustomFollowButton: UIButton {
     }
     
     private func setupUnblockButton() {
+        isHidden = false
         backgroundColor = .systemRed
         layer.borderColor = UIColor.systemRed.cgColor
         setTitleColor(.white, for: .normal)
