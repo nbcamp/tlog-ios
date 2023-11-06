@@ -39,24 +39,14 @@ final class APIService {
             }
         }
     }
-
+    
     func request(_ target: APIRequest) async -> APIResult<Response> {
-        let result = await provider.request(target)
-
-        if case .success(let response) = result {
-            guard let response = try? response.filterSuccessfulStatusCodes() else {
-                if let message = getErrorMessage(of: response) {
-                    return .failure(.underlying(APIError.error(message), response))
-                }
-                return .failure(.statusCode(response))
-            }
-            return .success(response)
+        return await withCheckedContinuation { [unowned self] continuation in
+            request(target) { continuation.resume(returning: $0) }
         }
-
-        return result
     }
 
-    func request<Model: Decodable>(_ target: APIRequest, to _: Model.Type, _ handler: @escaping APIHandler<Model>) {
+    func request<Model: Decodable>(_ target: APIRequest, to model: Model.Type, _ handler: @escaping APIHandler<Model>) {
         provider.request(target) { [unowned self] result in
             switch result {
             case .success(let response):
@@ -66,7 +56,7 @@ final class APIService {
                     }
                     return handler(.failure(.statusCode(response)))
                 }
-                guard let model = try? response.map(Model.self, using: Coder.decoder) else {
+                guard let model = try? response.map(model, using: Coder.decoder) else {
                     printJsonAsString(json: response.data)
                     return handler(.failure(.jsonMapping(response)))
                 }
@@ -77,24 +67,9 @@ final class APIService {
         }
     }
 
-    func request<Model: Decodable>(_ target: APIRequest, to _: Model.Type) async -> APIResult<Model> {
-        let result = await provider.request(target)
-
-        switch result {
-        case .success(let response):
-            guard let response = try? response.filterSuccessfulStatusCodes() else {
-                if let message = getErrorMessage(of: response) {
-                    return .failure(.underlying(APIError.error(message), response))
-                }
-                return .failure(.statusCode(response))
-            }
-            guard let model = try? response.map(Model.self, using: Coder.decoder) else {
-                printJsonAsString(json: response.data)
-                return .failure(.jsonMapping(response))
-            }
-            return .success(model)
-        case .failure(let error):
-            return .failure(error)
+    func request<Model: Decodable>(_ target: APIRequest, to model: Model.Type) async -> APIResult<Model> {
+        return await withCheckedContinuation { [unowned self] continuation in
+            request(target, to: model) { continuation.resume(returning: $0) }
         }
     }
 
