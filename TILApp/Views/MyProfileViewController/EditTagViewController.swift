@@ -72,6 +72,7 @@ final class EditTagViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        hideKeyboardWhenTappedAround()
 
         view.backgroundColor = .systemBackground
 
