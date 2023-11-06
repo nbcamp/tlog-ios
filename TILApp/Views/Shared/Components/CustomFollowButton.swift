@@ -56,6 +56,7 @@ class CustomFollowButton: UIButton {
     
     private func setupUnblockButton() {
         backgroundColor = .systemRed
+        layer.borderColor = UIColor.systemRed.cgColor
         setTitleColor(.white, for: .normal)
         setTitle("차단 해제", for: .normal)
     }

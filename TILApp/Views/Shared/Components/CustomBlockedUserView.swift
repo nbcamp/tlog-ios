@@ -6,7 +6,7 @@ class CustomBlockedUserView: UIView {
         set { imageView.image = newValue }
     }
 
-    var followButtonTapped: (() -> Void)? {
+    var unblockButtonTapped: (() -> Void)? {
         get { button.buttonTapped }
         set { button.buttonTapped = newValue }
     }
@@ -46,7 +46,7 @@ class CustomBlockedUserView: UIView {
 
         imageView.pin.vCenter().left(10).width(47).height(47)
         button.pin.right(10).vCenter()
-        nicknameLabel.pin.after(of: imageView).before(of: button).marginLeft(10).marginRight(10)
+        nicknameLabel.pin.after(of: imageView).before(of: button).vCenter().sizeToFit().marginLeft(10).marginRight(10)
 
         imageView.layer.cornerRadius = imageView.bounds.size.width / 2.0
     }
