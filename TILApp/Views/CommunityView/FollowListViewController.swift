@@ -30,8 +30,14 @@ final class FollowListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "팔로우 관리"
+        
+        Task {
+            _ = await loadFollowList()
+            tableView.reloadData()
+            tableView.layoutIfNeeded()
+        }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = false
@@ -43,19 +49,22 @@ final class FollowListViewController: UIViewController {
     }
 
     // TODO: 스크롤 위치 에러 수정
-    @objc func segmentedControlSelected(_ control: CustomSegmentedControl) {
-        let selectedIndex = control.selectedSegmentIndex
+    @objc private func segmentedControlSelected(_ control: CustomSegmentedControl) {
+        Task {
+            _ = await loadFollowList()
+            tableView.reloadData()
+            tableView.layoutIfNeeded()
 
-        tableView.reloadData()
-        tableView.layoutIfNeeded()
-
-        if let ratio = scrollRatios[selectedIndex] {
-            let totalScrollableHeight = tableView.contentSize.height - tableView.bounds.height
-            let yOffset = totalScrollableHeight * ratio
-            tableView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: false)
-        } else {
-            tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
+            let selectedIndex = control.selectedSegmentIndex
+            if let ratio = scrollRatios[selectedIndex] {
+                let totalScrollableHeight = tableView.contentSize.height - tableView.bounds.height
+                let yOffset = totalScrollableHeight * ratio
+                tableView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: false)
+            } else {
+                tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
+            }
         }
+
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -65,6 +74,16 @@ final class FollowListViewController: UIViewController {
         var ratio = totalScrollableHeight > 0 ? currentOffset / totalScrollableHeight : 0
         ratio = min(1, max(0, ratio))
         scrollRatios[segmentedControl.selectedSegmentIndex] = ratio
+    }
+
+    private func loadFollowList() async -> APIResult<[User]> {
+        return await withCheckedContinuation { continuation in
+            if selectedIndex == 0 {
+                userViewModel.withMyFollowers { continuation.resume(returning: $0) }
+            } else if selectedIndex == 1 {
+                userViewModel.withMyFollowings { continuation.resume(returning: $0) }
+            }
+        }
     }
 }
 
@@ -83,46 +102,48 @@ extension FollowListViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "FollowListTableViewCell")
             as? FollowListTableViewCell else { return UITableViewCell() }
 
-//        let data: User = segmentedControl.selectedSegmentIndex == 0
-//            ? userViewModel.followers[indexPath.row]
-//            : userViewModel.followings[indexPath.row]
-//
-//        let variant: CustomFollowButton.Variant = userViewModel.isFollowed(userId: data.id) ? .unfollow : .follow
+        let user: User = segmentedControl.selectedSegmentIndex == 0
+            ? userViewModel.myFollowers[indexPath.row]
+            : userViewModel.myFollowings[indexPath.row]
 
-//        cell.customUserView.setup(
-//            image: UIImage(),
-//            nicknameText: data.username ?? "이름없음",
-//            contentText: "TIL 마지막 작성일 | ",
-//            variant: variant
-//        )
-//
-//        cell.customUserView.followButtonTapped = { [weak self, weak cell] in
-//            guard let self = self, let cell = cell else { return }
-//
-//            let currentVariant = cell.customUserView.variant
-//
-//            switch currentVariant {
-//            case .follow:
-//                userViewModel.follow(to: data.id) { [weak self] in
-//                    guard let self else { return }
-//                    cell.customUserView.variant = .unfollow
-//                    segmentedControl.setTitle("팔로잉 \(userViewModel.followings.count)", forSegmentAt: 1)
-//                } onError: { error in
-//                    // TODO: 에러 처리
-//                    print(error)
-//                }
-//
-//            case .unfollow:
-//                userViewModel.unfollow(to: data.id) { [weak self] in
-//                    guard let self else { return }
-//                    cell.customUserView.variant = .follow
-//                    segmentedControl.setTitle("팔로잉 \(userViewModel.followings.count)", forSegmentAt: 1)
-//                } onError: { error in
-//                    // TODO: 에러 처리
-//                    print(error)
-//                }
-//            }
-//        }
+        let isFollowing = userViewModel.isMyFollowing(user: user)
+
+        cell.customUserView.setup(
+            image: UIImage(),
+            nicknameText: user.username,
+            contentText: "TIL 마지막 작성일 | ",
+            variant: isFollowing ? .unfollow : .follow
+        )
+
+        cell.customUserView.followButtonTapped = { [weak self, weak cell] in
+            guard let self, let cell else { return }
+
+            let currentVariant = cell.customUserView.variant
+
+            switch currentVariant {
+            case .follow:
+                userViewModel.follow(user: user) { [weak self] result in
+                    guard let self else { return }
+                    guard case .success(let success) = result, success else {
+                        // TODO: 에러 처리
+                        return
+                    }
+                    cell.customUserView.variant = .unfollow
+                    segmentedControl.setTitle("팔로잉 \(userViewModel.myFollowings.count)", forSegmentAt: 1)
+                }
+            case .unfollow:
+                userViewModel.unfollow(user: user) { [weak self] result in
+                    guard let self else { return }
+                    guard case .success(let success) = result, success else {
+                        // TODO: 에러 처리
+                        return
+                    }
+                    cell.customUserView.variant = .follow
+                    segmentedControl.setTitle("팔로잉 \(userViewModel.myFollowings.count)", forSegmentAt: 1)
+                }
+            case .hidden: break
+            }
+        }
         return cell
     }
 
