@@ -129,7 +129,7 @@ final class MyProfileViewController: UIViewController {
 
         screenView.pin.top(view.pin.safeArea).bottom(80%).left(20).right(20)
         editBlogButton.pin.below(of: screenView).left(20).right(20).marginTop(10)
-        moreButton.pin.top(view.pin.safeArea).right(25).top(5)
+        moreButton.pin.top(view.pin.safeArea).right(25).marginTop(5)
         myProfileSegmentedControl.pin.below(of: editBlogButton).marginTop(10)
         myProfileTableView.pin.below(of: myProfileSegmentedControl).bottom(view.pin.safeArea).left().right()
     }
@@ -227,7 +227,7 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             }))
             alertController.addAction(.init(title: "취소", style: .cancel))
             topMostViewController.present(alertController, animated: true)
-            
+
         } else if title == "자주 묻는 질문" {
             let webViewController = WebViewController()
             webViewController.postURL = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
@@ -240,13 +240,18 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true, completion: nil)
-//          // TODO: 이용약관 어디에 띄워야하지?
-//            let webViewController = WebViewController()
-//            webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
-//            webViewController.hidesBottomBarWhenPushed = true
-//            navigationController?.pushViewController(webViewController, animated: true)
-//            dismiss(animated: true, completion: nil)
-
+        } else if title == "이용 약관" {
+            let webViewController = WebViewController()
+            webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
+            webViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true, completion: nil)
+        } else if title == "차단 목록" {
+            let webViewController = WebViewController()
+            webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
+            webViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true, completion: nil)
         }
     }
 }
