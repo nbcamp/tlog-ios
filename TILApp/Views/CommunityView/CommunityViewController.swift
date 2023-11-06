@@ -86,6 +86,7 @@ extension CommunityViewController: UITableViewDataSource {
         } else {
             cell.customCommunityTILView.variant = .follow
         }
+
         cell.customCommunityTILView.followButtonTapped = { [weak self, weak cell] in
             guard let self, let cell else { return }
             switch cell.customCommunityTILView.variant {
@@ -114,7 +115,7 @@ extension CommunityViewController: UITableViewDataSource {
         cell.selectionStyle = .none
 
         cell.customCommunityTILView.userProfileTapped = { [weak self] in
-            guard let self else { return }
+            guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
             let userProfileViewController = UserProfileViewController()
             userProfileViewController.user = post.user
             navigationController?.pushViewController(userProfileViewController, animated: true)
