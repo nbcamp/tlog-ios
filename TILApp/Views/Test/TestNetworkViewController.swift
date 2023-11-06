@@ -2,6 +2,7 @@
 
 import CombineMoya
 import Moya
+import MoyaSugar
 import UIKit
 
 struct Pong: Codable {
@@ -33,7 +34,7 @@ final class TestNetworkViewController: UIViewController {
         button.backgroundColor = .systemTeal
         button.layer.cornerRadius = 8
         button.contentEdgeInsets = .init(top: 6, left: 10, bottom: 6, right: 10)
-        button.addTarget(self, action: #selector(requestViewModel), for: .touchUpInside)
+        button.addTarget(self, action: #selector(requestButtonTapped), for: .touchUpInside)
     }
 
     private lazy var statusLabel = UILabel().then { label in
@@ -59,6 +60,7 @@ final class TestNetworkViewController: UIViewController {
 //        _Concurrency.Task {
 //            await moya5()
 //        }
+
     }
 
     override func viewDidLayoutSubviews() {
@@ -99,42 +101,19 @@ final class TestNetworkViewController: UIViewController {
     // MARK: - APIService (NetworkLayer) 작성방법
 
     @objc private func requestButtonTapped() {
-        APIService.shared.request(.getProfile) { response in
-            _ = response
-        }
-
-        APIService.shared.request(.getProfile) { response in
-            _ = response
-            print(response)
-        } onError: { error in
-            _ = error
-            print(error)
-        }
-
-        APIService.shared.request(.getProfile, model: AuthUser.self) { model in
-            _ = model
-        }
-
-        APIService.shared.request(.getProfile, model: AuthUser.self) { model in
-            _ = model
-            print(model)
-        } onError: { error in
-            _ = error
-            print(error)
-        }
-    }
-
-    @objc private func requestViewModel() {
-//        PostViewModel.shared.withPosts(byUserId: 2) { posts in
-//            print(posts)
-//        } onError: { error in
-//            print(error)
+//        APIService.shared.request(.getMyProfile) { (result: APIResult<AuthUser>) in
+//            switch result {
+//            case .success(let user):
+//                print(user)
+//            case .failure(let error):
+//                print(error)
+//            }
 //        }
     }
 
     // MARK: - Using Custom APIService with Moya
 
-    private let provider = MoyaProvider<APIRequest>()
+    private let provider = MoyaSugarProvider<APIRequest>()
 
     // MARK: - #1 Moya
 
@@ -231,16 +210,16 @@ final class TestNetworkViewController: UIViewController {
     // MARK: - Authentication
 
     @objc private func signIn() {
-        AuthViewModel.shared.signIn(.init(
-            username: nil,
-            avatarUrl: nil,
-            provider: "APPLE",
-            providerId: "1234567"
-        )) { user in
-            print(user)
-        } onError: { error in
-            print(error)
-        }
+//        AuthViewModel.shared.signIn(.init(
+//            username: nil,
+//            avatarUrl: nil,
+//            provider: "APPLE",
+//            providerId: "1234567"
+//        )) { user in
+//            print(user)
+//        } onError: { error in
+//            print(error)
+//        }
     }
 
     @objc private func signOut() {
