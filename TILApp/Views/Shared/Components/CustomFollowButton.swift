@@ -4,6 +4,7 @@ class CustomFollowButton: UIButton {
     enum Variant {
         case follow
         case unfollow
+        case unblock
     }
 
     var variant: Variant = .follow {
@@ -13,6 +14,8 @@ class CustomFollowButton: UIButton {
                 setupFollowButton()
             case .unfollow:
                 setupUnfollowButton()
+            case .unblock:
+                setupUnblockButton()
             }
         }
     }
@@ -49,6 +52,12 @@ class CustomFollowButton: UIButton {
         backgroundColor = UIColor.white
         setTitleColor(.accent, for: .normal)
         setTitle("언팔로우", for: .normal)
+    }
+    
+    private func setupUnblockButton() {
+        backgroundColor = .systemRed
+        setTitleColor(.white, for: .normal)
+        setTitle("차단 해제", for: .normal)
     }
 
     @objc private func _buttonTapped() {

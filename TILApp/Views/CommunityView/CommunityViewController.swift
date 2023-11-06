@@ -109,6 +109,8 @@ extension CommunityViewController: UITableViewDataSource {
                     // TODO: 에러 처리
                     print(error)
                 }
+            default:
+                break
             }
         }
         
