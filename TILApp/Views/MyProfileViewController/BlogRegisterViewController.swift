@@ -69,13 +69,15 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
             url: blogURLTextField.mainText,
             rss: blogRSSTextField.mainText,
             keywords: keywordInputViewModel.keywords
-        ), onSuccess: { [weak self] _ in
-            guard let self = self else { return }
-            print("블로그가 성공적으로 생성되었습니다.")
+        )) { [weak self] result in
+            guard let self else { return }
+            if case let .failure(error) = result {
+                // TODO: 에러 처리
+                debugPrint(error)
+                return
+            }
             navigationController?.popViewController(animated: true)
-        }, onError: { error in
-            print("블로그 생성 중 오류 발생: \(error)")
-        })
+        }
         keywordInputViewModel.clear()
     }
 

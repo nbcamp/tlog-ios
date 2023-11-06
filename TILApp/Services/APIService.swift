@@ -108,8 +108,7 @@ enum APIRequest {
          createMyBlog(_ input: CreateBlogInput),
          updateMyBlog(_ blogId: Int, _ input: UpdateBlogInput),
          deleteMyBlog(_ blogId: Int),
-         getMyMainBlog,
-         setMyMainBlog(_ blogId: Int)
+         getMyMainBlog
 
     // My Posts
     case getMyPosts,
@@ -166,7 +165,6 @@ extension APIRequest: SugarTargetType {
         case .updateMyBlog(let blogId, _): return .patch("/my/blogs/\(blogId)")
         case .deleteMyBlog(let blogId): return .delete("/my/blogs/\(blogId)")
         case .getMyMainBlog: return .get("/my/blogs/main")
-        case .setMyMainBlog(let blogId): return .patch("/my/blogs/\(blogId)/main")
 
         // My Posts
         case .getMyPosts: return .get("/my/posts")

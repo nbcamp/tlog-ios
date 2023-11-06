@@ -56,7 +56,7 @@ final class BlogEditViewController: UIViewController {
         contentView.addSubview($0)
     }
 
-    private lazy var deleteDescriotionLabel = UILabel().then {
+    private lazy var deleteDescriptionLabel = UILabel().then {
         $0.text = "블로그 주소를 수정하기 위해선 삭제 후 새로 등록해야 합니다."
         $0.font = .systemFont(ofSize: 13, weight: .regular)
         $0.textAlignment = .center
@@ -65,9 +65,10 @@ final class BlogEditViewController: UIViewController {
     }
 
     private lazy var deleteBlogButton = CustomLargeBorderButton().then {
-        $0.setTitle("블로그 삭제하기", for: .normal)
+        $0.setTitle(blog.main ? "메인 블로그는 삭제할 수 없습니다." : "블로그 삭제하기", for: .normal)
         $0.layer.borderColor = UIColor.systemRed.cgColor
         $0.setTitleColor(.systemRed, for: .normal)
+        $0.isUserInteractionEnabled = !blog.main
 
         contentView.addSubview($0)
         $0.addTarget(self, action: #selector(deleteBlogButtonTapped), for: .touchUpInside)
@@ -92,12 +93,8 @@ final class BlogEditViewController: UIViewController {
             style: .destructive,
             handler: { [weak self] _ in
                 guard let self else { return }
-
-                blogViewModel.delete(blog) {
-                    self.navigationController?.popViewController(animated: true)
-                } onError: { error in
-                    // TODO: 에러 처리
-                    print(error)
+                blogViewModel.delete(blog: blog) { [weak self] _ in
+                    self?.navigationController?.popViewController(animated: true)
                 }
             }
         )
@@ -138,26 +135,19 @@ final class BlogEditViewController: UIViewController {
     }
 
     @objc private func doneButtonTapped() {
-        blogViewModel.update(blog, .init(
+        blogViewModel.update(blog: blog, .init(
             name: blogNameTextField.mainText,
+            main: mainBlogButton.variant == .primary,
             keywords: keywordInputViewModel.keywords
-        ), onSuccess: { [weak self] _ in
+        )) { [weak self] result in
             guard let self else { return }
-            print("블로그가 성공적으로 수정되었습니다.")
-            if mainBlogButton.variant == .primary {
-                blogViewModel.setMainBlog(id) { [weak self] in
-                    guard let self else { return }
-                    navigationController?.popViewController(animated: true)
-                } onError: { error in
-                    // TODO: 에러 처리
-                    print(error)
-                }
-            } else {
-                navigationController?.popViewController(animated: true)
+            if case .failure(let error) = result {
+                // TODO: 에러처리
+                debugPrint(error)
+                return
             }
-        }, onError: { error in
-            print("블로그 수정 중 오류 발생: \(error)")
-        })
+            navigationController?.popViewController(animated: true)
+        }
     }
 
     private func updateDoneButtonState() {
@@ -181,8 +171,8 @@ final class BlogEditViewController: UIViewController {
         blogNameTextField.pin.horizontally().top(to: mainBlogButton.edge.bottom).marginTop(15)
         blogURLTextField.pin.horizontally().top(to: blogNameTextField.edge.bottom).marginTop(5)
         blogRSSTextField.pin.horizontally().top(to: blogURLTextField.edge.bottom).marginTop(5)
-        deleteDescriotionLabel.pin.top(to: blogRSSTextField.edge.bottom).horizontally(20).height(25).marginTop(5)
-        deleteBlogButton.pin.top(to: deleteDescriotionLabel.edge.bottom)
+        deleteDescriptionLabel.pin.top(to: blogRSSTextField.edge.bottom).horizontally(20).height(25).marginTop(5)
+        deleteBlogButton.pin.top(to: deleteDescriptionLabel.edge.bottom)
 
         tagHeader.pin.top(to: deleteBlogButton.edge.bottom).marginTop(20)
 

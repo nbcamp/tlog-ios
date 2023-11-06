@@ -7,7 +7,7 @@ final class BlogViewModel {
     func load(_ handler: @escaping APIHandler<[Blog]>) {
         APIService.shared.request(.getMyBlogs, to: [Blog].self) { [unowned self] result in
             if case let .success(model) = result {
-                blogs = model
+                self.blogs = model
             }
             handler(result)
         }
@@ -16,17 +16,31 @@ final class BlogViewModel {
     func create(_ input: CreateBlogInput, _ handler: @escaping APIHandler<Blog>) {
         APIService.shared.request(.createMyBlog(input), to: Blog.self) { [unowned self] result in
             if case let .success(model) = result {
-                blogs.append(model)
+                self.blogs.append(model)
             }
             handler(result)
         }
     }
 
     func update(blog: Blog, _ input: UpdateBlogInput, _ handler: @escaping APIHandler<Blog>) {
+        let index = input.main == true ? (blogs.firstIndex { $0.main }) : nil
         APIService.shared.request(.updateMyBlog(blog.id, input), to: Blog.self) { [unowned self] result in
             if case let .success(model) = result {
+                if model.main == true, let index {
+                    let blog = self.blogs[index]
+                    self.blogs[index] = .init(
+                        id: blog.id,
+                        name: blog.name,
+                        url: blog.url,
+                        rss: blog.rss,
+                        main: false,
+                        keywords: blog.keywords,
+                        lastPublishedAt: blog.lastPublishedAt,
+                        createdAt: blog.createdAt
+                    )
+                }
                 if let index = (blogs.firstIndex(where: { $0.id == blog.id })) {
-                    blogs[index] = model
+                    self.blogs[index] = model
                 }
             }
             handler(result)
@@ -34,9 +48,9 @@ final class BlogViewModel {
     }
 
     func delete(blog: Blog, _ handler: @escaping APIHandler<Bool>) {
-        APIService.shared.request(.deleteMyBlog(blog.id)) { [unowned self] result in
+        APIService.shared.request(.deleteMyBlog(blog.id)) { [unowned self] _ in
             if let index = (blogs.firstIndex(where: { $0.id == blog.id })) {
-                blogs.remove(at: index)
+                self.blogs.remove(at: index)
                 handler(.success(true))
                 return
             }
@@ -44,48 +58,15 @@ final class BlogViewModel {
         }
     }
 
-    func setMainBlog(blog: Blog, _ handler: @escaping APIHandler<Blog>) {
-        APIService.shared.request(.setMyMainBlog(blog.id), to: Blog.self) { [unowned self] result in
-            if case let .success(model) = result {
-                updateMainBlog(blog: model)
-            }
-            handler(result)
-        }
-    }
-
     func getBlog(blogId: Int) -> Blog {
-        return blogs.first { $0.id == blogId }!
+        return self.blogs.first { $0.id == blogId }!
     }
 
     func hasBlogName(_ blogNameToCheck: String) -> Bool {
-        return blogs.contains { $0.name == blogNameToCheck }
+        return self.blogs.contains { $0.name == blogNameToCheck }
     }
 
     func hasBlogURL(_ url: String) -> Bool {
-        return blogs.contains { $0.url == url }
-    }
-
-    private func updateMainBlog(blog: Blog) {
-        if let index = blogs.firstIndex(where: { $0.main }) {
-            blogs[index] = blogs[index].withMain(false)
-        }
-        if let index = blogs.firstIndex(where: { $0.id == blog.id }) {
-            blogs[index] = blog
-        }
-    }
-}
-
-extension Blog {
-    func withMain(_ main: Bool) -> Blog {
-        return Blog(
-            id: self.id,
-            name: self.name,
-            url: self.url,
-            rss: self.rss,
-            main: main,
-            keywords: self.keywords,
-            lastPublishedAt: self.lastPublishedAt,
-            createdAt: self.createdAt
-        )
+        return self.blogs.contains { $0.url == url }
     }
 }
