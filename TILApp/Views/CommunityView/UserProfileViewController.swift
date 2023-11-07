@@ -3,9 +3,8 @@ import UIKit
 
 final class UserProfileViewController: UIViewController {
     var user: User?
-    // TODO: 데이터 연결 필요
+
     private var posts: [Post] = []
-    private var userLikePosts: [Post] = []
 
     private lazy var screenView = UIView().then {
         view.addSubview($0)
@@ -106,6 +105,12 @@ final class UserProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+
+        Task {
+            _ = await loadPosts()
+            userProfileTableView.reloadData()
+            userProfileTableView.layoutIfNeeded()
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -188,45 +193,45 @@ final class UserProfileViewController: UIViewController {
         moreButton.menu = menu
     }
 
-    @objc private func userSegmentedControlSelected(_ sender: CustomSegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
+    @objc private func userSegmentedControlSelected(_: CustomSegmentedControl) {
+        Task {
+            let result = await loadPosts()
+            switch result {
+            case let .success(posts): self.posts = posts
+            case let .failure(error):
+                // TODO: 에러 처리
+                debugPrint(error)
+            }
             userProfileTableView.reloadData()
-        case 1:
-            userProfileTableView.reloadData()
-        default:
-            break
+            userProfileTableView.layoutIfNeeded()
+        }
+    }
+
+    private func loadPosts() async -> APIResult<[Post]> {
+        guard let user else { return .success([]) }
+        let selectedIndex = userSegmentedControl.selectedSegmentIndex
+        return await withCheckedContinuation { continuation in
+            if selectedIndex == 0 {
+                PostViewModel.shared.withUserPosts(user: user) { continuation.resume(returning: $0) }
+            } else if selectedIndex == 1 {
+                PostViewModel.shared.withUserLikedPosts(user: user) { continuation.resume(returning: $0) }
+            }
         }
     }
 }
 
 extension UserProfileViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        switch userSegmentedControl.selectedSegmentIndex {
-        case 0:
-            return posts.count
-        case 1:
-            return userLikePosts.count
-        default: break
-        }
-        return 0
+        posts.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let userPostCell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier) as? UserTableViewCell else { return UITableViewCell() }
-        guard let userLikeCell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier) as? UserTableViewCell else { return UITableViewCell() }
+        guard let userPostCell = tableView.dequeueReusableCell(
+            withIdentifier: UserTableViewCell.identifier
+        ) as? UserTableViewCell else { return UITableViewCell() }
 
-        switch userSegmentedControl.selectedSegmentIndex {
-        case 0:
-            let post = posts[indexPath.row]
-            userPostCell.userTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
-            return userPostCell
-        case 1:
-            let userLikePost = userLikePosts[indexPath.row]
-            userLikeCell.userTILView.setup(withTitle: userLikePost.title, content: userLikePost.content, date: userLikePost.publishedAt.format())
-            return userLikeCell
-        default: break
-        }
+        let post = posts[indexPath.row]
+        userPostCell.userTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
         return userPostCell
     }
 

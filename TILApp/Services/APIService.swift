@@ -39,7 +39,7 @@ final class APIService {
             }
         }
     }
-    
+
     func request(_ target: APIRequest) async -> APIResult<Response> {
         return await withCheckedContinuation { [unowned self] continuation in
             request(target) { continuation.resume(returning: $0) }
@@ -112,17 +112,13 @@ enum APIRequest {
 
     // My Posts
     case getMyPosts,
-         getMyPost(_ postId: Int)
+         getMyPost(_ postId: Int),
+         getMyLikedPosts
 
     // My Posts of Blog
     case getMyBlogPosts(_ blogId: Int),
          getMyBlogPost(_ blogId: Int, _ postId: Int),
          createMyBlogPost(_ blogId: Int, _ input: CreatePostInput)
-
-    // My Liked Posts
-    case getMyLikedPosts,
-         likePost(_ postId: Int),
-         unlikePost(_ postId: Int)
 
     // My Follow
     case getMyFollowers,
@@ -139,7 +135,9 @@ enum APIRequest {
          getUserLikedPosts(_ userId: Int)
 
     // Community
-    case getCommunityPosts(GetCommunityQuery)
+    case getCommunityPosts(GetCommunityQuery),
+         likePost(_ postId: Int),
+         unlikePost(_ postId: Int)
 }
 
 extension APIRequest: SugarTargetType {
@@ -169,16 +167,12 @@ extension APIRequest: SugarTargetType {
         // My Posts
         case .getMyPosts: return .get("/my/posts")
         case .getMyPost(let postId): return .get("/my/posts/\(postId)")
+        case .getMyLikedPosts: return .get("/my/liked-posts")
 
         // My Posts of Blog
         case .getMyBlogPosts(let blogId): return .get("/my/blogs/\(blogId)/posts")
         case .getMyBlogPost(let blogId, let postId): return .get("/my/blogs/\(blogId)/posts/\(postId)")
         case .createMyBlogPost(let blogId, _): return .post("/my/blogs/\(blogId)/posts")
-
-        // My Liked Posts
-        case .getMyLikedPosts: return .get("/my/likes/posts")
-        case .likePost(let postId): return .post("/my/likes/posts/\(postId)")
-        case .unlikePost(let postId): return .delete("/my/likes/posts/\(postId)")
 
         // My Follows
         case .getMyFollowers: return .get("/my/followers")
@@ -192,10 +186,12 @@ extension APIRequest: SugarTargetType {
         case .getUserBlogs(let userId): return .get("/users/\(userId)/blogs")
         case .getUserMainBlog(let userId): return .get("/users/\(userId)/blogs/main")
         case .getUserPosts(let userId): return .get("/users/\(userId)/posts")
-        case .getUserLikedPosts(let userId): return .get("/users/\(userId)/likes/posts")
+        case .getUserLikedPosts(let userId): return .get("/users/\(userId)/liked-posts")
 
         // Community
         case .getCommunityPosts: return .get("/community/posts")
+        case .likePost(let postId): return .post("/community/posts/\(postId)/likes")
+        case .unlikePost(let postId): return .delete("/community/posts/\(postId)/likes")
         }
     }
 
@@ -214,7 +210,7 @@ extension APIRequest: SugarTargetType {
     private func toBody<T: Codable>(_ input: T) -> MoyaSugar.Parameters? {
         JSONEncoding() => toDictionary(from: input, with: Coder.encoder)
     }
-    
+
     private func toParam<T: Codable>(_ input: T) -> MoyaSugar.Parameters? {
         URLEncoding() => toDictionary(from: input, with: Coder.encoder)
     }

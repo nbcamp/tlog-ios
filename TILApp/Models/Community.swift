@@ -8,6 +8,7 @@ struct CommunityPost: Codable {
     let url: String
     let tags: [String]
     let user: User
+    let liked: Bool
     let publishedAt: Date
 }
 

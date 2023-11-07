@@ -7,6 +7,7 @@ struct Post: Codable {
     let content: String
     let url: String
     let tags: [String]
+    let liked: Bool
     let publishedAt: Date
 }
 

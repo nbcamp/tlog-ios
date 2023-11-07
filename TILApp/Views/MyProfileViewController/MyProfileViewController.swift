@@ -9,9 +9,11 @@ final class MyProfileViewController: UIViewController {
         }
     }
 
-    // TODO: 데이터 연결 필요
-    private var posts: [Post] = []
-    private var likePosts: [Post] = []
+    private var posts: [Post] {
+        myProfileSegmentedControl.selectedSegmentIndex == 0
+            ? PostViewModel.shared.myPosts
+            : PostViewModel.shared.myLikedPosts
+    }
 
     private lazy var screenView = UIView().then {
         view.addSubview($0)
@@ -95,6 +97,12 @@ final class MyProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+
+        Task {
+            _ = await loadMyPosts()
+            myProfileTableView.reloadData()
+            myProfileTableView.layoutIfNeeded()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -160,45 +168,39 @@ final class MyProfileViewController: UIViewController {
         navigationController?.pushViewController(blogListViewController, animated: true)
     }
 
-    @objc func myProfileSegmentedControlSelected(_ sender: CustomSegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
+    @objc func myProfileSegmentedControlSelected(_: CustomSegmentedControl) {
+        Task {
+            _ = await loadMyPosts()
             myProfileTableView.reloadData()
-        case 1:
-            myProfileTableView.reloadData()
-        default:
-            break
+            myProfileTableView.layoutIfNeeded()
+        }
+    }
+
+    private func loadMyPosts() async -> APIResult<[Post]> {
+        let selectedIndex = myProfileSegmentedControl.selectedSegmentIndex
+        return await withCheckedContinuation { continuation in
+            if selectedIndex == 0 {
+                PostViewModel.shared.withMyPosts { continuation.resume(returning: $0) }
+            } else if selectedIndex == 1 {
+                PostViewModel.shared.withMyLikedPosts { continuation.resume(returning: $0) }
+            }
         }
     }
 }
 
 extension MyProfileViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        switch myProfileSegmentedControl.selectedSegmentIndex {
-        case 0:
-            return posts.count
-        case 1:
-            return likePosts.count
-        default: break
-        }
-        return 0
+        posts.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let myPostCell = tableView.dequeueReusableCell(withIdentifier: MyProfileTableViewCell.identifier) as? MyProfileTableViewCell else { return UITableViewCell() }
-        guard let likeCell = tableView.dequeueReusableCell(withIdentifier: MyProfileTableViewCell.identifier) as? MyProfileTableViewCell else { return UITableViewCell() }
+        guard let myPostCell = tableView.dequeueReusableCell(
+            withIdentifier: MyProfileTableViewCell.identifier
+        ) as? MyProfileTableViewCell else { return UITableViewCell() }
 
-        switch myProfileSegmentedControl.selectedSegmentIndex {
-        case 0:
-            let post = posts[indexPath.row]
-            myPostCell.myTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
-            return myPostCell
-        case 1:
-            let likePost = likePosts[indexPath.row]
-            likeCell.myTILView.setup(withTitle: likePost.title, content: likePost.content, date: likePost.publishedAt.format())
-            return likeCell
-        default: break
-        }
+        let post = posts[indexPath.row]
+        myPostCell.myTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
+        myPostCell.selectionStyle = .none
         return myPostCell
     }
 
@@ -207,9 +209,7 @@ extension MyProfileViewController: UITableViewDataSource {
     }
 }
 
-extension MyProfileViewController: UITableViewDelegate {
-    func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
-}
+extension MyProfileViewController: UITableViewDelegate {}
 
 extension MyProfileViewController: SeeMoreBottomSheetDelegate {
     func didSelectSeeMoreMenu(title: String) {
