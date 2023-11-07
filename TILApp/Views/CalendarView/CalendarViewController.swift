@@ -7,7 +7,6 @@ class CalendarViewController: UIViewController {
     private lazy var rssPostData = rssViewModel.rssPostData
     private lazy var rssPostAllData = rssViewModel.rssPostAllData
     private lazy var continueFirstDate = rssViewModel.continueFirstDate
-    // 캘린더 표시해주는 달을 저장하는 변수
     private lazy var monthDatanum = ""
 
     let dateFormatter = DateFormatter()
@@ -36,44 +35,25 @@ class CalendarViewController: UIViewController {
     private lazy var calendarView = FSCalendar().then {
         $0.dataSource = self
         $0.delegate = self
-        // 첫 열을 월요일로 설정
         $0.firstWeekday = 2
-        // week 또는 month 가능
         $0.scope = .month
         $0.appearance.titleWeekendColor = .red
-        // 셀 선택시 원형으로 만들어주는 radius 변경
-        //        calendar.appearance.borderRadius = 0
         $0.scrollEnabled = false
         $0.locale = Locale(identifier: "ko_KR")
-        // 현재 달의 날짜들만 표기하도록 설정
-        //        calendar.placeholderType = .none
         $0.appearance.titleFont = .boldSystemFont(ofSize: 14.5)
-        // 헤더뷰 높이 설정
         $0.headerHeight = 45
-        // 달력 월 형식 설정
         $0.appearance.headerDateFormat = "YYYY년 M월"
         $0.appearance.headerTitleColor = .darkGray
         $0.appearance.headerTitleFont = .boldSystemFont(ofSize: 25)
-        // 헤더 다음달 전달 표시
         $0.appearance.headerMinimumDissolvedAlpha = 0
-        // 요일 UI 설정
-        //        $0.appearance.weekdayTextColor = .black
-        // 날짜 UI 설정
-        //        $0.appearance.titleTodayColor = .black
-        // 오늘 둘러싸는 컬러
         $0.appearance.todayColor = .clear
-        // 선택했을때 컬러
         $0.appearance.selectionColor = .init(named: "AccentColor")
-        // 선택했을때 테두리 컬러
         $0.appearance.borderSelectionColor = .white
-        // week설정
         $0.weekdayHeight = 50
         $0.scrollEnabled = true
         $0.scrollDirection = .horizontal
-        // dot 컬러 설정
         $0.appearance.eventDefaultColor = .init(named: "AccentColor")
         $0.appearance.eventSelectionColor = .systemRed
-        // 요일 라벨의 textColor를 darkGray로 설정 , dot 색 설정 위치에 따라 적용됨 버그있음
         $0.calendarWeekdayView.weekdayLabels[1].textColor = .darkGray
         $0.calendarWeekdayView.weekdayLabels[1].font = .boldSystemFont(ofSize: 20)
         $0.calendarWeekdayView.weekdayLabels[2].textColor = .darkGray
@@ -84,16 +64,15 @@ class CalendarViewController: UIViewController {
         $0.calendarWeekdayView.weekdayLabels[4].font = .boldSystemFont(ofSize: 20)
         $0.calendarWeekdayView.weekdayLabels[0].textColor = .darkGray
         $0.calendarWeekdayView.weekdayLabels[0].font = .boldSystemFont(ofSize: 20)
-        // 토요일 라벨
         $0.calendarWeekdayView.weekdayLabels[5].textColor = .darkGray
         $0.calendarWeekdayView.weekdayLabels[5].font = .boldSystemFont(ofSize: 20)
-        // 일요일 라벨
         $0.calendarWeekdayView.weekdayLabels[6].textColor = .darkGray
         $0.calendarWeekdayView.weekdayLabels[6].font = .boldSystemFont(ofSize: 20)
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.isHidden = false
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = true
     }
 
     override func viewDidLayoutSubviews() {
@@ -101,10 +80,13 @@ class CalendarViewController: UIViewController {
         calendarFlexView.flex.direction(.column).define {
             $0.addItem(calendarResultContent).alignItems(.center)
             $0.addItem(calendarView).marginLeft(20).marginRight(20).aspectRatio(1)
-            $0.addItem(tableView).grow(1)
+            $0.addItem().grow(1).define { flex in
+                flex.view?.addSubview(tableView)
+            }
         }
         calendarFlexView.pin.all(view.pin.safeArea)
         calendarFlexView.flex.layout()
+        tableView.pin.all()
     }
 
     override func viewDidLoad() {
@@ -117,7 +99,6 @@ class CalendarViewController: UIViewController {
 }
 
 extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDelegateAppearance {
-    // 날짜 선택시 콜백 메소드
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         let rssFindKey = rssPostData[rssViewModel.utcTimeConvert(date: date)]
         if rssFindKey != nil {
@@ -128,7 +109,6 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
         tableView.reloadData()
     }
 
-    // 오늘 날짜 자체 텍스트를 바꾸기
     func calendar(_ calendar: FSCalendar, titleFor date: Date) -> String? {
         switch rssViewModel.utcTimeConvert(date: date) {
         case rssViewModel.utcTimeConvert(date: Date()):
@@ -138,7 +118,6 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
         }
     }
 
-    // 일요일에 해당되는 모든 날짜의 색상 red로 변경
     func calendar(_ calendar: FSCalendar,
                   appearance: FSCalendarAppearance,
                   titleDefaultColorFor date: Date) -> UIColor?
@@ -149,10 +128,9 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
 
         if monthDatanum != monthDataStr {
             monthDatanum = monthDataStr
-            // 여기다 서버에 지금 달력이 보여주는 월 보내서 데이터 다다음달 데이터 불러와야함
             calendar.reloadData()
         }
-        // 저번달 다음달 일 표시 회색으로
+
         if monthDataStr.prefix(6) != inputDateStr.prefix(6) {
             return .lightGray
         } else if continueFirstDate != nil {
@@ -163,7 +141,6 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
             }
         }
 
-        // ios 업데이트 후 한글 표기에서 영어로 변화됨
         let day = Calendar.current.component(.weekday, from: date) - 1
         let dayLabel = Calendar.current.shortWeekdaySymbols[day]
         if dayLabel == "Sun" || dayLabel == "일" {
@@ -180,12 +157,13 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
         dateFormatter.dateFormat = "yyyyMMdd"
         let dateUtc = rssViewModel.utcTimeConvert(date: date)
         let todayUtc = rssViewModel.utcTimeConvert(date: Date())
-        // dot 크기 설정
+
         cell.eventIndicator.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-        // cell 재사용된 속성 삭제 prepareForReuse를 사용하는 것보다 메모리 관점으로 이득
+
         if cell.subviews[0].frame.origin.y >= 5 {
             cell.subviews[0].removeFromSuperview()
         }
+
         if continueFirstDate != nil {
             if dateDifferenceDay(from: continueFirstDate!, to: dateUtc) >= 0
                 && dateDifferenceDay(from: todayUtc, to: dateUtc) <= 0
@@ -211,7 +189,6 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
         }
     }
 
-    // dot 키기
     func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
         let dateUtc = rssViewModel.utcTimeConvert(date: date)
         if rssPostData[dateUtc] != nil {
@@ -221,12 +198,10 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
         }
     }
 
-    // dot 위치 조정
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, eventOffsetFor date: Date) -> CGPoint {
         return CGPoint(x: 0, y: 1)
     }
 
-    // 1일 더해서 날짜 바뀌는걸 확인하는 함수
     func timePlusDate(date: Date, dayPlus: Int) -> Date {
         return Calendar.current.date(
             byAdding: .day,

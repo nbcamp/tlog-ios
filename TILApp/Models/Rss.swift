@@ -1,13 +1,6 @@
-//
-//  Rss.swift
-//  TILApp
-//
-//  Created by 정동교 on 10/31/23.
-//
 import Foundation
 
 struct RSS: Codable {
-//    let to: String
     let channel: RSSChannel?
 }
 
@@ -33,7 +26,6 @@ struct RSSPost: Codable {
     }
 }
 
-// 애도 더미 CreatePostInput 에 맞춰 blogId가 생길 예정
 struct RssPostData: Codable {
     let title: String
     let content: String

@@ -1,10 +1,3 @@
-//
-//  RssViewModel.swift
-//  TILApp
-//
-//  Created by 정동교 on 10/31/23.
-//
-
 import Foundation
 import XMLCoder
 
@@ -27,7 +20,7 @@ final class RssViewModel {
                 do {
                     self.rss = try XMLDecoder().decode(RSS.self, from: data)
                     self.creatRssData(tag: tag)
-                    
+
                 } catch {
                     print("Error parsing JSON response")
                 }
@@ -48,12 +41,10 @@ final class RssViewModel {
             var postUrl = indexData.link ?? ""
             var postPublishedAt = Date()
 
-            // pubDate 데이터 가공
             if let convertDate = indexData.pubDate {
                 postPublishedAt = dateFormatter.date(from: convertDate)!
             }
 
-            // link 데이터 가공
             if let convertLink = rss!.channel!.posts[index].link {
                 let convertUrlString = replacingStr(data: convertLink)
                 postUrl = convertUrlString
@@ -66,7 +57,6 @@ final class RssViewModel {
                 contentData = String(content!.prefix(20))
             }
 
-            // title 데이터 가공
             if let convertTitle = indexData.title {
                 let apendData = RssPostData(title: postTitle,
                                             content: contentData,
