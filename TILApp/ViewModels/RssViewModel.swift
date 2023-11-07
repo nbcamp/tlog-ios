@@ -7,33 +7,15 @@
 
 import Foundation
 import XMLCoder
-/*
- 세트의 장점 중복값을 허용 안함
-
- import Foundation
-
- let now = Date()
- let calendar = Calendar.current
-
- let components = calendar.dateComponents([.year, .month, .day], from: now)
- if let dateWithoutTime = calendar.date(from: components) {
-     print(dateWithoutTime)
- }
- */
 
 final class RssViewModel {
-    // 더미데이터 나중에 서버에서 받아오는 데이터로 바뀔예정
-    // 블로그 id랑 주소도 나중에 생성
     let dateFormatter = DateFormatter()
+    let calendar = Calendar.current
     static let shared: RssViewModel = .init()
     private init() {}
     private(set) var rss: RSS?
     private(set) var rssPostData: [Date: [RssPostData]] = [:]
-    // 테이블뷰에 보여줄 데이터
-    // 사용자가 미국? 날짜가 바뀌는 문제가 만들어짐
-    // 딕셔너리 형태가 게시물 마다 만들어주는게 맞다
-    // 서버와의 통신? 줄때는 형식이 다르다 그럼 결국 이건
-
+    private(set) var rssPostAllData: [RssPostData] = []
     private(set) var continueFirstDate: Date?
 
     func respondData(urlString: String, tag: [String]) {
@@ -45,6 +27,7 @@ final class RssViewModel {
                 do {
                     self.rss = try XMLDecoder().decode(RSS.self, from: data)
                     self.creatRssData(tag: tag)
+                    
                 } catch {
                     print("Error parsing JSON response")
                 }
@@ -56,26 +39,18 @@ final class RssViewModel {
     }
 
     func creatRssData(tag: [String]) {
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss z"
-//        dateFormatter.locale = Locale(identifier: "en_US")
-        var rssGetData: [RssPostData]
+        dateFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss z"
+        dateFormatter.locale = Locale(identifier: "en_US")
         guard let rssChannelPost = rss!.channel?.posts else { return }
-
-        rssGetData = rssChannelPost.enumerated().map { index, indexData in
-            // pubDate 관련 변수
+        rssChannelPost.enumerated().forEach { index, indexData in
 
             var postTitle = indexData.title ?? ""
             var postUrl = indexData.link ?? ""
             var postPublishedAt = Date()
 
-            // title 데이터 가공
-            if let convertTitle = indexData.title {
-                postTitle = convertTitle
-            }
             // pubDate 데이터 가공
             if let convertDate = indexData.pubDate {
-                postPublishedAt = convertDate
+                postPublishedAt = dateFormatter.date(from: convertDate)!
             }
 
             // link 데이터 가공
@@ -85,48 +60,48 @@ final class RssViewModel {
             }
 
             var content = indexData.content ?? indexData.contentEncoded
-
+            var contentData = ""
             if let unwrapContent = content {
                 content = replacingStr(data: unwrapContent)
+                contentData = String(content!.prefix(20))
             }
 
-            return .init(
-                title: postTitle,
-                content: content ?? "",
-                url: postUrl,
-                publishedAt: postPublishedAt
-            )
-        }
-        // 여기서부터 데이터 수정이 들어가면 됨
-        rssGetData = rssGetData.filter { filterIndex in
-            dateFormatter.dateFormat = "yyyyMMdd"
-            let convertDate = dateFormatter.date(from: dateFormatter.string(from: filterIndex.publishedAt))!
-            var tagBool = false
-            let dateMinus = timePlusDate(date: convertDate, dayPlus: -1)
-
-            tag.map {
-                // 키워드가 타이틀의 일부분에 들어있는지 확인해야 해서 contains 사용 어차피 문자열 내에서만 돌아감
-                if filterIndex.title.contains($0) {
-                    calendarPostDataSetArr.insert(convertDate)
-                    rssPostData["allData"]!.append(filterIndex)
-                    if rssPostData[dateFormatter.string(from: filterIndex.publishedAt)] == nil {
-                        rssPostData[dateFormatter.string(from: filterIndex.publishedAt)] = [filterIndex]
-                    } else {
-                        rssPostData[dateFormatter.string(from: filterIndex.publishedAt)]?.append(filterIndex)
+            // title 데이터 가공
+            if let convertTitle = indexData.title {
+                let apendData = RssPostData(title: postTitle,
+                                            content: contentData,
+                                            url: postUrl,
+                                            publishedAt: postPublishedAt)
+                postTitle = convertTitle
+                tag.forEach {
+                    if convertTitle.contains($0) {
+                        rssPostAllData.append(apendData)
+                        if rssPostData[utcTimeConvert(date: postPublishedAt)] == nil {
+                            rssPostData[utcTimeConvert(date: postPublishedAt)] = [apendData]
+                        } else {
+                            rssPostData[utcTimeConvert(date: postPublishedAt)]!.append(apendData)
+                        }
                     }
-//                    Calendar.current.dateComponents([.day], from: convertDate, to: continueFirstDate!).day! != continueCountNum
-                    if continueFirstDate == nil {
-                        continueFirstDate = convertDate
-                    } else if rssPostData[dateFormatter.string(from: filterIndex.publishedAt)] == nil {
-                        continueFirstDate = convertDate
-                    }
-                    tagBool = true
                 }
             }
-            return tagBool
         }
+        rssPostAllData.sort {
+            $0.publishedAt.compare($1.publishedAt) == .orderedDescending
+        }
+        continuDate()
+    }
 
-        print(rssPostData)
+    func continuDate() {
+        var utcTime = utcTimeConvert(date: Date())
+        if rssPostData[utcTime] != nil {
+            for _ in rssPostAllData {
+                continueFirstDate = utcTime
+                utcTime = timePlusDate(date: utcTime, dayPlus: -1)
+                if rssPostData[utcTime] == nil {
+                    break
+                }
+            }
+        }
     }
 
     func timePlusDate(date: Date, dayPlus: Int) -> Date {
@@ -135,6 +110,10 @@ final class RssViewModel {
             value: dayPlus,
             to: date
         )!
+    }
+
+    func utcTimeConvert(date: Date) -> Date {
+        return calendar.date(from: calendar.dateComponents([.year, .month, .day], from: date))!
     }
 
     func replacingStr(data: String) -> String {

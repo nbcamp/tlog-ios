@@ -4,7 +4,6 @@
 //
 //  Created by 정동교 on 10/31/23.
 //
-
 import Foundation
 
 struct RSS: Codable {
@@ -23,7 +22,7 @@ struct RSSChannel: Codable {
 struct RSSPost: Codable {
     let title: String?
     let content: String?
-    let pubDate: Date?
+    let pubDate: String?
     let link: String?
     let contentEncoded: String?
 

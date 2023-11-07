@@ -2,7 +2,7 @@ import UIKit
 
 final class HomeViewController: UIViewController {
     private var user: AuthUser? { AuthViewModel.shared.user }
-    
+
     private var TILPost = [1, 2, 3, 4]
     // TODO: 모델 추가후 변경하기
     private var userDidRegisterBlog: Bool = false // 로그인상태
@@ -60,6 +60,13 @@ final class HomeViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         registerBlogButton.addTarget(self, action: #selector(registerBlogButtonTapped), for: .touchUpInside)
+
+        let blogRssUrl: [String] = ["https://noobd.tistory.com/rss", "https://skypine.tistory.com/rss"]
+        let tag = ["마작", "일기"]
+        let rssViewModel = RssViewModel.shared
+        blogRssUrl.forEach {
+            rssViewModel.respondData(urlString: $0, tag: tag)
+        }
         configureUI()
         updateCountTILLabel()
         updateGrowthImage()
