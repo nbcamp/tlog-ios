@@ -31,7 +31,6 @@ class CalendarViewController: UIViewController {
     private let tableView = UITableView().then {
         $0.register(UserTableViewCell.self, forCellReuseIdentifier: "UserCell")
         $0.applyCustomSeparator()
-//        $0.backgroundColor = .blue
     }
 
     private lazy var calendarView = FSCalendar().then {
