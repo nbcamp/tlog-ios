@@ -100,6 +100,7 @@ final class UserProfileViewController: UIViewController {
         $0.register(UserTableViewCell.self, forCellReuseIdentifier: UserTableViewCell.identifier)
         $0.delegate = self
         $0.dataSource = self
+        $0.applyCustomSeparator()
         view.addSubview($0)
     }
 
