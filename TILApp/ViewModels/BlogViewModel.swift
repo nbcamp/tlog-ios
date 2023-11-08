@@ -23,7 +23,7 @@ final class BlogViewModel {
     }
 
     func update(blog: Blog, _ input: UpdateBlogInput, _ handler: @escaping APIHandler<Blog>) {
-        let index = input.main == true ? (blogs.firstIndex { $0.main }) : nil
+        let index = input.main == true ? (self.blogs.firstIndex { $0.main }) : nil
         APIService.shared.request(.updateMyBlog(blog.id, input), to: Blog.self) { [unowned self] result in
             if case let .success(model) = result {
                 if model.main == true, let index {
@@ -68,5 +68,23 @@ final class BlogViewModel {
 
     func hasBlogURL(_ url: String) -> Bool {
         return self.blogs.contains { $0.url == url }
+    }
+
+    func getLastPublishedAt(userId: Int, _ handler: @escaping (String) -> Void) {
+        APIService.shared.request(.getUserBlogs(userId), to: [Blog].self) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case let .success(blogs):
+                let validBlogs = blogs.filter { $0.lastPublishedAt != nil }
+                if let lastPublishedBlog = validBlogs.max(by: { $0.lastPublishedAt! < $1.lastPublishedAt! }) {
+                    let formattedDate = "TIL 마지막 작성일 | " + lastPublishedBlog.lastPublishedAt!.format("YYYY-MM-DD")
+                    handler(formattedDate)
+                } else {
+                    handler("작성한 TIL이 없습니다.")
+                }
+            case .failure:
+                handler("블로그 정보가 없습니다.")
+            }
+        }
     }
 }

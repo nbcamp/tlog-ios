@@ -30,7 +30,7 @@ final class FollowListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "팔로우 관리"
-        
+
         Task {
             _ = await loadFollowList()
             tableView.reloadData()
@@ -64,7 +64,6 @@ final class FollowListViewController: UIViewController {
                 tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
             }
         }
-
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -111,9 +110,14 @@ extension FollowListViewController: UITableViewDataSource {
         cell.customUserView.setup(
             image: UIImage(),
             nicknameText: user.username,
-            contentText: "TIL 마지막 작성일 | ",
+            contentText: " ",
             variant: isFollowing ? .unfollow : .follow
         )
+        
+        BlogViewModel.shared.getLastPublishedAt(userId: user.id) { [weak cell] lastPublishedAt in
+            guard let cell else { return }
+            cell.customUserView.contentText = lastPublishedAt
+        }
 
         cell.customUserView.followButtonTapped = { [weak self, weak cell] in
             guard let self, let cell else { return }
