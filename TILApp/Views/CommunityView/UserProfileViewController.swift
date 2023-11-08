@@ -1,10 +1,18 @@
-
 import UIKit
 
 final class UserProfileViewController: UIViewController {
     var user: User?
 
+    private enum Section {
+        case posts, likedPosts
+    }
+
+    private var section: Section {
+        userSegmentedControl.selectedSegmentIndex == 0 ? .posts : .likedPosts
+    }
+
     private var posts: [Post] = []
+    private var likedPosts: [CommunityPost] = []
 
     private lazy var screenView = UIView().then {
         view.addSubview($0)
@@ -90,7 +98,7 @@ final class UserProfileViewController: UIViewController {
 //            }
     }
 
-    private lazy var userSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요 목록"]).then {
+    private lazy var userSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요한 글"]).then {
         view.addSubview($0)
         $0.addTarget(self, action: #selector(userSegmentedControlSelected(_:)), for: .valueChanged)
     }
@@ -106,11 +114,15 @@ final class UserProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
 
-        Task {
-            _ = await loadPosts()
-            userProfileTableView.reloadData()
-            userProfileTableView.layoutIfNeeded()
+        loadPosts { [weak self] in
+            self?.userProfileTableView.reloadData()
+            self?.userProfileTableView.layoutIfNeeded()
         }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = false
     }
 
     override func viewDidLayoutSubviews() {
@@ -154,8 +166,8 @@ final class UserProfileViewController: UIViewController {
         // TODO: 차단하기 생각해보기
         let reportAction = UIAction(
             title: "차단하기",
-            image: UIImage(systemName: "eye.slash"))
-        { [weak self] _ in
+            image: UIImage(systemName: "eye.slash")
+        ) { [weak self] _ in
             let alertController = UIAlertController(title: "차단 완료", message: "차단되었습니다.", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
             guard let self else { return }
@@ -166,8 +178,8 @@ final class UserProfileViewController: UIViewController {
         let reportSpamAction = UIAction(
             title: "신고하기",
             image: UIImage(systemName: "flag.fill"),
-            attributes: .destructive)
-        { [weak self] _ in
+            attributes: .destructive
+        ) { [weak self] _ in
             let alertController = UIAlertController(title: "신고하기", message: "신고 사유를 입력해주세요", preferredStyle: .alert)
 
             alertController.addTextField { textField in
@@ -194,27 +206,26 @@ final class UserProfileViewController: UIViewController {
     }
 
     @objc private func userSegmentedControlSelected(_: CustomSegmentedControl) {
-        Task {
-            let result = await loadPosts()
-            switch result {
-            case let .success(posts): self.posts = posts
-            case let .failure(error):
-                // TODO: 에러 처리
-                debugPrint(error)
-            }
-            userProfileTableView.reloadData()
-            userProfileTableView.layoutIfNeeded()
+        loadPosts { [weak self] in
+            self?.userProfileTableView.reloadData()
+            self?.userProfileTableView.layoutIfNeeded()
         }
     }
 
-    private func loadPosts() async -> APIResult<[Post]> {
-        guard let user else { return .success([]) }
-        let selectedIndex = userSegmentedControl.selectedSegmentIndex
-        return await withCheckedContinuation { continuation in
-            if selectedIndex == 0 {
-                PostViewModel.shared.withUserPosts(user: user) { continuation.resume(returning: $0) }
-            } else if selectedIndex == 1 {
-                PostViewModel.shared.withUserLikedPosts(user: user) { continuation.resume(returning: $0) }
+    private func loadPosts(_ completion: @escaping () -> Void) {
+        guard let user else { return }
+        switch section {
+        case .posts:
+            PostViewModel.shared.withUserPosts(user: user) { [weak self] result in
+                guard let self, case let .success(posts) = result else { return }
+                self.posts = posts
+                completion()
+            }
+        case .likedPosts:
+            PostViewModel.shared.withUserLikedPosts(user: user) { [weak self] result in
+                guard let self, case let .success(posts) = result else { return }
+                self.likedPosts = posts
+                completion()
             }
         }
     }
@@ -226,17 +237,86 @@ extension UserProfileViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let userPostCell = tableView.dequeueReusableCell(
-            withIdentifier: UserTableViewCell.identifier
-        ) as? UserTableViewCell else { return UITableViewCell() }
+        switch section {
+        case .posts:
+            let post = posts[indexPath.row]
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: UserTableViewCell.identifier
+            ) as? UserTableViewCell else { return UITableViewCell() }
+            cell.userTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
+            cell.selectionStyle = .none
+            return cell
+        case .likedPosts:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: CommunityTableViewCell.identifier
+            ) as? CommunityTableViewCell else { return UITableViewCell() }
+            let post = likedPosts[indexPath.row]
+            cell.customCommunityTILView.setup(post: post)
+            if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
+                cell.customCommunityTILView.variant = .hidden
+            } else if UserViewModel.shared.isMyFollowing(user: post.user) {
+                cell.customCommunityTILView.variant = .unfollow
+            } else {
+                cell.customCommunityTILView.variant = .follow
+            }
 
-        let post = posts[indexPath.row]
-        userPostCell.userTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
-        return userPostCell
+            cell.customCommunityTILView.followButtonTapped = { [weak cell] in
+                guard let cell else { return }
+                switch cell.customCommunityTILView.variant {
+                case .follow:
+                    UserViewModel.shared.follow(user: post.user) { [weak cell] result in
+                        guard case let .success(success) = result, success else {
+                            // TODO: 에러 처리
+                            return
+                        }
+                        cell?.customCommunityTILView.variant = .unfollow
+                    }
+                case .unfollow:
+                    UserViewModel.shared.unfollow(user: post.user) { [weak cell] result in
+                        guard case let .success(success) = result, success else {
+                            // TODO: 에러 처리
+                            return
+                        }
+                        cell?.customCommunityTILView.variant = .follow
+                    }
+                default:
+                    break
+                }
+            }
+
+            cell.customCommunityTILView.userProfileTapped = { [weak self] in
+                guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
+                let userProfileViewController = UserProfileViewController()
+                userProfileViewController.user = post.user
+                navigationController?.pushViewController(userProfileViewController, animated: true)
+            }
+
+            cell.customCommunityTILView.postTapped = { [weak self] in
+                guard let self else { return }
+                let webViewController = WebViewController()
+                webViewController.postURL = post.url
+                let likeButton = LikeButton(liked: post.liked)
+                likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
+                    APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
+                        guard case .success = result else { return }
+                        completion()
+                    }
+                }
+                webViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
+
+                webViewController.hidesBottomBarWhenPushed = true
+                navigationController?.pushViewController(webViewController, animated: true)
+            }
+            cell.selectionStyle = .none
+            return cell
+        }
     }
 
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
-        return 85
+        switch section {
+        case .myPosts: return 85
+        case .myLikedPosts: return 180
+        }
     }
 }
 

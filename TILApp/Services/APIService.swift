@@ -20,7 +20,7 @@ final class APIService {
     private init() {}
 
     private let provider = MoyaSugarProvider<APIRequest>(plugins: [
-        NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
+//        NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
     ])
 
     func request(_ target: APIRequest, handler: @escaping APIHandler<Response>) {
@@ -57,7 +57,7 @@ final class APIService {
                     return handler(.failure(.statusCode(response)))
                 }
                 guard let model = try? response.map(model, using: Coder.decoder) else {
-                    printJsonAsString(json: response.data)
+                    printJsonAsString(json: response.data, to: model)
                     return handler(.failure(.jsonMapping(response)))
                 }
                 return handler(.success(model))
@@ -81,11 +81,10 @@ final class APIService {
         return error
     }
 
-    private func printJsonAsString(json: Data) {
+    private func printJsonAsString<Model>(json: Data, to model: Model) {
+        debugPrint("Failed to convert json to data(\(String(describing: model))")
         if let string = String(data: json, encoding: .utf8) {
-            debugPrint(string)
-        } else {
-            debugPrint("Failed to convert data to string.")
+            debugPrint("Stringify:", string)
         }
     }
 }

@@ -1,6 +1,10 @@
 import UIKit
 
 final class MyProfileViewController: UIViewController {
+    private enum Section {
+        case myPosts, myLikedPosts
+    }
+
     private let authViewModel = AuthViewModel.shared
     private var user: AuthUser? {
         didSet {
@@ -9,11 +13,12 @@ final class MyProfileViewController: UIViewController {
         }
     }
 
-    private var posts: [Post] {
-        myProfileSegmentedControl.selectedSegmentIndex == 0
-            ? PostViewModel.shared.myPosts
-            : PostViewModel.shared.myLikedPosts
+    private var section: Section {
+        myProfileSegmentedControl.selectedSegmentIndex == 0 ? .myPosts : .myLikedPosts
     }
+
+    private var myPosts: [Post] { PostViewModel.shared.myPosts }
+    private var myLikedPosts: [CommunityPost] { PostViewModel.shared.myLikedPosts }
 
     private lazy var screenView = UIView().then {
         view.addSubview($0)
@@ -82,13 +87,14 @@ final class MyProfileViewController: UIViewController {
         $0.addTarget(self, action: #selector(editBlogButtonTapped), for: .touchUpInside)
     }
 
-    private lazy var myProfileSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요 목록"]).then {
+    private lazy var myProfileSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요한 글"]).then {
         view.addSubview($0)
         $0.addTarget(self, action: #selector(myProfileSegmentedControlSelected(_:)), for: .valueChanged)
     }
 
     private lazy var myProfileTableView = UITableView().then {
         $0.register(MyProfileTableViewCell.self, forCellReuseIdentifier: MyProfileTableViewCell.identifier)
+        $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: CommunityTableViewCell.identifier)
         $0.delegate = self
         $0.dataSource = self
         view.addSubview($0)
@@ -98,10 +104,9 @@ final class MyProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
 
-        Task {
-            _ = await loadMyPosts()
-            myProfileTableView.reloadData()
-            myProfileTableView.layoutIfNeeded()
+        loadMyPosts { [weak self] in
+            self?.myProfileTableView.reloadData()
+            self?.myProfileTableView.setNeedsLayout()
         }
     }
 
@@ -169,43 +174,111 @@ final class MyProfileViewController: UIViewController {
     }
 
     @objc func myProfileSegmentedControlSelected(_: CustomSegmentedControl) {
-        Task {
-            _ = await loadMyPosts()
-            myProfileTableView.reloadData()
-            myProfileTableView.layoutIfNeeded()
+        loadMyPosts { [weak self] in
+            self?.myProfileTableView.reloadData()
+            self?.myProfileTableView.setNeedsLayout()
         }
     }
 
-    private func loadMyPosts() async -> APIResult<[Post]> {
-        let selectedIndex = myProfileSegmentedControl.selectedSegmentIndex
-        return await withCheckedContinuation { continuation in
-            if selectedIndex == 0 {
-                PostViewModel.shared.withMyPosts { continuation.resume(returning: $0) }
-            } else if selectedIndex == 1 {
-                PostViewModel.shared.withMyLikedPosts { continuation.resume(returning: $0) }
-            }
+    private func loadMyPosts(_ completion: @escaping () -> Void) {
+        switch section {
+        case .myPosts:
+            PostViewModel.shared.withMyPosts { _ in completion() }
+        case .myLikedPosts:
+            PostViewModel.shared.withMyLikedPosts { _ in completion() }
         }
     }
 }
 
 extension MyProfileViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        posts.count
+        switch section {
+        case .myPosts: return myPosts.count
+        case .myLikedPosts: return myLikedPosts.count
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let myPostCell = tableView.dequeueReusableCell(
-            withIdentifier: MyProfileTableViewCell.identifier
-        ) as? MyProfileTableViewCell else { return UITableViewCell() }
+        switch section {
+        case .myPosts:
+            let post = myPosts[indexPath.row]
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: MyProfileTableViewCell.identifier
+            ) as? MyProfileTableViewCell else { return UITableViewCell() }
+            cell.myTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
+            cell.selectionStyle = .none
+            return cell
+        case .myLikedPosts:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: CommunityTableViewCell.identifier
+            ) as? CommunityTableViewCell else { return UITableViewCell() }
+            let post = myLikedPosts[indexPath.row]
+            cell.customCommunityTILView.setup(post: post)
+            if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
+                cell.customCommunityTILView.variant = .hidden
+            } else if UserViewModel.shared.isMyFollowing(user: post.user) {
+                cell.customCommunityTILView.variant = .unfollow
+            } else {
+                cell.customCommunityTILView.variant = .follow
+            }
 
-        let post = posts[indexPath.row]
-        myPostCell.myTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
-        myPostCell.selectionStyle = .none
-        return myPostCell
+            cell.customCommunityTILView.followButtonTapped = { [weak cell] in
+                guard let cell else { return }
+                switch cell.customCommunityTILView.variant {
+                case .follow:
+                    UserViewModel.shared.follow(user: post.user) { [weak cell] result in
+                        guard case .success(let success) = result, success else {
+                            // TODO: 에러 처리
+                            return
+                        }
+                        cell?.customCommunityTILView.variant = .unfollow
+                    }
+                case .unfollow:
+                    UserViewModel.shared.unfollow(user: post.user) { [weak cell] result in
+                        guard case .success(let success) = result, success else {
+                            // TODO: 에러 처리
+                            return
+                        }
+                        cell?.customCommunityTILView.variant = .follow
+                    }
+                default:
+                    break
+                }
+            }
+
+            cell.customCommunityTILView.userProfileTapped = { [weak self] in
+                guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
+                let userProfileViewController = UserProfileViewController()
+                userProfileViewController.user = post.user
+                navigationController?.pushViewController(userProfileViewController, animated: true)
+            }
+
+            cell.customCommunityTILView.postTapped = { [weak self] in
+                guard let self else { return }
+                let webViewController = WebViewController()
+                webViewController.postURL = post.url
+                let likeButton = LikeButton(liked: post.liked)
+                likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
+                    APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
+                        guard case .success = result else { return }
+                        completion()
+                    }
+                }
+                webViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
+
+                webViewController.hidesBottomBarWhenPushed = true
+                navigationController?.pushViewController(webViewController, animated: true)
+            }
+            cell.selectionStyle = .none
+            return cell
+        }
     }
 
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
-        return 85
+        switch section {
+        case .myPosts: return 85
+        case .myLikedPosts: return 180
+        }
     }
 }
 
