@@ -134,7 +134,7 @@ final class UserProfileViewController: UIViewController {
 
     private func setUpUI() {
         screenView.flex.addItem().direction(.row).marginLeft(10).define { flex in
-            flex.addItem(profileImageView).width(100).height(100).marginLeft(10)
+            flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2).marginLeft(10)
             flex.addItem().direction(.column).width(200).define { flex in
                 flex.addItem(nicknameLabel).width(200).height(25).marginLeft(20).marginTop(5)
                 flex.addItem(countView).direction(.row).width(200).height(75)
