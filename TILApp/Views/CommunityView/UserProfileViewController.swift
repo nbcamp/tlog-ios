@@ -51,7 +51,7 @@ final class UserProfileViewController: UIViewController {
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("\(user?.posts ?? 0)\nposts", for: .normal)
+        $0.setTitle("\(user?.posts ?? 0)\n포스트", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -63,14 +63,14 @@ final class UserProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("\(user?.followers ?? 0)\nfollowers", for: .normal)
+        $0.setTitle("\(user?.followers ?? 0)\n팔로워", for: .normal)
         $0.setTitleColor(.black, for: .normal)
     }
 
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("\(user?.followings ?? 0)\nfollowing", for: .normal)
+        $0.setTitle("\(user?.followings ?? 0)\n팔로잉", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
@@ -85,17 +85,8 @@ final class UserProfileViewController: UIViewController {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         $0.titleLabel?.textAlignment = .left
-        $0.setTitle("유저의 블로그 URL링크", for: .normal)
         $0.setTitleColor(.systemGray, for: .normal)
-        // TODO: 블로그 불러오기 구현 후 setTitle 수정
-//            APIService.shared.request(.getMainBlog, model: [Blog].self) { [weak self] _ in
-//                guard let self else { return }
-//                userBlogURL.setTitle(blog.url, for: .normal)
-//                print("\(blog)")
-//            } onError: { [weak self] error in
-//                // TODO: 오류 함수 구현 후 재정의
-//                debugPrint(error)
-//            }
+        $0.addTarget(self, action: #selector(blogURLTapped), for: .touchUpInside)
     }
 
     private lazy var userSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요한 글"]).then {
@@ -114,6 +105,17 @@ final class UserProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        if let userId = user?.id {
+            APIService.shared.request(.getUserMainBlog(userId), to: Blog.self) { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let blog):
+                    userBlogURL.setTitle(blog.url, for: .normal)
+                case .failure:
+                    userBlogURL.setTitle("메인 블로그가 없습니다.", for: .normal)
+                }
+            }
+        }
 
         loadPosts { [weak self] in
             self?.userProfileTableView.reloadData()
@@ -146,9 +148,10 @@ final class UserProfileViewController: UIViewController {
                     }
             }
         }
+        
         followButtonView.flex.addItem().direction(.row).define { flex in
             flex.addItem(doingFollowButton).width(100).height(30).direction(.row)
-            flex.addItem(userBlogURL).width(180).marginBottom(20).marginLeft(10)
+            flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).minWidth(100).maxWidth(200)
         }
 
         screenView.flex.layout()
@@ -206,6 +209,16 @@ final class UserProfileViewController: UIViewController {
         moreButton.menu = menu
     }
 
+    @objc private func blogURLTapped() {
+        if let blogURL = userBlogURL.title(for: .normal){
+            let webViewController = WebViewController()
+            webViewController.postURL = blogURL
+            webViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(webViewController, animated: true)
+        }
+    }
+
+    
     @objc private func userSegmentedControlSelected(_: CustomSegmentedControl) {
         loadPosts { [weak self] in
             self?.userProfileTableView.reloadData()
