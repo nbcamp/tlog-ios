@@ -77,7 +77,7 @@ final class BlogViewModel {
             case let .success(blogs):
                 let validBlogs = blogs.filter { $0.lastPublishedAt != nil }
                 if let lastPublishedBlog = validBlogs.max(by: { $0.lastPublishedAt! < $1.lastPublishedAt! }) {
-                    let formattedDate = "TIL 마지막 작성일 | " + lastPublishedBlog.lastPublishedAt!.format("YYYY-MM-DD")
+                    let formattedDate = "TIL 마지막 작성일 | " + lastPublishedBlog.lastPublishedAt!.format()
                     handler(formattedDate)
                 } else {
                     handler("작성한 TIL이 없습니다.")
