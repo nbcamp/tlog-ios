@@ -3,7 +3,7 @@ import UIKit
 final class ProfileEditViewController: UIViewController {
     var username: String?
     var userImage: String?
-    
+
     private lazy var componentView = UIView().then {
         view.addSubview($0)
     }
@@ -104,9 +104,9 @@ final class ProfileEditViewController: UIViewController {
         // TODO: avatarURL 변경
         AuthViewModel.shared.update(.init(username: newNickname, avatarUrl: nil)) { [weak self] result in
             guard let self else { return }
+            // TODO: 에러 처리
             if case let .failure(error) = result {
-                // TODO: 에러처리
-                debugPrint(error)
+                NotificationCenter.postError(withError: error)
                 return
             }
             navigationController?.popViewController(animated: true)

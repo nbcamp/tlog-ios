@@ -93,8 +93,14 @@ final class BlogEditViewController: UIViewController {
             style: .destructive,
             handler: { [weak self] _ in
                 guard let self else { return }
-                blogViewModel.delete(blog: blog) { [weak self] _ in
-                    self?.navigationController?.popViewController(animated: true)
+                blogViewModel.delete(blog: blog) { [weak self] result in
+                    guard let self else { return }
+                    // TODO: 에러 처리
+                    if case let .failure(error) = result {
+                        NotificationCenter.postError(withError: error)
+                        return
+                    }
+                    navigationController?.popViewController(animated: true)
                 }
             }
         )
@@ -142,9 +148,9 @@ final class BlogEditViewController: UIViewController {
             keywords: keywordInputViewModel.keywords
         )) { [weak self] result in
             guard let self else { return }
-            if case .failure(let error) = result {
-                // TODO: 에러처리
-                debugPrint(error)
+            // TODO: 에러 처리
+            if case let .failure(error) = result {
+                NotificationCenter.postError(withError: error)
                 return
             }
             navigationController?.popViewController(animated: true)
