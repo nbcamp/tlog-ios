@@ -315,8 +315,8 @@ extension UserProfileViewController: UITableViewDataSource {
 
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
         switch section {
-        case .myPosts: return 85
-        case .myLikedPosts: return 180
+        case .posts: return 85
+        case .likedPosts: return 180
         }
     }
 }
