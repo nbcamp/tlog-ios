@@ -13,6 +13,7 @@ final class CommunityViewController: UIViewController {
         $0.keyboardDismissMode = .onDrag
         $0.refreshControl = UIRefreshControl()
         $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: "CommunityTableViewCell")
+        $0.applyCustomSeparator()
         view.addSubview($0)
     }
 

@@ -22,7 +22,7 @@ final class FollowListViewController: UIViewController {
         $0.dataSource = self
         $0.delegate = self
         $0.register(FollowListTableViewCell.self, forCellReuseIdentifier: "FollowListTableViewCell")
-
+        $0.applyCustomSeparator()
         view.addSubview($0)
     }
 

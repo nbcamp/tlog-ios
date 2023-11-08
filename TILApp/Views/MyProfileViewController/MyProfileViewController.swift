@@ -89,6 +89,7 @@ final class MyProfileViewController: UIViewController {
         $0.register(MyProfileTableViewCell.self, forCellReuseIdentifier: MyProfileTableViewCell.identifier)
         $0.delegate = self
         $0.dataSource = self
+        $0.applyCustomSeparator()
         view.addSubview($0)
     }
 
