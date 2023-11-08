@@ -112,7 +112,7 @@ final class UserProfileViewController: UIViewController {
                 case .success(let blog):
                     userBlogURL.setTitle(blog.url, for: .normal)
                 case .failure:
-                    userBlogURL.setTitle("메인 블로그가 없습니다.(실패)", for: .normal)
+                    userBlogURL.setTitle("메인 블로그가 없습니다.", for: .normal)
                 }
             }
         }
