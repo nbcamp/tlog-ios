@@ -32,9 +32,10 @@ class CustomUserView: UIView {
     }
 
     private let imageView = UIImageView().then {
-        $0.backgroundColor = .systemGray5
         $0.contentMode = .scaleAspectFit
         $0.clipsToBounds = true
+        $0.tintColor = .accent
+        $0.backgroundColor = .clear
     }
 
     private let button = CustomFollowButton()
@@ -65,9 +66,13 @@ class CustomUserView: UIView {
 
         imageView.layer.cornerRadius = imageView.bounds.size.width / 2.0
     }
-
-    func setup(image: UIImage, nicknameText: String, contentText: String, variant: CustomFollowButton.Variant) {
-        self.image = image
+// TODO: 이미지 구현후 수정 필요 예상
+    func setup(image: UIImage?, nicknameText: String, contentText: String, variant: CustomFollowButton.Variant) {
+        if let image = image {
+            self.image = UIImage(systemName: "person.circle.fill")
+        } else {
+            self.image = image
+        }
         self.nicknameText = nicknameText
         self.contentText = contentText
         self.variant = variant

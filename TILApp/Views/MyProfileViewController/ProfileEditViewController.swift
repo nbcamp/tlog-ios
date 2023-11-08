@@ -11,7 +11,7 @@ final class ProfileEditViewController: UIViewController {
     private lazy var editProfileImageView = UIImageView().then {
         // TODO: 이미지 구현후 수정
         $0.image = UIImage(systemName: "person.circle.fill")
-        $0.tintColor = UIColor.accent
+        $0.tintColor = .accent
         $0.layer.borderColor = UIColor.accent.cgColor
         $0.layer.cornerRadius = 50
         $0.contentMode = .scaleAspectFill
