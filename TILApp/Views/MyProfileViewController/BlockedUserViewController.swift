@@ -11,6 +11,7 @@ final class BlockedUserViewController: UIViewController {
         $0.dataSource = self
         $0.delegate = self
         $0.register(BlockedUserTableViewCell.self, forCellReuseIdentifier: "BlockedUserTableViewCell")
+        $0.applyCustomSeparator()
 
         view.addSubview($0)
     }
