@@ -106,18 +106,18 @@ extension FollowListViewController: UITableViewDataSource {
             : userViewModel.myFollowings[indexPath.row]
 
         let isFollowing = userViewModel.isMyFollowing(user: user)
+        
+        var content = "작성한 TIL이 없습니다."
+        if let lastPublishedAt = user.lastPublishedAt {
+            content = "마지막 TIL 작성일 | " + lastPublishedAt.format()
+        }
 
         cell.customUserView.setup(
             image: UIImage(),
             nicknameText: user.username,
-            contentText: " ",
+            contentText: content,
             variant: isFollowing ? .unfollow : .follow
         )
-        
-        BlogViewModel.shared.getLastPublishedAt(userId: user.id) { [weak cell] lastPublishedAt in
-            guard let cell else { return }
-            cell.customUserView.contentText = lastPublishedAt
-        }
 
         cell.customUserView.followButtonTapped = { [weak self, weak cell] in
             guard let self, let cell else { return }
