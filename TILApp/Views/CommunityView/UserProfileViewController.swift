@@ -40,7 +40,7 @@ final class UserProfileViewController: UIViewController {
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
         $0.imageEdgeInsets = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 25)
-        $0.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
+        $0.menu = makeMenuItems()
         view.addSubview($0)
     }
 
@@ -104,7 +104,7 @@ final class UserProfileViewController: UIViewController {
             APIService.shared.request(.getUserMainBlog(userId), to: Blog.self) { [weak self] result in
                 guard let self else { return }
                 switch result {
-                case .success(let blog):
+                case let .success(blog):
                     userBlogURL.setTitle(blog.url, for: .normal)
                 case .failure:
                     userBlogURL.setTitle("메인 블로그가 없습니다.", for: .normal)
@@ -156,7 +156,7 @@ final class UserProfileViewController: UIViewController {
         }.layout()
     }
 
-    @objc private func moreButtonTapped() {
+    private func makeMenuItems() -> UIMenu {
         // TODO: 차단하기 생각해보기
         let reportAction = UIAction(
             title: "차단하기",
@@ -193,14 +193,11 @@ final class UserProfileViewController: UIViewController {
             self.present(alertController, animated: true, completion: nil)
         }
 
-        let menu = UIMenu(children: [reportAction, reportSpamAction])
-
-        moreButton.showsMenuAsPrimaryAction = true
-        moreButton.menu = menu
+        return UIMenu(children: [reportAction, reportSpamAction])
     }
 
     @objc private func blogURLTapped() {
-        if let blogURL = userBlogURL.title(for: .normal){
+        if let blogURL = userBlogURL.title(for: .normal) {
             let webViewController = WebViewController()
             webViewController.postURL = blogURL
             webViewController.hidesBottomBarWhenPushed = true
@@ -208,7 +205,6 @@ final class UserProfileViewController: UIViewController {
         }
     }
 
-    
     @objc private func userSegmentedControlSelected(_: CustomSegmentedControl) {
         loadPosts { [weak self] in
             self?.userProfileTableView.reloadData()
