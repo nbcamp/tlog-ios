@@ -23,11 +23,6 @@ final class UserProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
-    private lazy var calendarView = UIView().then {
-        $0.backgroundColor = .systemBlue
-        view.addSubview($0)
-    }
-
     private lazy var profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.circle.fill")
         $0.layer.cornerRadius = 50
@@ -135,35 +130,30 @@ final class UserProfileViewController: UIViewController {
     }
 
     private func setUpUI() {
-        screenView.flex.addItem().direction(.row).marginLeft(10).define { flex in
-            flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2).marginLeft(10)
-            flex.addItem().direction(.column).width(200).define { flex in
-                flex.addItem(nicknameLabel).width(200).height(25).marginLeft(20).marginTop(5)
-                flex.addItem(countView).direction(.row).width(200).height(75)
-                countView.flex.direction(.row)
-                    .width(210).define { flex in
-                        flex.addItem(postButton).width(70)
-                        flex.addItem(followersButton).width(70)
-                        flex.addItem(followingButton).width(70)
-                    }
-            }
-        }
-        
-        followButtonView.flex.addItem().direction(.row).define { flex in
-            flex.addItem(doingFollowButton).width(100).height(30).direction(.row)
-            flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).minWidth(100).maxWidth(200)
-        }
+        screenView.pin.all(view.pin.safeArea)
+        moreButton.pin.top(view.pin.safeArea).right(25)
 
-        screenView.flex.layout()
-        countView.flex.layout()
-        followButtonView.flex.layout()
-
-        screenView.pin.top(view.pin.safeArea).bottom(80%).left().right()
-        followButtonView.pin.top(to: screenView.edge.bottom).left().right().height(50).marginLeft(20).marginTop(30)
-        calendarView.pin.top(to: followButtonView.edge.bottom).left().right().bottom(30%)
-        moreButton.pin.top(view.pin.safeArea).right(20)
-        userSegmentedControl.pin.below(of: calendarView)
-        userProfileTableView.pin.below(of: userSegmentedControl).bottom(view.pin.safeArea).left().right()
+        screenView.flex.direction(.column).define { flex in
+            flex.addItem().direction(.row).paddingHorizontal(10).define { flex in
+                flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2)
+                flex.addItem().direction(.column).width(200).define { flex in
+                    flex.addItem(nicknameLabel).width(200).height(25).marginLeft(15).marginTop(5)
+                    flex.addItem(countView).direction(.row).width(200).height(75)
+                    countView.flex.direction(.row)
+                        .width(210).define { flex in
+                            flex.addItem(postButton).width(70)
+                            flex.addItem(followersButton).width(70)
+                            flex.addItem(followingButton).width(70)
+                        }
+                }
+            }.layout()
+            flex.addItem(followButtonView).direction(.row).paddingHorizontal(15).define { flex in
+                flex.addItem(doingFollowButton).width(100).height(30).direction(.row)
+                flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).minWidth(100).maxWidth(200)
+            }.layout()
+            flex.addItem(userSegmentedControl).height(45)
+            flex.addItem(userProfileTableView).grow(1)
+        }.layout()
     }
 
     @objc private func moreButtonTapped() {
