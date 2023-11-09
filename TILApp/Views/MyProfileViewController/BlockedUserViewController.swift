@@ -3,8 +3,8 @@ import UIKit
 final class BlockedUserViewController: UIViewController {
     
     let blockedUsers: [User] = [
-        .init(id: 999, username: "차단1", avatarUrl: "", posts: 0, followers: 0, followings: 0),
-        .init(id: 9999, username: "차단2", avatarUrl: "", posts: 0, followers: 0, followings: 0)
+//        .init(id: 999, username: "차단1", avatarUrl: "", posts: 0, followers: 0, followings: 0),
+//        .init(id: 9999, username: "차단2", avatarUrl: "", posts: 0, followers: 0, followings: 0)
     ]
     
     private lazy var tableView = UITableView().then {

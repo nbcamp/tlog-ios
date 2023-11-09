@@ -30,7 +30,7 @@ final class FollowListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "팔로우 관리"
-        
+
         Task {
             _ = await loadFollowList()
             tableView.reloadData()
@@ -64,7 +64,6 @@ final class FollowListViewController: UIViewController {
                 tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
             }
         }
-
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -107,11 +106,16 @@ extension FollowListViewController: UITableViewDataSource {
             : userViewModel.myFollowings[indexPath.row]
 
         let isFollowing = userViewModel.isMyFollowing(user: user)
+        
+        var content = "작성한 TIL이 없습니다."
+        if let lastPublishedAt = user.lastPublishedAt {
+            content = "마지막 TIL 작성일 | " + lastPublishedAt.format()
+        }
 
         cell.customUserView.setup(
             image: UIImage(),
             nicknameText: user.username,
-            contentText: "TIL 마지막 작성일 | ",
+            contentText: content,
             variant: isFollowing ? .unfollow : .follow
         )
 
