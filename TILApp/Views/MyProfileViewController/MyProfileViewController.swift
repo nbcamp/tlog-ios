@@ -249,6 +249,7 @@ extension MyProfileViewController: UITableViewDataSource {
                 guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
                 let userProfileViewController = UserProfileViewController()
                 userProfileViewController.user = post.user
+                userProfileViewController.hidesBottomBarWhenPushed = true
                 navigationController?.pushViewController(userProfileViewController, animated: true)
             }
 
