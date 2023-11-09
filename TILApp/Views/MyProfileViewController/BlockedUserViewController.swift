@@ -4,7 +4,7 @@ final class BlockedUserViewController: UIViewController {
     
     let blockedUsers: [User] = [
         .init(id: 999, username: "차단1", avatarUrl: "", posts: 0, followers: 0, followings: 0),
-            .init(id: 9999, username: "차단2", avatarUrl: "", posts: 0, followers: 0, followings: 0)
+        .init(id: 9999, username: "차단2", avatarUrl: "", posts: 0, followers: 0, followings: 0)
     ]
     
     private lazy var tableView = UITableView().then {
@@ -24,12 +24,16 @@ final class BlockedUserViewController: UIViewController {
         title = "차단한 사용자 관리"
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = false
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
         tableView.pin.top(view.pin.safeArea).bottom().horizontally()
     }
-
 }
 
 extension BlockedUserViewController: UITableViewDataSource {

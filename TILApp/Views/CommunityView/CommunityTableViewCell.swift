@@ -1,13 +1,8 @@
-//
-//  CommunityTableViewCell.swift
-//  TILApp
-//
-//  Created by 이재희 on 10/21/23.
-//
-
 import UIKit
 
 final class CommunityTableViewCell: UITableViewCell {
+    static let identifier = #function
+
     let customCommunityTILView = CustomCommunityTILView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

@@ -2,12 +2,12 @@ import Foundation
 
 struct CommunityPost: Codable {
     let id: Int
-    let userId: Int
     let title: String
     let content: String
     let url: String
     let tags: [String]
     let user: User
+    let liked: Bool
     let publishedAt: Date
 }
 
