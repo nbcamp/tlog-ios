@@ -33,16 +33,10 @@ class CustomCommunityTILView: UIView {
         $0.sizeToFit()
         $0.pin.height(20)
     }
-    
-    private lazy var heartButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "heart")?
-            .withTintColor(.systemGray2, renderingMode: .alwaysOriginal), for: .normal)
-        $0.setImage(UIImage(systemName: "heart.fill")?
-            .withTintColor(.red, renderingMode: .alwaysOriginal), for: .selected)
+
+    private lazy var heartButton = LikeButton(liked: false).then {
         $0.contentMode = .scaleAspectFit
         $0.pin.width(20).height(20)
-        
-        $0.addTarget(self, action: #selector(heartButtonTapped), for: .touchUpInside)
     }
 
     private let tagsCollectionView = HorizontalTagsCollectionView().then {
@@ -87,17 +81,19 @@ class CustomCommunityTILView: UIView {
     @objc private func _postTapped() {
         postTapped?()
     }
-    
-    @objc private func heartButtonTapped() {
-        heartButton.isSelected.toggle()
-    }
 
     // TODO: 팔로워 옆에 연속 작성 일수 추가해야 함
     func setup(post: CommunityPost) {
-        userView.setup(image: UIImage(), nicknameText: post.user.username,
-                       contentText: "팔로워 \(post.user.followers) | T+4", variant: .follow)
+        userView.setup(
+            image: UIImage(),
+            nicknameText: post.user.username,
+            contentText: "팔로워 \(post.user.followers)",
+            variant: .follow
+        )
         tilView.setup(withTitle: post.title, content: post.content, date: "")
         tagsCollectionView.tags = post.tags
         dateLabel.text = post.publishedAt.relativeFormat()
+        dateLabel.sizeToFit()
+        heartButton.isSelected = post.liked
     }
 }

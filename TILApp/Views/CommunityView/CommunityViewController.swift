@@ -48,6 +48,7 @@ final class CommunityViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = true
+        communityViewModel.refresh()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -100,7 +101,7 @@ extension CommunityViewController: UITableViewDataSource {
                         NotificationCenter.postError(withError: error)
                         return
                     }
-                    cell.customCommunityTILView.variant = .unfollow
+                    cell?.customCommunityTILView.variant = .unfollow
                 }
             case .unfollow:
                 userViewModel.unfollow(user: post.user) { [weak self] result in
@@ -110,7 +111,7 @@ extension CommunityViewController: UITableViewDataSource {
                         NotificationCenter.postError(withError: error)
                         return
                     }
-                    cell.customCommunityTILView.variant = .follow
+                    cell?.customCommunityTILView.variant = .follow
                 }
             default:
                 break
@@ -130,15 +131,14 @@ extension CommunityViewController: UITableViewDataSource {
             guard let self else { return }
             let webViewController = WebViewController()
             webViewController.postURL = post.url
-            let heartIconButton = UIButton(type: .system)
-            heartIconButton.setImage(UIImage(systemName: "heart")?
-                .withTintColor(.systemGray2, renderingMode: .alwaysOriginal), for: .normal)
-            heartIconButton.setImage(UIImage(systemName: "heart.fill")?
-                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .selected)
-            heartIconButton.tintColor = .clear
-            heartIconButton.addTarget(self, action: #selector(self.heartButtonTapped), for: .touchUpInside)
-            let heartBarButton = UIBarButtonItem(customView: heartIconButton)
-            webViewController.navigationItem.rightBarButtonItem = heartBarButton
+            let likeButton = LikeButton(liked: post.liked)
+            likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
+                APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
+                    guard case .success = result else { return }
+                    completion()
+                }
+            }
+            webViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
 
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)

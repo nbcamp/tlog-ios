@@ -22,17 +22,18 @@ class SeeMoreBottomSheetViewController: UIViewController {
 
     private lazy var backgroundView = UIView().then {
         $0.backgroundColor = .systemBackground
-        $0.sizeToFit()
+        $0.layer.cornerRadius = 30.0
+        $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         view.addSubview($0)
     }
 
     private lazy var moreTableView = UITableView().then {
         $0.separatorColor = .clear
-        $0.sizeToFit()
         $0.isScrollEnabled = false
         $0.register(MoreTableViewCell.self, forCellReuseIdentifier: MoreTableViewCell.identifier)
         $0.delegate = self
         $0.dataSource = self
+        $0.backgroundColor = .clear
         backgroundView.addSubview($0)
     }
 
@@ -40,13 +41,13 @@ class SeeMoreBottomSheetViewController: UIViewController {
         $0.backgroundColor = .systemGray
         $0.frame = CGRect(x: (view.frame.width - 40) / 2, y: 10, width: 80, height: 6)
         $0.layer.cornerRadius = 3
-        $0.isUserInteractionEnabled = true
-
         backgroundView.addSubview($0)
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    private lazy var emptyView = UIView().then {
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(emptyViewTapped))
+        $0.isUserInteractionEnabled = true
+        $0.addGestureRecognizer(gesture)
     }
 
     override func viewDidLayoutSubviews() {
@@ -55,12 +56,17 @@ class SeeMoreBottomSheetViewController: UIViewController {
     }
 
     private func setUpUI() {
-        view.pin.top(40%)
-        backgroundView.pin.all(view.pin.safeArea)
-        handleView.pin.topCenter().marginTop(15)
-        moreTableView.pin.below(of: handleView).bottom().left().right().marginTop(25)
-        backgroundView.layer.cornerRadius = 30.0
-        backgroundView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        view.flex.direction(.column).define { flex in
+            flex.addItem(emptyView).height(40%)
+            flex.addItem(backgroundView).grow(1).direction(.column).define { flex in
+                flex.addItem(handleView).width(60).height(6).marginTop(15).alignSelf(.center)
+                flex.addItem(moreTableView).grow(1).marginTop(10)
+            }
+        }.layout()
+    }
+
+    @objc func emptyViewTapped() {
+        dismiss(animated: true)
     }
 }
 
@@ -76,6 +82,7 @@ extension SeeMoreBottomSheetViewController: UITableViewDataSource, UITableViewDe
         let seeMenuList = seeMoreMenus[indexPath.row]
         cell.configure(withTitle: seeMenuList.title, iconName: seeMenuList.icon)
         cell.selectionStyle = .none
+        cell.backgroundColor = .clear
         return cell
     }
 
