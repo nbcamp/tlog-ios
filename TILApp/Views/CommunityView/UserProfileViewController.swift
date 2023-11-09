@@ -74,6 +74,14 @@ final class UserProfileViewController: UIViewController {
     private lazy var doingFollowButton = CustomFollowButton().then {
         $0.setTitle("팔로우", for: .normal)
         $0.backgroundColor = .accent
+        
+        if let user = self.user {
+            if UserViewModel.shared.isMyFollowing(user: user) {
+                $0.variant = .unfollow
+            } else {
+                $0.variant = .follow
+            }
+        }
     }
 
     private lazy var userBlogURL = UIButton().then {
@@ -115,6 +123,49 @@ final class UserProfileViewController: UIViewController {
         loadPosts { [weak self] in
             self?.userProfileTableView.reloadData()
             self?.userProfileTableView.layoutIfNeeded()
+        }
+        
+        doingFollowButton.buttonTapped = { [weak self] in
+            guard let self, let user else { return }
+            switch doingFollowButton.variant {
+            case .follow:
+                UserViewModel.shared.follow(user: user) { [weak self] result in
+                    guard let self else { return }
+                    guard case .success(let success) = result, success else {
+                        // TODO: 에러 처리
+                        return
+                    }
+                    doingFollowButton.variant = .unfollow
+                    UserViewModel.shared.withProfile(user: user) { [weak self] result in
+                        guard let self else { return }
+                        guard case .success(let userProfile) = result else {
+                            // TODO: 에러 처리
+                            return
+                        }
+                        followersButton.setTitle("\(userProfile.followers)\n팔로워", for: .normal)
+                    }
+                    
+                }
+            case .unfollow:
+                UserViewModel.shared.unfollow(user: user) { [weak self] result in
+                    guard let self else { return }
+                    guard case .success(let success) = result, success else {
+                        // TODO: 에러 처리
+                        return
+                    }
+                    doingFollowButton.variant = .follow
+                    UserViewModel.shared.withProfile(user: user) { [weak self] result in
+                        guard let self else { return }
+                        guard case .success(let userProfile) = result else {
+                            // TODO: 에러 처리
+                            return
+                        }
+                        followersButton.setTitle("\(userProfile.followers)\n팔로워", for: .normal)
+                    }
+                }
+            default:
+                break
+            }
         }
     }
 
