@@ -191,6 +191,7 @@ extension CommunityViewController: CommunityViewModelDelegate {
             tableView.insertRows(at: indexPaths, with: .automatic)
         } else {
             tableView.reloadData()
+            tableView.updatePlaceholderIfNeeded(count: posts.count, placeholderText: "검색 결과가 존재하지 않습니다.")
         }
     }
 

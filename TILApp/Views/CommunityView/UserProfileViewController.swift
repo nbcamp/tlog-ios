@@ -104,7 +104,7 @@ final class UserProfileViewController: UIViewController {
             APIService.shared.request(.getUserMainBlog(userId), to: Blog.self) { [weak self] result in
                 guard let self else { return }
                 switch result {
-                case .success(let blog):
+                case let .success(blog):
                     userBlogURL.setTitle(blog.url, for: .normal)
                 case .failure:
                     userBlogURL.setTitle("메인 블로그가 없습니다.", for: .normal)
@@ -115,6 +115,7 @@ final class UserProfileViewController: UIViewController {
         loadPosts { [weak self] in
             self?.userProfileTableView.reloadData()
             self?.userProfileTableView.layoutIfNeeded()
+            self?.updatePlaceholderIfNeeded()
         }
     }
 
@@ -200,7 +201,7 @@ final class UserProfileViewController: UIViewController {
     }
 
     @objc private func blogURLTapped() {
-        if let blogURL = userBlogURL.title(for: .normal){
+        if let blogURL = userBlogURL.title(for: .normal) {
             let webViewController = WebViewController()
             webViewController.postURL = blogURL
             webViewController.hidesBottomBarWhenPushed = true
@@ -208,11 +209,11 @@ final class UserProfileViewController: UIViewController {
         }
     }
 
-    
     @objc private func userSegmentedControlSelected(_: CustomSegmentedControl) {
         loadPosts { [weak self] in
             self?.userProfileTableView.reloadData()
             self?.userProfileTableView.layoutIfNeeded()
+            self?.updatePlaceholderIfNeeded()
         }
     }
 
@@ -233,11 +234,29 @@ final class UserProfileViewController: UIViewController {
             }
         }
     }
+
+    private func updatePlaceholderIfNeeded() {
+        let selectedIndex = userSegmentedControl.selectedSegmentIndex
+        if selectedIndex == 0 {
+            userProfileTableView.updatePlaceholderIfNeeded(
+                count: posts.count,
+                placeholderText: "작성한 글이 없습니다."
+            )
+        } else if selectedIndex == 1 {
+            userProfileTableView.updatePlaceholderIfNeeded(
+                count: likedPosts.count,
+                placeholderText: "좋아요한 글이 없습니다."
+            )
+        }
+    }
 }
 
 extension UserProfileViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        posts.count
+        switch section {
+        case .posts: return posts.count
+        case .likedPosts: return likedPosts.count
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

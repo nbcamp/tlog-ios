@@ -48,6 +48,7 @@ final class BlogListViewController: UIViewController {
 
 extension BlogListViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+        tableView.updatePlaceholderIfNeeded(count: blogViewModel.blogs.count, placeholderText: "등록된 블로그가 없습니다.")
         return blogViewModel.blogs.count
     }
 

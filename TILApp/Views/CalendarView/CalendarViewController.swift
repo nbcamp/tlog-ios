@@ -217,6 +217,7 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
 
 extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        tableView.updatePlaceholderIfNeeded(count: rssPostAllData.count, placeholderText: "작성한 게시물이 없습니다.")
         return rssPostAllData.count
     }
 

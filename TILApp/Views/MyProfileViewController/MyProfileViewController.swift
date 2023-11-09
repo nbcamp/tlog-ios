@@ -4,7 +4,7 @@ final class MyProfileViewController: UIViewController {
     private enum Section {
         case myPosts, myLikedPosts
     }
-
+    
     private let authViewModel = AuthViewModel.shared
     private var user: AuthUser? {
         didSet {
@@ -12,33 +12,33 @@ final class MyProfileViewController: UIViewController {
             nicknameLabel.text = user?.username
         }
     }
-
+    
     private var section: Section {
         myProfileSegmentedControl.selectedSegmentIndex == 0 ? .myPosts : .myLikedPosts
     }
-
+    
     private var myPosts: [Post] { PostViewModel.shared.myPosts }
     private var myLikedPosts: [CommunityPost] { PostViewModel.shared.myLikedPosts }
-
+    
     private lazy var screenView = UIView().then {
         view.addSubview($0)
     }
-
+    
     private lazy var countView = UIView().then { _ in
     }
-
+    
     private lazy var profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.circle.fill")
         $0.tintColor = .accent
         $0.layer.borderColor = UIColor.accent.cgColor
     }
-
+    
     private lazy var nicknameLabel = UILabel().then {
         $0.font = UIFont.boldSystemFont(ofSize: 20)
         $0.text = user?.username
         $0.sizeToFit()
     }
-
+    
     private lazy var moreButton = UIButton().then {
         $0.sizeToFit()
         $0.tintColor = .accent
@@ -48,7 +48,7 @@ final class MyProfileViewController: UIViewController {
         $0.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
         view.addSubview($0)
     }
-
+    
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
         $0.setTitle("\(user?.posts ?? 0)\n작성글", for: .normal)
@@ -57,7 +57,7 @@ final class MyProfileViewController: UIViewController {
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
     }
-
+    
     private lazy var followersButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
@@ -67,7 +67,7 @@ final class MyProfileViewController: UIViewController {
         $0.setTitleColor(.black, for: .normal)
         $0.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
     }
-
+    
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
@@ -77,7 +77,7 @@ final class MyProfileViewController: UIViewController {
         $0.setTitleColor(.black, for: .normal)
         $0.addTarget(self, action: #selector(followingButtonTapped), for: .touchUpInside)
     }
-
+    
     private lazy var editBlogButton = CustomLargeButton().then {
         $0.sizeToFit()
         $0.backgroundColor = .accent
@@ -86,12 +86,12 @@ final class MyProfileViewController: UIViewController {
         view.addSubview($0)
         $0.addTarget(self, action: #selector(editBlogButtonTapped), for: .touchUpInside)
     }
-
+    
     private lazy var myProfileSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요한 글"]).then {
         view.addSubview($0)
         $0.addTarget(self, action: #selector(myProfileSegmentedControlSelected(_:)), for: .valueChanged)
     }
-
+    
     private lazy var myProfileTableView = UITableView().then {
         $0.register(MyProfileTableViewCell.self, forCellReuseIdentifier: MyProfileTableViewCell.identifier)
         $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: CommunityTableViewCell.identifier)
@@ -100,32 +100,34 @@ final class MyProfileViewController: UIViewController {
         $0.applyCustomSeparator()
         view.addSubview($0)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
+        
         loadMyPosts { [weak self] in
-            self?.myProfileTableView.reloadData()
-            self?.myProfileTableView.setNeedsLayout()
+            guard let self else { return }
+            myProfileTableView.reloadData()
+            myProfileTableView.setNeedsLayout()
+            updatePlaceholderIfNeeded()
         }
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         user = authViewModel.user
         navigationController?.isNavigationBarHidden = true
     }
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setUpUI()
     }
-
+    
     private func setUpUI() {
         screenView.pin.all(view.pin.safeArea)
         moreButton.pin.top(view.pin.safeArea).right(25).marginTop(5)
-
+        
         screenView.flex.direction(.column).define { flex in
             flex.addItem().direction(.row).paddingHorizontal(20).define { flex in
                 flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2)
@@ -145,46 +147,63 @@ final class MyProfileViewController: UIViewController {
             flex.addItem(myProfileTableView).grow(1)
         }.layout()
     }
-
+    
     @objc private func moreButtonTapped() {
         let vc = SeeMoreBottomSheetViewController()
         vc.delegate = self
         present(vc, animated: true)
     }
-
+    
     @objc private func followersButtonTapped() {
         let vc = FollowListViewController()
         vc.hidesBottomBarWhenPushed = true
         vc.selectedIndex = 0
         navigationController?.pushViewController(vc, animated: true)
     }
-
+    
     @objc private func followingButtonTapped() {
         let vc = FollowListViewController()
         vc.hidesBottomBarWhenPushed = true
         vc.selectedIndex = 1
         navigationController?.pushViewController(vc, animated: true)
     }
-
+    
     @objc private func editBlogButtonTapped() {
         let blogListViewController = BlogListViewController()
         blogListViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(blogListViewController, animated: true)
     }
-
+    
     @objc func myProfileSegmentedControlSelected(_: CustomSegmentedControl) {
         loadMyPosts { [weak self] in
-            self?.myProfileTableView.reloadData()
-            self?.myProfileTableView.setNeedsLayout()
+            guard let self else { return }
+            myProfileTableView.reloadData()
+            myProfileTableView.setNeedsLayout()
+            updatePlaceholderIfNeeded()
         }
     }
-
+    
     private func loadMyPosts(_ completion: @escaping () -> Void) {
         switch section {
         case .myPosts:
             PostViewModel.shared.withMyPosts { _ in completion() }
         case .myLikedPosts:
             PostViewModel.shared.withMyLikedPosts { _ in completion() }
+        }
+    }
+    
+    private func updatePlaceholderIfNeeded() {
+        let selectedIndex = myProfileSegmentedControl.selectedSegmentIndex
+        if selectedIndex == 0 {
+            myProfileTableView.updatePlaceholderIfNeeded(
+                count: myPosts.count,
+                placeholderText: "작성한 글이 없습니다."
+            )
+        } else if selectedIndex == 1 {
+            myProfileTableView.updatePlaceholderIfNeeded(
+                count: myLikedPosts.count,
+                placeholderText: "좋아요한 글이 없습니다."
+            )
         }
     }
 }
@@ -196,7 +215,7 @@ extension MyProfileViewController: UITableViewDataSource {
         case .myLikedPosts: return myLikedPosts.count
         }
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch section {
         case .myPosts:
@@ -220,7 +239,7 @@ extension MyProfileViewController: UITableViewDataSource {
             } else {
                 cell.customCommunityTILView.variant = .follow
             }
-
+            
             cell.customCommunityTILView.followButtonTapped = { [weak cell] in
                 guard let cell else { return }
                 switch cell.customCommunityTILView.variant {
@@ -244,14 +263,14 @@ extension MyProfileViewController: UITableViewDataSource {
                     break
                 }
             }
-
+            
             cell.customCommunityTILView.userProfileTapped = { [weak self] in
                 guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
                 let userProfileViewController = UserProfileViewController()
                 userProfileViewController.user = post.user
                 navigationController?.pushViewController(userProfileViewController, animated: true)
             }
-
+            
             cell.customCommunityTILView.postTapped = { [weak self] in
                 guard let self else { return }
                 let webViewController = WebViewController()
@@ -264,7 +283,7 @@ extension MyProfileViewController: UITableViewDataSource {
                     }
                 }
                 webViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
-
+                
                 webViewController.hidesBottomBarWhenPushed = true
                 navigationController?.pushViewController(webViewController, animated: true)
             }
@@ -272,7 +291,7 @@ extension MyProfileViewController: UITableViewDataSource {
             return cell
         }
     }
-
+    
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
         switch section {
         case .myPosts: return 85
