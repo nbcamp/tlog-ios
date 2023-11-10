@@ -19,6 +19,7 @@ final class CommunityViewController: UIViewController {
 
     private lazy var searchBar = UISearchBar().then {
         $0.delegate = self
+        $0.searchTextField.delegate = self
         view.addSubview($0)
     }
 
@@ -120,6 +121,7 @@ extension CommunityViewController: UITableViewDataSource {
             guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
             let userProfileViewController = UserProfileViewController()
             userProfileViewController.user = post.user
+            userProfileViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(userProfileViewController, animated: true)
         }
 
@@ -172,15 +174,16 @@ extension CommunityViewController: UISearchBarDelegate {
         }
         searchBar.resignFirstResponder()
     }
+}
 
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.isEmpty {
-            communityViewModel.reload()
-            tableView.reloadData()
-            DispatchQueue.main.async {
-                searchBar.resignFirstResponder()
-            }
+extension CommunityViewController: UITextFieldDelegate {
+    func textFieldShouldClear(_: UITextField) -> Bool {
+        communityViewModel.reload()
+        tableView.reloadData()
+        DispatchQueue.main.async { [weak self] in
+            self?.searchBar.resignFirstResponder()
         }
+        return true
     }
 }
 

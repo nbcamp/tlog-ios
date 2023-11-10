@@ -2,14 +2,17 @@ import FSCalendar
 import UIKit
 import XMLCoder
 
-class CalendarViewController: UIViewController {
+class CalendarViewController: UIViewController, UIGestureRecognizerDelegate {
     private var rssViewModel = RssViewModel.shared
     private lazy var rssPostData = rssViewModel.rssPostData
     private lazy var rssPostAllData = rssViewModel.rssPostAllData
+    private lazy var rssPostAllDataOriginal = rssViewModel.rssPostAllData
     private lazy var continueFirstDate = rssViewModel.continueFirstDate
     private lazy var monthDatanum = ""
-
+    private var currentPage: Date?
     let dateFormatter = DateFormatter()
+    var selectDate: Date?
+
     private lazy var calendarFlexView = UIView().then {
         view.addSubview($0)
         $0.backgroundColor = .white
@@ -20,20 +23,20 @@ class CalendarViewController: UIViewController {
         $0.setup(withTitle: "제목", content: "내용\n내용", date: "2023-10-17")
     }
 
-    private var calendarResultContent = UILabel().then {
-        $0.text = "5"
-        $0.textColor = .black
-        $0.font = .boldSystemFont(ofSize: 25)
-        $0.numberOfLines = 1
-        $0.textAlignment = .center
-    }
-
     private let tableView = UITableView().then {
         $0.register(UserTableViewCell.self, forCellReuseIdentifier: "UserCell")
         $0.applyCustomSeparator()
     }
 
     private lazy var calendarView = FSCalendar().then {
+        let swipeRightView = UISwipeGestureRecognizer(target: self, action: #selector(swipeRightAction))
+        let swipeLeftView = UISwipeGestureRecognizer(target: self, action: #selector(swipeLeftAction))
+        swipeRightView.delegate = self
+        swipeLeftView.delegate = self
+        swipeLeftView.direction = .left
+        $0.addGestureRecognizer(swipeRightView)
+        $0.addGestureRecognizer(swipeLeftView)
+
         $0.dataSource = self
         $0.delegate = self
         $0.firstWeekday = 2
@@ -51,7 +54,7 @@ class CalendarViewController: UIViewController {
         $0.appearance.selectionColor = .init(named: "AccentColor")
         $0.appearance.borderSelectionColor = .white
         $0.weekdayHeight = 50
-        $0.scrollEnabled = true
+        $0.scrollEnabled = false
         $0.scrollDirection = .horizontal
         $0.appearance.eventDefaultColor = .init(named: "AccentColor")
         $0.appearance.eventSelectionColor = .systemRed
@@ -71,15 +74,31 @@ class CalendarViewController: UIViewController {
         $0.calendarWeekdayView.weekdayLabels[6].font = .boldSystemFont(ofSize: 20)
     }
 
+    private func swipeCurrentPage(nextBool: Bool) {
+        let cal = Calendar.current
+        var dateComponents = DateComponents()
+        var today = Date()
+        dateComponents.month = nextBool ? -1 : 1
+        currentPage = cal.date(byAdding: dateComponents, to: currentPage ?? today)
+        calendarView.setCurrentPage(currentPage!, animated: false)
+    }
+
+    @objc func swipeRightAction(_ sender: UISwipeGestureRecognizer) {
+        if sender.direction == .right { swipeCurrentPage(nextBool: true) }
+    }
+
+    @objc func swipeLeftAction(_ sender: UISwipeGestureRecognizer) {
+        if sender.direction == .left { swipeCurrentPage(nextBool: false) }
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.isHidden = true
+        navigationController?.navigationBar.isHidden = false
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         calendarFlexView.flex.direction(.column).define {
-            $0.addItem(calendarResultContent).alignItems(.center)
             $0.addItem(calendarView).marginLeft(20).marginRight(20).aspectRatio(1)
             $0.addItem().grow(1).define { flex in
                 flex.view?.addSubview(tableView)
@@ -95,18 +114,50 @@ class CalendarViewController: UIViewController {
         view.backgroundColor = .systemBackground
         tableView.delegate = self
         tableView.dataSource = self
-        fightingMessage()
     }
 }
 
 extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDelegateAppearance {
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         let rssFindKey = rssPostData[rssViewModel.utcTimeConvert(date: date)]
-        if rssFindKey != nil {
-            rssPostAllData = rssFindKey!
-        } else {
-            rssPostAllData = []
+        var selectedDates = calendar.selectedDates
+        dateFormatter.dateFormat = "yyyyMMdd"
+        guard var selectedDate = calendar.selectedDates.first else { return }
+
+        guard rssFindKey != nil else {
+            if selectDate == selectedDate {
+                rssPostAllData = rssPostAllDataOriginal
+                calendar.deselect(selectedDates.removeFirst())
+                print("1")
+                selectDate = nil
+                return
+            } else {
+                selectDate = selectedDate
+                rssPostAllData = []
+                print("2")
+                return
+            }
         }
+        guard !rssPostAllData.isEmpty else {
+            rssPostAllData = rssFindKey!
+            selectDate = selectedDate
+            print("3")
+            return
+        }
+        guard selectDate == selectedDate else {
+            rssPostAllData = rssFindKey!
+            selectDate = selectedDate
+            print("4")
+            return
+        }
+        guard rssPostAllData.count == rssPostAllDataOriginal.count else {
+            rssPostAllData = rssPostAllDataOriginal
+            calendar.deselect(selectedDates.removeFirst())
+            selectDate = nil
+            print("5")
+            return
+        }
+
         tableView.reloadData()
     }
 
@@ -190,6 +241,12 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
         }
     }
 
+    func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
+        dateFormatter.dateFormat = "yyyyMMdd"
+
+        return monthDatanum.prefix(6) == dateFormatter.string(from: date).prefix(6)
+    }
+
     func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
         let dateUtc = rssViewModel.utcTimeConvert(date: date)
         if rssPostData[dateUtc] != nil {
@@ -259,16 +316,16 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension CalendarViewController {
-    func fightingMessage() {
-        if continueFirstDate != nil {
-            let today = rssViewModel.utcTimeConvert(date: Date())
-            if dateDifferenceDay(from: continueFirstDate!, to: today) == 0 {
-                calendarResultContent.text = "오늘처럼 내일도 TIl 화이팅"
-            }
-
-            calendarResultContent.text = "화이팅 \(dateDifferenceDay(from: continueFirstDate!, to: today) + 1)일 연속 TIL 작성중이에요!"
-        } else {
-            calendarResultContent.text = "오늘의 TIL을 기록해 봐요!"
-        }
-    }
+//    func fightingMessage() {
+//        if continueFirstDate != nil {
+//            let today = rssViewModel.utcTimeConvert(date: Date())
+//            if dateDifferenceDay(from: continueFirstDate!, to: today) == 0 {
+//                calendarResultContent.text = "오늘처럼 내일도 TIl 화이팅"
+//            }
+//
+//            calendarResultContent.text = "화이팅 \(dateDifferenceDay(from: continueFirstDate!, to: today) + 1)일 연속 TIL 작성중이에요!"
+//        } else {
+//            calendarResultContent.text = "오늘의 TIL을 기록해 봐요!"
+//        }
+//    }
 }

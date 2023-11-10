@@ -23,7 +23,7 @@ final class BlogViewModel {
     }
 
     func update(blog: Blog, _ input: UpdateBlogInput, _ handler: @escaping APIHandler<Blog>) {
-        let index = input.main == true ? (blogs.firstIndex { $0.main }) : nil
+        let index = input.main == true ? (self.blogs.firstIndex { $0.main }) : nil
         APIService.shared.request(.updateMyBlog(blog.id, input), to: Blog.self) { [unowned self] result in
             if case let .success(model) = result {
                 if model.main == true, let index {
@@ -69,4 +69,5 @@ final class BlogViewModel {
     func hasBlogURL(_ url: String) -> Bool {
         return self.blogs.contains { $0.url == url }
     }
+
 }
