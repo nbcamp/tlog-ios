@@ -151,7 +151,7 @@ final class UserProfileViewController: UIViewController {
                 flex.addItem(doingFollowButton).width(100).height(30).direction(.row)
                 flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).minWidth(100).maxWidth(200)
             }.layout()
-            flex.addItem(userSegmentedControl).height(45)
+            flex.addItem(userSegmentedControl).height(40)
             flex.addItem(userProfileTableView).grow(1)
         }.layout()
     }

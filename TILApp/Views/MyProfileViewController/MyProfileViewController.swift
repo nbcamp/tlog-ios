@@ -141,7 +141,7 @@ final class MyProfileViewController: UIViewController {
                 }
             }
             flex.addItem(editBlogButton).height(40)
-            flex.addItem(myProfileSegmentedControl).height(45).marginTop(10)
+            flex.addItem(myProfileSegmentedControl).height(40).marginTop(10)
             flex.addItem(myProfileTableView).grow(1)
         }.layout()
     }
