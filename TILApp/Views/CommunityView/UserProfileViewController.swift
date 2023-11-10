@@ -132,7 +132,7 @@ final class UserProfileViewController: UIViewController {
     }
 
     private func setUpUI() {
-        screenView.pin.top(view.pin.safeArea).bottom().left().right()
+        screenView.pin.all(view.pin.safeArea)
         moreButton.pin.top(view.pin.safeArea).right(25)
 
         screenView.flex.direction(.column).define { flex in
