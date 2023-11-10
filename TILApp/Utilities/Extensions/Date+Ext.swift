@@ -12,6 +12,18 @@ extension Date {
         self.init(timeIntervalSince1970: TimeInterval(unixtime))
     }
 
+    var startOfDay: Date {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day], from: self)
+        return calendar.date(from: components)!
+    }
+    
+    var startOfMonth:  Date {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month], from: self)
+        return calendar.date(from: components)!
+    }
+
     func format(_ dateFormat: String = "yyyy-MM-dd") -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = .init(identifier: Locale.current.identifier)

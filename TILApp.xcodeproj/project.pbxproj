@@ -31,6 +31,7 @@
 		3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F72AD91DCB00D853D7 /* FlexLayoutYogaKit */; };
 		3373D55F2AF4ECC30057A23B /* MoyaSugar in Frameworks */ = {isa = PBXBuildFile; productRef = 3373D55E2AF4ECC30057A23B /* MoyaSugar */; };
 		3373D5662AFA2EDE0057A23B /* LikeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3373D5652AFA2EDE0057A23B /* LikeButton.swift */; };
+		3373D56B2AFB7F820057A23B /* RssService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3373D56A2AFB7F820057A23B /* RssService.swift */; };
 		33A4E81C2AEBB14800E3F55E /* BlogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E81B2AEBB14800E3F55E /* BlogViewModel.swift */; };
 		33A4E81E2AEBB24A00E3F55E /* Exported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E81D2AEBB24A00E3F55E /* Exported.swift */; };
 		33A4E8242AECB4C700E3F55E /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E8232AECB4C700E3F55E /* UserViewModel.swift */; };
@@ -116,6 +117,7 @@
 		3334E1EA2AD919D700D853D7 /* MyProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileViewController.swift; sourceTree = "<group>"; };
 		3334E1ED2AD919F500D853D7 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		3373D5652AFA2EDE0057A23B /* LikeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeButton.swift; sourceTree = "<group>"; };
+		3373D56A2AFB7F820057A23B /* RssService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RssService.swift; sourceTree = "<group>"; };
 		33A4E81B2AEBB14800E3F55E /* BlogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogViewModel.swift; sourceTree = "<group>"; };
 		33A4E81D2AEBB24A00E3F55E /* Exported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exported.swift; sourceTree = "<group>"; };
 		33A4E8232AECB4C700E3F55E /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 			isa = PBXGroup;
 			children = (
 				3334E1D02AD9129600D853D7 /* APIService.swift */,
+				3373D56A2AFB7F820057A23B /* RssService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -601,6 +604,7 @@
 				3334E1D72AD914EF00D853D7 /* User.swift in Sources */,
 				D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */,
 				D29F54C52AF9FC970064B9B3 /* UITableView+Ext.swift in Sources */,
+				3373D56B2AFB7F820057A23B /* RssService.swift in Sources */,
 				33A4E83C2AF0EB6300E3F55E /* converter.swift in Sources */,
 				D2CDB70F2AEB693C00BFD8C2 /* CustomSegmentedControl.swift in Sources */,
 			);

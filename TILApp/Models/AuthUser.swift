@@ -5,6 +5,7 @@ struct AuthUser: Codable {
     let posts: Int
     let followers: Int
     let followings: Int
+    let hasBlog: Bool
 }
 
 struct SignInInput: Codable {
