@@ -3,7 +3,7 @@ import UIKit
 final class CommunityViewController: UIViewController {
     private let communityViewModel = CommunityViewModel.shared
     private let userViewModel = UserViewModel.shared
-    private var posts: [CommunityPost] { communityViewModel.items }
+    private var posts: [CommunityPost] { communityViewModel.posts }
     private var cancellables: Set<AnyCancellable> = []
     private var isHeartFilled = false
 
@@ -197,7 +197,7 @@ extension CommunityViewController: CommunityViewModelDelegate {
         }
     }
 
-    func errorOccurred(_: CommunityViewModel, error: Error) {
+    func errorOccurred(_: CommunityViewModel, error: String) {
         // TODO: 에러처리
         debugPrint(error)
     }
