@@ -74,7 +74,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
             guard let self else { return }
             if case let .failure(error) = result {
                 // TODO: 에러 처리
-                debugPrint(error)
+                debugPrint(#function, error)
                 return
             }
             navigationController?.popViewController(animated: true)

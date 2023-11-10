@@ -36,6 +36,7 @@ final class APIService {
                 }
                 return handler(.success(response))
             case .failure(let error):
+                debugPrint(#function, error)
                 if let response = error.response, let message = getErrorMessage(of: response) {
                     return handler(.failure(.error(message)))
                 }
@@ -79,6 +80,7 @@ final class APIService {
                 }
                 return handler(.success(model))
             case .failure(let error):
+                debugPrint(#function, error)
                 if let response = error.response, let message = getErrorMessage(of: response) {
                     return handler(.failure(.error(message)))
                 }
@@ -113,7 +115,7 @@ final class APIService {
     }
 
     private func printJsonAsString<Model>(json: Data, to model: Model) {
-        debugPrint("Failed to convert json to data(\(String(describing: model))")
+        debugPrint("[\(#function)] Failed to convert json to data(\(String(describing: model))")
         if let string = String(data: json, encoding: .utf8) {
             debugPrint("Stringify:", string)
         }

@@ -60,7 +60,7 @@ final class SignInViewController: UIViewController {
     
     @objc private func privacyLabelTapped() {
         let webViewController = WebViewController()
-        webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
+        webViewController.url = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
         webViewController.hidesBottomBarWhenPushed = true
         present(webViewController, animated: true)
     }

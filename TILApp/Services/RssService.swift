@@ -46,7 +46,7 @@ final class RssService {
                 }
                 completion(.success(sanitizedPosts))
             } catch {
-                debugPrint(error)
+                debugPrint(#function, error)
                 completion(.failure(.parseFailed))
             }
         }.resume()

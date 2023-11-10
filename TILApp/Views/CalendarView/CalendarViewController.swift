@@ -185,14 +185,14 @@ extension CalendarViewController: FSCalendarDelegate {
         let view = UIView()
         cell.backgroundView = view
         view.backgroundColor = .accent
-        view.transform = .init(translationX: 0, y: -5)
-            .concatenating(.init(scaleX: 1, y: 0.7))
         view.layer.masksToBounds = true
+        view.transform = .init(translationX: 0, y: -6)
+            .concatenating(.init(scaleX: 1, y: 0.5))
         if cal.isDate(date, inSameDayAs: startOfStreakDays) {
-            view.layer.cornerRadius = view.bounds.height / 2.2
+            view.layer.cornerRadius = 4
             view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
         } else if cal.isDateInToday(date) {
-            view.layer.cornerRadius = view.bounds.height / 2.2
+            view.layer.cornerRadius = 4
             view.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
         }
     }
@@ -254,24 +254,19 @@ extension CalendarViewController: UITableViewDataSource {
             content: post.content,
             date: post.publishedAt.format()
         )
+
+        cell.selectionStyle = .none
         return cell
     }
 }
 
 extension CalendarViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let alert = UIAlertController(
-            title: nil,
-            message: posts[indexPath.row].title,
-            preferredStyle: UIAlertController.Style.alert
-        )
-        let deleteAction = UIAlertAction(title: "리로드", style: UIAlertAction.Style.destructive) { _ in
-            tableView.reloadData()
-        }
-        let cancelAction = UIAlertAction(title: "취소", style: UIAlertAction.Style.cancel, handler: nil)
-        alert.addAction(cancelAction)
-        alert.addAction(deleteAction)
-        present(alert, animated: true)
+        let post = posts[indexPath.row]
+        let webViewController = WebViewController()
+        webViewController.url = post.url
+        webViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(webViewController, animated: true)
     }
 
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {

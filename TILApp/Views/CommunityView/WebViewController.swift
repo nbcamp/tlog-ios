@@ -2,9 +2,9 @@ import UIKit
 import WebKit
 
 final class WebViewController: UIViewController {
-    var postURL: String? {
+    var url: String? {
         didSet {
-            if let postURL, let url = URL(string: postURL) {
+            if let url, let url = URL(string: url) {
                 let request = URLRequest(url: url)
                 webView.load(request)
             }

@@ -37,7 +37,7 @@ final class RssViewModel {
         if prepared { completion?(true); return }
         prepared = true
 
-        guard let hasBlog = AuthViewModel.shared.user?.hasBlog, hasBlog else {
+        guard let authUser = AuthViewModel.shared.user, authUser.hasBlog else {
             completion?(false); return
         }
 
@@ -45,29 +45,27 @@ final class RssViewModel {
             loading = true
             do {
                 let blogs = try await api.request(.getMyBlogs, to: [Blog].self)
-                await preparePostsMap(blogs: blogs)
+                await prepareDatasets(blogs: blogs)
                 findStartOfStreakDays()
 
-                let lastPublishedAt = blogs.reduce(Date.distantPast) { result, blog in
-                    guard let lastPublishedAt = blog.lastPublishedAt else { return result }
-                    return result < lastPublishedAt ? lastPublishedAt : result
-                }
-                try await sendPostsToServer(lastPublishedAt: lastPublishedAt)
+                try await sendPostsToServer(lastPublishedAt: authUser.lastPublishedAt)
                 completion?(true)
             } catch {
-                debugPrint(error)
+                debugPrint(#function, error)
                 completion?(false)
             }
             loading = false
         }
     }
 
+    func reload(_ completion: ((Bool) -> Void)? = nil) {}
+
     func isDateInStreakDays(date: Date) -> Bool {
         guard let startOfStreakDays else { return false }
         return startOfStreakDays <= date && date <= .now
     }
 
-    private func preparePostsMap(blogs: [Blog]) async {
+    private func prepareDatasets(blogs: [Blog]) async {
         for blog in blogs {
             do {
                 let posts = try await rss.loadDocument(url: blog.rss)
@@ -83,7 +81,7 @@ final class RssViewModel {
                     ))
                 }
             } catch {
-                debugPrint(error)
+                debugPrint(#function, error)
             }
         }
 
@@ -98,10 +96,10 @@ final class RssViewModel {
         }
     }
 
-    private func sendPostsToServer(lastPublishedAt: Date) async throws {
+    private func sendPostsToServer(lastPublishedAt: Date?) async throws {
         for (blogId, posts) in postsByBlogMap {
             for post in posts {
-                guard post.publishedAt > lastPublishedAt else { return }
+                guard lastPublishedAt == nil || post.publishedAt > lastPublishedAt! else { return }
                 _ = try await api.request(.createMyBlogPost(blogId, .init(
                     title: post.title,
                     content: post.content,

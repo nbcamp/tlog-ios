@@ -144,7 +144,7 @@ final class BlogEditViewController: UIViewController {
             guard let self else { return }
             if case .failure(let error) = result {
                 // TODO: 에러처리
-                debugPrint(error)
+                debugPrint(#function, error)
                 return
             }
             navigationController?.popViewController(animated: true)
