@@ -114,6 +114,7 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = true
+        navigationController?.isToolbarHidden = true
     }
 
     override func viewDidLayoutSubviews() {
