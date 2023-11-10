@@ -48,7 +48,7 @@ final class RssViewModel {
                 await prepareDatasets(blogs: blogs)
                 findStartOfStreakDays()
 
-                try await sendPostsToServer(lastPublishedAt: authUser.lastPublishedAt)
+                await sendPostsToServer(lastPublishedAt: authUser.lastPublishedAt)
                 completion?(true)
             } catch {
                 debugPrint(#function, error)
@@ -96,16 +96,20 @@ final class RssViewModel {
         }
     }
 
-    private func sendPostsToServer(lastPublishedAt: Date?) async throws {
+    private func sendPostsToServer(lastPublishedAt: Date?) async {
         for (blogId, posts) in postsByBlogMap {
             for post in posts {
-                guard lastPublishedAt == nil || post.publishedAt > lastPublishedAt! else { return }
-                _ = try await api.request(.createMyBlogPost(blogId, .init(
-                    title: post.title,
-                    content: post.content,
-                    url: post.url,
-                    publishedAt: post.publishedAt
-                )))
+                do {
+                    guard lastPublishedAt == nil || post.publishedAt > lastPublishedAt! else { return }
+                    _ = try await api.request(.createMyBlogPost(blogId, .init(
+                        title: post.title,
+                        content: post.content,
+                        url: post.url,
+                        publishedAt: post.publishedAt
+                    )))
+                } catch {
+                    debugPrint(#function, error)
+                }
             }
         }
     }
