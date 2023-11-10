@@ -77,11 +77,13 @@ final class UserProfileViewController: UIViewController {
     }
 
     private lazy var userBlogURL = UIButton().then {
-        $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         $0.titleLabel?.textAlignment = .left
         $0.setTitleColor(.systemGray, for: .normal)
         $0.addTarget(self, action: #selector(blogURLTapped), for: .touchUpInside)
+        $0.titleLabel?.lineBreakMode = .byTruncatingTail
+        $0.contentHorizontalAlignment = .left
+        $0.invalidateIntrinsicContentSize()
     }
 
     private lazy var userSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요한 글"]).then {
@@ -130,27 +132,25 @@ final class UserProfileViewController: UIViewController {
     }
 
     private func setUpUI() {
-        screenView.pin.all(view.pin.safeArea)
+        screenView.pin.top(view.pin.safeArea).bottom().left().right()
         moreButton.pin.top(view.pin.safeArea).right(25)
 
         screenView.flex.direction(.column).define { flex in
             flex.addItem().direction(.row).paddingHorizontal(10).define { flex in
-                flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2)
+                flex.addItem(profileImageView).width(100).height(100).cornerRadius(100 / 2)
                 flex.addItem().direction(.column).width(200).define { flex in
                     flex.addItem(nicknameLabel).width(200).height(25).marginLeft(15).marginTop(5)
-                    flex.addItem(countView).direction(.row).width(200).height(75)
-                    countView.flex.direction(.row)
-                        .width(210).define { flex in
-                            flex.addItem(postButton).width(70)
-                            flex.addItem(followersButton).width(70)
-                            flex.addItem(followingButton).width(70)
-                        }
+                    flex.addItem(countView).direction(.row).width(210).height(75).define { flex in
+                        flex.addItem(postButton).width(75)
+                        flex.addItem(followersButton).width(75)
+                        flex.addItem(followingButton).width(75)
+                    }
                 }
-            }.layout()
+            }
             flex.addItem(followButtonView).direction(.row).paddingHorizontal(15).define { flex in
-                flex.addItem(doingFollowButton).width(100).height(30).direction(.row)
-                flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).minWidth(100).maxWidth(200)
-            }.layout()
+                flex.addItem(doingFollowButton).width(100).height(30)
+                flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).grow(1)
+            }
             flex.addItem(userSegmentedControl).height(40)
             flex.addItem(userProfileTableView).grow(1)
         }.layout()
