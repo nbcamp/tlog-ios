@@ -83,7 +83,6 @@ final class UserProfileViewController: UIViewController {
         $0.addTarget(self, action: #selector(blogURLTapped), for: .touchUpInside)
         $0.titleLabel?.lineBreakMode = .byTruncatingTail
         $0.contentHorizontalAlignment = .left
-        $0.invalidateIntrinsicContentSize()
     }
 
     private lazy var userSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요한 글"]).then {
