@@ -293,6 +293,30 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             dismiss(animated: true) { [weak self] in
                 self?.navigationController?.pushViewController(profileEditViewController, animated: true)
             }
+        } else if title == "자주 묻는 질문" {
+            let webViewController = WebViewController()
+            webViewController.postURL = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
+            webViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true)
+        } else if title == "이용 약관" {
+            let webViewController = WebViewController()
+            webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
+            webViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true)
+        } else if title == "개인 정보 처리 방침" {
+            let webViewController = WebViewController()
+            webViewController.postURL = "https:plip.kr/pcc/96e3cd8c-700d-46a1-b007-37443c721874/privacy-policy"
+            webViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true)
+        } else if title == "차단한 사용자 관리" {
+            let blockedUserViewController = BlockedUserViewController()
+            blockedUserViewController.hidesBottomBarWhenPushed = true
+            dismiss(animated: true) { [weak self] in
+                self?.navigationController?.pushViewController(blockedUserViewController, animated: true)
+            }
         } else if title == "로그아웃" {
             let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)
             alertController.addAction(.init(title: "계속", style: .destructive, handler: { _ in
@@ -300,33 +324,6 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             }))
             alertController.addAction(.init(title: "취소", style: .cancel))
             topMostViewController.present(alertController, animated: true)
-        } else if title == "자주 묻는 질문" {
-            let webViewController = WebViewController()
-            webViewController.postURL = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
-            webViewController.hidesBottomBarWhenPushed = true
-            dismiss(animated: true) { [weak self] in
-                self?.navigationController?.pushViewController(webViewController, animated: true)
-            }
-        } else if title == "개인 정보 처리 방침" {
-            let webViewController = WebViewController()
-            webViewController.postURL = "https:plip.kr/pcc/96e3cd8c-700d-46a1-b007-37443c721874/privacy-policy"
-            webViewController.hidesBottomBarWhenPushed = true
-            dismiss(animated: true) { [weak self] in
-                self?.navigationController?.pushViewController(webViewController, animated: true)
-            }
-        } else if title == "이용 약관" {
-            let webViewController = WebViewController()
-            webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
-            webViewController.hidesBottomBarWhenPushed = true
-            dismiss(animated: true) { [weak self] in
-                self?.navigationController?.pushViewController(webViewController, animated: true)
-            }
-        } else if title == "차단한 사용자 관리" {
-            let blockedUserViewController = BlockedUserViewController()
-            blockedUserViewController.hidesBottomBarWhenPushed = true
-            dismiss(animated: true) { [weak self] in
-                self?.navigationController?.pushViewController(blockedUserViewController, animated: true)
-            }
         }
     }
 }
