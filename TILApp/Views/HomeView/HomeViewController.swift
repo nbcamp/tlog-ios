@@ -28,7 +28,7 @@ final class HomeViewController: UIViewController {
         $0.layer.cornerRadius = 8
     }
 
-    private let hiLabel = UILabel().then {
+    private let greetingLabel = UILabel().then {
         $0.text = "\(String(describing: AuthViewModel.shared.user?.username))님, 안녕하세요!"
         $0.textAlignment = .center
         $0.font = UIFont.boldSystemFont(ofSize: 24)
@@ -46,7 +46,7 @@ final class HomeViewController: UIViewController {
         $0.tintColor = .accent
     }
 
-    private let registerBlogButton = CustomLargeButton().then {
+    private lazy var registerBlogButton = CustomLargeButton().then {
         $0.backgroundColor = .accent
         $0.setTitleColor(.white, for: .normal)
         $0.setTitle("블로그 등록하기", for: .normal)
@@ -54,22 +54,15 @@ final class HomeViewController: UIViewController {
         $0.layer.cornerRadius = 8
         $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         $0.setBackgroundImage(UIImage(named: "pressedButtonImage"), for: .highlighted)
+        $0.addTarget(self, action: #selector(registerBlogButtonTapped), for: .touchUpInside)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        registerBlogButton.addTarget(self, action: #selector(registerBlogButtonTapped), for: .touchUpInside)
-
-        let blogRssUrl: [String] = ["https://noobd.tistory.com/rss", "https://skypine.tistory.com/rss"]
-        let tag = ["마작", "일기"]
-        let rssViewModel = RssViewModel.shared
-        blogRssUrl.forEach {
-            rssViewModel.respondData(urlString: $0, tag: tag)
-        }
         configureUI()
         updateCountTILLabel()
-        updateGrowthImage()
+        RssViewModel.shared.prepare()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -77,9 +70,9 @@ final class HomeViewController: UIViewController {
 
         navigationController?.isNavigationBarHidden = true
         if let username = user?.username {
-            hiLabel.text = "\(username)님, 안녕하세요!"
+            greetingLabel.text = "\(username)님, 안녕하세요!"
         } else {
-            hiLabel.text = "등록을 위해선 로그인이 필요해요!"
+            greetingLabel.text = "등록을 위해선 로그인이 필요해요!"
         }
     }
 
@@ -113,15 +106,14 @@ final class HomeViewController: UIViewController {
     private func setUpUIForUnregisteredUser() {
         view.addSubview(registerBlogButton)
         view.addSubview(registerBlogLabel)
-        view.addSubview(hiLabel)
+        view.addSubview(greetingLabel)
 
         registerBlogButton.pin.center()
         registerBlogLabel.pin.above(of: registerBlogButton).hCenter().marginBottom(40)
-        hiLabel.pin.above(of: registerBlogLabel).hCenter()
+        greetingLabel.pin.above(of: registerBlogLabel).hCenter()
     }
 
     @objc private func registerBlogButtonTapped() {
-        // TODO: 블로그 등록 페이지 추가 후 수정하기
         let blogRegisterViewController = BlogRegisterViewController()
         blogRegisterViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(blogRegisterViewController, animated: true)
@@ -129,14 +121,5 @@ final class HomeViewController: UIViewController {
 
     private func updateCountTILLabel() {
         countTILLabel.text = "대단해요!! 연속 \(TILPost.count)일 달성"
-    }
-
-    private func updateGrowthImage() {
-        if TILPost.count >= 1 && TILPost.count <= 50 {
-            let imageName = "\(TILPost.count / 5 + 1)"
-            if let image = UIImage(named: imageName) {
-                growthImage.image = image
-            } else {}
-        } else {}
     }
 }

@@ -29,6 +29,15 @@ final class AuthViewModel {
         }
     }
 
+    func profile(_ handler: @escaping APIHandler<AuthUser>) {
+        api.request(.getMyProfile, to: AuthUser.self) { [unowned self] result in
+            if case let .success(model) = result {
+                user = model
+            }
+            handler(result)
+        }
+    }
+
     func signIn(_ input: SignInInput, _ handler: @escaping APIHandler<SignInOutput>) {
         api.request(.signIn(input), to: SignInOutput.self) { [unowned self] result in
             if case let .success(model) = result {

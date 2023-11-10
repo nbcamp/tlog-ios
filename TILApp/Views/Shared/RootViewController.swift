@@ -27,6 +27,8 @@ final class RootViewController: UITabBarController {
             navigationController.tabBarItem = tabBarItem
             return navigationController
         }, animated: false)
+
+        RssViewModel.shared.prepare()
     }
 
     override func viewDidLayoutSubviews() {

@@ -11,11 +11,6 @@ struct Post: Codable {
     let publishedAt: Date
 }
 
-struct GetPostsQuery: Codable {
-    let userId: Int?
-    let q: String?
-}
-
 struct CreatePostInput: Codable {
     let title: String
     let content: String

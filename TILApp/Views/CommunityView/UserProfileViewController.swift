@@ -198,7 +198,7 @@ final class UserProfileViewController: UIViewController {
     @objc private func blogURLTapped() {
         if let blogURL = userBlogURL.title(for: .normal) {
             let webViewController = WebViewController()
-            webViewController.postURL = blogURL
+            webViewController.url = blogURL
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)
         }
@@ -293,7 +293,7 @@ extension UserProfileViewController: UITableViewDataSource {
             cell.customCommunityTILView.postTapped = { [weak self] in
                 guard let self else { return }
                 let webViewController = WebViewController()
-                webViewController.postURL = post.url
+                webViewController.url = post.url
                 let likeButton = LikeButton(liked: post.liked)
                 likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
                     APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
