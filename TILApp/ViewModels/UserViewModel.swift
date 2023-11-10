@@ -13,21 +13,29 @@ final class UserViewModel {
 
     func follow(user: User, _ handler: @escaping APIHandler<Bool>) {
         api.request(.followUser(user.id)) { [unowned self] result in
-            if case .success = result {
+            switch result {
+            case .success:
                 myFollowings.append(user)
+                handler(.success(true))
+            case let .failure(error):
+                handler(.failure(error))
             }
-            handler(.success(true))
         }
     }
 
     func unfollow(user: User, _ handler: @escaping APIHandler<Bool>) {
-        api.request(.unfollowUser(user.id)) { [unowned self] _ in
-            if let index = myFollowings.firstIndex(where: { $0.id == user.id }) {
-                myFollowings.remove(at: index)
-                handler(.success(true))
-                return
+        api.request(.unfollowUser(user.id)) { [unowned self] result in
+            switch result {
+            case .success:
+                if let index = myFollowings.firstIndex(where: { $0.id == user.id }) {
+                    myFollowings.remove(at: index)
+                    handler(.success(true))
+                } else {
+                    handler(.success(false))
+                }
+            case let .failure(error):
+                handler(.failure(error))
             }
-            handler(.success(false))
         }
     }
 

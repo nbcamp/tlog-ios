@@ -72,9 +72,9 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
             keywords: keywordInputViewModel.keywords
         )) { [weak self] result in
             guard let self else { return }
+            // TODO: 에러 처리
             if case let .failure(error) = result {
-                // TODO: 에러 처리
-                debugPrint(error)
+                NotificationCenter.postError(withError: error)
                 return
             }
             navigationController?.popViewController(animated: true)

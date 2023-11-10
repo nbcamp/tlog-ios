@@ -68,6 +68,7 @@
 		D29659F02AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29659EF2AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift */; };
 		D29659F22AE80313000C28A6 /* EditTagViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29659F12AE80313000C28A6 /* EditTagViewController.swift */; };
 		D29F54C52AF9FC970064B9B3 /* UITableView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29F54C42AF9FC970064B9B3 /* UITableView+Ext.swift */; };
+		D29F54C72AFB2BC80064B9B3 /* NotificationCenter+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29F54C62AFB2BC80064B9B3 /* NotificationCenter+Ext.swift */; };
 		D2A1684A2AE8D4E5006BD2C4 /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A168492AE8D4E5006BD2C4 /* UIView+Ext.swift */; };
 		D2A1684C2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A1684B2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift */; };
 		D2A4D1F92AE5DD4000B510A3 /* FollowListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */; };
@@ -149,6 +150,7 @@
 		D29659EF2AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		D29659F12AE80313000C28A6 /* EditTagViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTagViewController.swift; sourceTree = "<group>"; };
 		D29F54C42AF9FC970064B9B3 /* UITableView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Ext.swift"; sourceTree = "<group>"; };
+		D29F54C62AFB2BC80064B9B3 /* NotificationCenter+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationCenter+Ext.swift"; sourceTree = "<group>"; };
 		D2A168492AE8D4E5006BD2C4 /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
 		D2A1684B2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextTapGestureRecognizer.swift; sourceTree = "<group>"; };
 		D2A4D1F82AE5DD4000B510A3 /* FollowListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowListViewController.swift; sourceTree = "<group>"; };
@@ -307,6 +309,7 @@
 				D29F54C42AF9FC970064B9B3 /* UITableView+Ext.swift */,
 				3334E1D42AD913FE00D853D7 /* Date+Ext.swift */,
 				33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */,
+				D29F54C62AFB2BC80064B9B3 /* NotificationCenter+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -582,6 +585,7 @@
 				D2BEB5072AF8B78700C1BF30 /* BlockedUserViewController.swift in Sources */,
 				D20DC9E62AF2098F001F83D0 /* KeywordInput.swift in Sources */,
 				D20DC9EA2AF3AA9E001F83D0 /* HorizontalTagsCollectionView.swift in Sources */,
+				D29F54C72AFB2BC80064B9B3 /* NotificationCenter+Ext.swift in Sources */,
 				33A4E8302AEF740600E3F55E /* Community.swift in Sources */,
 				33A4E8242AECB4C700E3F55E /* UserViewModel.swift in Sources */,
 				3334E1DE2AD918CB00D853D7 /* HomeViewController.swift in Sources */,

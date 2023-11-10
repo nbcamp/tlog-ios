@@ -48,13 +48,17 @@ final class BlogViewModel {
     }
 
     func delete(blog: Blog, _ handler: @escaping APIHandler<Bool>) {
-        APIService.shared.request(.deleteMyBlog(blog.id)) { [unowned self] _ in
-            if let index = (blogs.firstIndex(where: { $0.id == blog.id })) {
-                self.blogs.remove(at: index)
-                handler(.success(true))
-                return
+        APIService.shared.request(.deleteMyBlog(blog.id)) { [unowned self] result in
+            switch result {
+            case .success:
+                if let index = (blogs.firstIndex(where: { $0.id == blog.id })) {
+                    self.blogs.remove(at: index)
+                    handler(.success(true))
+                    return
+                }
+            case let .failure(error):
+                handler(.failure(error))
             }
-            handler(.success(false))
         }
     }
 

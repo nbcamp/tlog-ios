@@ -27,6 +27,9 @@ final class RootViewController: UITabBarController {
             navigationController.tabBarItem = tabBarItem
             return navigationController
         }, animated: false)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(showErrorAlert),
+                                               name: .init("ShowErrorAlert"), object: nil)
     }
 
     override func viewDidLayoutSubviews() {
@@ -39,5 +42,21 @@ final class RootViewController: UITabBarController {
             width: tabBar.frame.width,
             height: tabBar.frame.height + paddingTop
         )
+    }
+
+    @objc private func showErrorAlert(notification: Notification) {
+        if let userInfo = notification.userInfo, let message = userInfo["message"] as? String {
+            DispatchQueue.main.async {
+                let alertController = UIAlertController(
+                    title: "오류 발생",
+                    message: "\n" + message + "\n",
+                    preferredStyle: .alert
+                )
+                let okAction = UIAlertAction(title: "확인", style: .default)
+                alertController.addAction(okAction)
+
+                self.present(alertController, animated: true)
+            }
+        }
     }
 }

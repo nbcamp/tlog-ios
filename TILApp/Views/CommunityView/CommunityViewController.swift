@@ -95,17 +95,21 @@ extension CommunityViewController: UITableViewDataSource {
             guard let self, let cell else { return }
             switch cell.customCommunityTILView.variant {
             case .follow:
-                userViewModel.follow(user: post.user) { [weak cell] result in
-                    guard case .success(let success) = result, success else {
-                        // TODO: 에러 처리
+                userViewModel.follow(user: post.user) { [weak self] result in
+                    guard let self else { return }
+                    // TODO: 에러 처리
+                    if case let .failure(error) = result {
+                        NotificationCenter.postError(withError: error)
                         return
                     }
                     cell?.customCommunityTILView.variant = .unfollow
                 }
             case .unfollow:
-                userViewModel.unfollow(user: post.user) { [weak cell] result in
-                    guard case .success(let success) = result, success else {
-                        // TODO: 에러 처리
+                userViewModel.unfollow(user: post.user) { [weak self] result in
+                    guard let self else { return }
+                    // TODO: 에러 처리
+                    if case let .failure(error) = result {
+                        NotificationCenter.postError(withError: error)
                         return
                     }
                     cell?.customCommunityTILView.variant = .follow
