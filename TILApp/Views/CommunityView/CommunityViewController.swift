@@ -3,7 +3,7 @@ import UIKit
 final class CommunityViewController: UIViewController {
     private let communityViewModel = CommunityViewModel.shared
     private let userViewModel = UserViewModel.shared
-    private var posts: [CommunityPost] { communityViewModel.items }
+    private var posts: [CommunityPost] { communityViewModel.posts }
     private var cancellables: Set<AnyCancellable> = []
     private var isHeartFilled = false
 
@@ -129,7 +129,7 @@ extension CommunityViewController: UITableViewDataSource {
         cell.customCommunityTILView.postTapped = { [weak self] in
             guard let self else { return }
             let webViewController = WebViewController()
-            webViewController.postURL = post.url
+            webViewController.url = post.url
             let likeButton = LikeButton(liked: post.liked)
             likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
                 APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
@@ -202,8 +202,8 @@ extension CommunityViewController: CommunityViewModelDelegate {
         }
     }
 
-    func errorOccurred(_: CommunityViewModel, error: Error) {
+    func errorOccurred(_: CommunityViewModel, error: String) {
         // TODO: 에러처리
-        debugPrint(error)
+        debugPrint(#function, error)
     }
 }

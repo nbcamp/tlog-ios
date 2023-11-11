@@ -82,11 +82,12 @@ final class UserProfileViewController: UIViewController {
     }
 
     private lazy var userBlogURL = UIButton().then {
-        $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         $0.titleLabel?.textAlignment = .left
         $0.setTitleColor(.systemGray, for: .normal)
         $0.addTarget(self, action: #selector(blogURLTapped), for: .touchUpInside)
+        $0.titleLabel?.lineBreakMode = .byTruncatingTail
+        $0.contentHorizontalAlignment = .left
     }
 
     private lazy var userSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요한 글"]).then {
@@ -171,20 +172,18 @@ final class UserProfileViewController: UIViewController {
                 flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2)
                 flex.addItem().direction(.column).width(200).define { flex in
                     flex.addItem(nicknameLabel).width(200).height(25).marginLeft(15).marginTop(5)
-                    flex.addItem(countView).direction(.row).width(200).height(75)
-                    countView.flex.direction(.row)
-                        .width(210).define { flex in
-                            flex.addItem(postButton).width(70)
-                            flex.addItem(followersButton).width(70)
-                            flex.addItem(followingButton).width(70)
-                        }
+                    flex.addItem(countView).direction(.row).width(210).height(75).define { flex in
+                        flex.addItem(postButton).width(75)
+                        flex.addItem(followersButton).width(75)
+                        flex.addItem(followingButton).width(75)
+                    }
                 }
-            }.layout()
+            }
             flex.addItem(followButtonView).direction(.row).paddingHorizontal(15).define { flex in
-                flex.addItem(doingFollowButton).width(100).height(30).direction(.row)
-                flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).minWidth(100).maxWidth(200)
-            }.layout()
-            flex.addItem(userSegmentedControl).height(45)
+                flex.addItem(doingFollowButton).width(100).height(30)
+                flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).grow(1)
+            }
+            flex.addItem(userSegmentedControl).height(40)
             flex.addItem(userProfileTableView).grow(1)
         }.layout()
     }
@@ -232,7 +231,7 @@ final class UserProfileViewController: UIViewController {
     @objc private func blogURLTapped() {
         if let blogURL = userBlogURL.title(for: .normal) {
             let webViewController = WebViewController()
-            webViewController.postURL = blogURL
+            webViewController.url = blogURL
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)
         }
@@ -342,7 +341,7 @@ extension UserProfileViewController: UITableViewDataSource {
             cell.customCommunityTILView.postTapped = { [weak self] in
                 guard let self else { return }
                 let webViewController = WebViewController()
-                webViewController.postURL = post.url
+                webViewController.url = post.url
                 let likeButton = LikeButton(liked: post.liked)
                 likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
                     APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in

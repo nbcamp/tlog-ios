@@ -141,7 +141,7 @@ final class MyProfileViewController: UIViewController {
                 }
             }
             flex.addItem(editBlogButton).height(40)
-            flex.addItem(myProfileSegmentedControl).height(45).marginTop(10)
+            flex.addItem(myProfileSegmentedControl).height(40).marginTop(10)
             flex.addItem(myProfileTableView).grow(1)
         }.layout()
     }
@@ -256,7 +256,7 @@ extension MyProfileViewController: UITableViewDataSource {
             cell.customCommunityTILView.postTapped = { [weak self] in
                 guard let self else { return }
                 let webViewController = WebViewController()
-                webViewController.postURL = post.url
+                webViewController.url = post.url
                 let likeButton = LikeButton(liked: post.liked)
                 likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
                     APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
@@ -295,19 +295,19 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             }
         } else if title == "자주 묻는 질문" {
             let webViewController = WebViewController()
-            webViewController.postURL = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
+            webViewController.url = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true)
         } else if title == "이용 약관" {
             let webViewController = WebViewController()
-            webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
+            webViewController.url = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true)
         } else if title == "개인 정보 처리 방침" {
             let webViewController = WebViewController()
-            webViewController.postURL = "https:plip.kr/pcc/96e3cd8c-700d-46a1-b007-37443c721874/privacy-policy"
+            webViewController.url = "https:plip.kr/pcc/96e3cd8c-700d-46a1-b007-37443c721874/privacy-policy"
             webViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true)

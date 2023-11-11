@@ -22,3 +22,14 @@ func convertToRssUrl(from blogUrl: String) -> String? {
     }
     return nil
 }
+
+func toDate(string: String, formats: [String]) -> Date? {
+    let formatter = DateFormatter()
+    for format in formats {
+        formatter.dateFormat = format
+        if let date = formatter.date(from: string) {
+            return date
+        }
+    }
+    return nil
+}
