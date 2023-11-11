@@ -77,9 +77,9 @@ final class FollowListViewController: UIViewController {
 
     private func loadFollowList() async -> APIResult<[User]> {
         return await withCheckedContinuation { continuation in
-            if selectedIndex == 0 {
+            if segmentedControl.selectedSegmentIndex == 0 {
                 userViewModel.withMyFollowers { continuation.resume(returning: $0) }
-            } else if selectedIndex == 1 {
+            } else if segmentedControl.selectedSegmentIndex == 1 {
                 userViewModel.withMyFollowings { continuation.resume(returning: $0) }
             }
         }
@@ -105,8 +105,6 @@ extension FollowListViewController: UITableViewDataSource {
             ? userViewModel.myFollowers[indexPath.row]
             : userViewModel.myFollowings[indexPath.row]
 
-        let isFollowing = userViewModel.isMyFollowing(user: user)
-        
         var content = "작성한 TIL이 없습니다."
         if let lastPublishedAt = user.lastPublishedAt {
             content = "마지막 TIL 작성일 | " + lastPublishedAt.format()
@@ -116,7 +114,7 @@ extension FollowListViewController: UITableViewDataSource {
             image: UIImage(),
             nicknameText: user.username,
             contentText: content,
-            variant: isFollowing ? .unfollow : .follow
+            variant: user.isMyFollowing ? .unfollow : .follow
         )
 
         cell.customUserView.followButtonTapped = { [weak self, weak cell] in
@@ -128,7 +126,7 @@ extension FollowListViewController: UITableViewDataSource {
             case .follow:
                 userViewModel.follow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case .success(let updatedUser) = result else {
+                    guard case .success = result else {
                         // TODO: 에러 처리
                         return
                     }
@@ -138,7 +136,7 @@ extension FollowListViewController: UITableViewDataSource {
             case .unfollow:
                 userViewModel.unfollow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case .success(let updatedUser) = result else {
+                    guard case .success = result else {
                         // TODO: 에러 처리
                         return
                     }
