@@ -128,7 +128,7 @@ extension FollowListViewController: UITableViewDataSource {
             case .follow:
                 userViewModel.follow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case .success(let success) = result, success else {
+                    guard case .success(let updatedUser) = result else {
                         // TODO: 에러 처리
                         return
                     }
@@ -138,7 +138,7 @@ extension FollowListViewController: UITableViewDataSource {
             case .unfollow:
                 userViewModel.unfollow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case .success(let success) = result, success else {
+                    guard case .success(let updatedUser) = result else {
                         // TODO: 에러 처리
                         return
                     }

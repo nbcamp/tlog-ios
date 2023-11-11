@@ -82,10 +82,11 @@ extension CommunityViewController: UITableViewDataSource {
         }
 
         let post = posts[indexPath.row]
+
         cell.customCommunityTILView.setup(post: post)
         if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
             cell.customCommunityTILView.variant = .hidden
-        } else if userViewModel.isMyFollowing(user: post.user) {
+        } else if post.user.isMyFollowing {
             cell.customCommunityTILView.variant = .unfollow
         } else {
             cell.customCommunityTILView.variant = .follow
@@ -95,20 +96,20 @@ extension CommunityViewController: UITableViewDataSource {
             guard let self, let cell else { return }
             switch cell.customCommunityTILView.variant {
             case .follow:
-                userViewModel.follow(user: post.user) { [weak cell] result in
-                    guard case .success(let success) = result, success else {
+                userViewModel.follow(user: post.user) { result in
+                    guard case let .success(updatedUser) = result else {
                         // TODO: 에러 처리
                         return
                     }
-                    cell?.customCommunityTILView.variant = .unfollow
+                    CommunityViewModel.shared.updatePosts(forUser: updatedUser)
                 }
             case .unfollow:
-                userViewModel.unfollow(user: post.user) { [weak cell] result in
-                    guard case .success(let success) = result, success else {
+                userViewModel.unfollow(user: post.user) { result in
+                    guard case let .success(updatedUser) = result else {
                         // TODO: 에러 처리
                         return
                     }
-                    cell?.customCommunityTILView.variant = .follow
+                    CommunityViewModel.shared.updatePosts(forUser: updatedUser)
                 }
             default:
                 break
@@ -188,6 +189,10 @@ extension CommunityViewController: UITextFieldDelegate {
 }
 
 extension CommunityViewController: CommunityViewModelDelegate {
+    func itemsUpdated(_: CommunityViewModel, updatedIndexPaths: [IndexPath]) {
+        tableView.reloadRows(at: updatedIndexPaths, with: .none)
+    }
+
     func itemsUpdated(_: CommunityViewModel, items _: [CommunityPost], range: Range<Int>) {
         if range.lowerBound > 0 {
             let indexPaths = range.map { IndexPath(row: $0, section: 0) }

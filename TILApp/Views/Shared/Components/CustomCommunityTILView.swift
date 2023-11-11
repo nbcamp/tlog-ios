@@ -14,6 +14,11 @@ class CustomCommunityTILView: UIView {
         set { userView.followButtonTapped = newValue }
     }
 
+    var contentText: String {
+        get { userView.contentText }
+        set { userView.contentText = newValue }
+    }
+
     private lazy var userView = CustomUserView().then {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(_userProfileTapped))
         $0.isUserInteractionEnabled = true
@@ -95,5 +100,14 @@ class CustomCommunityTILView: UIView {
         dateLabel.text = post.publishedAt.relativeFormat()
         dateLabel.sizeToFit()
         heartButton.isSelected = post.liked
+    }
+    
+    func updateUser(user: User, variant: CustomFollowButton.Variant) {
+        userView.setup(
+            image: UIImage(),
+            nicknameText: user.username,
+            contentText: "팔로워 \(user.followers)",
+            variant: variant
+        )
     }
 }

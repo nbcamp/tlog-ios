@@ -226,7 +226,7 @@ extension MyProfileViewController: UITableViewDataSource {
                 switch cell.customCommunityTILView.variant {
                 case .follow:
                     UserViewModel.shared.follow(user: post.user) { [weak cell] result in
-                        guard case .success(let success) = result, success else {
+                        guard case .success(let success) = result else {
                             // TODO: 에러 처리
                             return
                         }
@@ -234,7 +234,7 @@ extension MyProfileViewController: UITableViewDataSource {
                     }
                 case .unfollow:
                     UserViewModel.shared.unfollow(user: post.user) { [weak cell] result in
-                        guard case .success(let success) = result, success else {
+                        guard case .success(let success) = result else {
                             // TODO: 에러 처리
                             return
                         }

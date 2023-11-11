@@ -8,6 +8,8 @@ struct User: Codable {
     let followers: Int
     let followings: Int
     let lastPublishedAt: Date?
+    let isMyFollower: Bool
+    let isMyFollowing: Bool
 }
 
 struct UpdateUserInput: Codable {

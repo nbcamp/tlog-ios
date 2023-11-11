@@ -76,11 +76,8 @@ final class UserProfileViewController: UIViewController {
         $0.backgroundColor = .accent
 
         if let user = self.user {
-            if UserViewModel.shared.isMyFollowing(user: user) {
-                $0.variant = .unfollow
-            } else {
-                $0.variant = .follow
-            }
+            $0.variant = user.isMyFollowing ? .unfollow : .follow
+            print(user.isMyFollowing)
         }
     }
 
@@ -131,7 +128,7 @@ final class UserProfileViewController: UIViewController {
             case .follow:
                 UserViewModel.shared.follow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case let .success(success) = result, success else {
+                    guard case let .success(success) = result else {
                         // TODO: 에러 처리
                         return
                     }
@@ -141,7 +138,7 @@ final class UserProfileViewController: UIViewController {
             case .unfollow:
                 UserViewModel.shared.unfollow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case let .success(success) = result, success else {
+                    guard case let .success(success) = result else {
                         // TODO: 에러 처리
                         return
                     }
@@ -265,7 +262,7 @@ final class UserProfileViewController: UIViewController {
             }
         }
     }
-    
+
     func updateUserFollowers(user: User) {
         UserViewModel.shared.withProfile(user: user) { [weak self] result in
             guard let self else { return }
@@ -281,7 +278,10 @@ final class UserProfileViewController: UIViewController {
 
 extension UserProfileViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        posts.count
+        switch section {
+        case .posts: return posts.count
+        case .likedPosts: return likedPosts.count
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -313,7 +313,7 @@ extension UserProfileViewController: UITableViewDataSource {
                 switch cell.customCommunityTILView.variant {
                 case .follow:
                     UserViewModel.shared.follow(user: post.user) { [weak cell] result in
-                        guard case let .success(success) = result, success else {
+                        guard case let .success(success) = result else {
                             // TODO: 에러 처리
                             return
                         }
@@ -321,7 +321,7 @@ extension UserProfileViewController: UITableViewDataSource {
                     }
                 case .unfollow:
                     UserViewModel.shared.unfollow(user: post.user) { [weak cell] result in
-                        guard case let .success(success) = result, success else {
+                        guard case let .success(success) = result else {
                             // TODO: 에러 처리
                             return
                         }
