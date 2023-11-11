@@ -137,13 +137,13 @@ final class CommunityViewModel {
     func updatePosts(forUser updatedUser: User) {
         var updatedIndexPaths: [IndexPath] = []
 
-        for (index, post) in items.enumerated() where post.user.id == updatedUser.id {
+        for (index, post) in posts.enumerated() where post.user.id == updatedUser.id {
             let updatedPost = CommunityPost(
                 id: post.id, title: post.title, content: post.content,
                 url: post.url, tags: post.tags, user: updatedUser,
                 liked: post.liked, publishedAt: post.publishedAt
             )
-            items[index] = updatedPost
+            posts[index] = updatedPost
             updatedIndexPaths.append(IndexPath(row: index, section: 0))
         }
 
