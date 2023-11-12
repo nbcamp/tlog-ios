@@ -149,7 +149,7 @@ final class UserProfileViewController: UIViewController {
         moreButton.pin.top(view.pin.safeArea).right(25)
 
         screenView.flex.direction(.column).define { flex in
-            flex.addItem().direction(.row).paddingHorizontal(10).define { flex in
+            flex.addItem().direction(.row).padding(10).define { flex in
                 flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2)
                 flex.addItem().direction(.column).width(200).define { flex in
                     flex.addItem(nicknameLabel).width(200).height(25).marginLeft(15).marginTop(5)
