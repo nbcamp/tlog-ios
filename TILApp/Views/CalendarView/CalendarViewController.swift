@@ -110,6 +110,11 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
                 loadingView.removeFromSuperview()
                 tableView.reloadData()
             }.store(in: &cancellable)
+
+        rootView.flex.direction(.column).define {
+            $0.addItem(calendarView).marginLeft(20).marginRight(20).aspectRatio(1)
+            $0.addItem(tableView).grow(1)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -126,10 +131,7 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         rootView.pin.all(view.pin.safeArea)
-        rootView.flex.direction(.column).define {
-            $0.addItem(calendarView).marginLeft(20).marginRight(20).aspectRatio(1)
-            $0.addItem(tableView).grow(1)
-        }.layout()
+        rootView.flex.layout()
         if rssViewModel.loading {
             view.addSubview(loadingView)
             loadingView.pin.all(view.pin.safeArea)

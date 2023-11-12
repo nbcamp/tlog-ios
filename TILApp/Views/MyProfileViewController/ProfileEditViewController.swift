@@ -66,18 +66,7 @@ final class ProfileEditViewController: UIViewController {
             target: self,
             action: #selector(completeButtonTapped)
         )
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setUpUI()
-    }
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.endEditing(true)
-    }
-
-    private func setUpUI() {
+        
         componentView.flex.direction(.column).marginTop(40).define { flex in
             flex.addItem().direction(.row).justifyContent(.center).define { flex in
                 flex.addItem(editProfileImageView).width(100).height(100)
@@ -86,9 +75,17 @@ final class ProfileEditViewController: UIViewController {
             }
             flex.addItem(nicknameTextFieldView).marginTop(10)
         }
-        componentView.pin.top(view.pin.safeArea).bottom(50%).left(view.pin.safeArea).right(view.pin.safeArea)
-        componentView.flex.layout()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         memberWithdrawalButton.pin.bottom(view.pin.safeArea).hCenter()
+        componentView.pin.top(view.pin.safeArea).bottom(50%).horizontally(view.pin.safeArea)
+        componentView.flex.layout()
+    }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
     }
 
     @objc private func profileTapped() {

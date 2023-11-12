@@ -44,6 +44,7 @@ final class FollowListViewController: UIViewController {
     }
 
     override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         segmentedControl.pin.top(view.pin.safeArea).horizontally(view.pin.safeArea)
         tableView.pin.top(to: segmentedControl.edge.bottom).horizontally().bottom()
     }

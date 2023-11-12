@@ -42,6 +42,7 @@ final class UserProfileViewController: UIViewController {
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
         $0.imageEdgeInsets = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 25)
+        $0.showsMenuAsPrimaryAction = true
         $0.menu = makeMenuItems()
         view.addSubview($0)
     }
@@ -119,29 +120,7 @@ final class UserProfileViewController: UIViewController {
             self?.userProfileTableView.reloadData()
             self?.userProfileTableView.layoutIfNeeded()
         }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        WKWebViewWarmer.shared.prepare(3)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        WKWebViewWarmer.shared.clear()
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setUpUI()
-        moreButton.showsMenuAsPrimaryAction = true
-    }
-
-    private func setUpUI() {
-        screenView.pin.all(view.pin.safeArea)
-        moreButton.pin.top(view.pin.safeArea).right(25)
-
+        
         screenView.flex.direction(.column).define { flex in
             flex.addItem().direction(.row).padding(10).define { flex in
                 flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2)
@@ -160,7 +139,25 @@ final class UserProfileViewController: UIViewController {
             }
             flex.addItem(userSegmentedControl).height(40)
             flex.addItem(userProfileTableView).grow(1)
-        }.layout()
+        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        WKWebViewWarmer.shared.prepare(3)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        WKWebViewWarmer.shared.clear()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        screenView.pin.all(view.pin.safeArea)
+        moreButton.pin.top(view.pin.safeArea).right(25)
+        screenView.flex.layout()
     }
 
     private func makeMenuItems() -> UIMenu {
