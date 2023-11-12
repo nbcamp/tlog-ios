@@ -48,6 +48,7 @@
 		33DC8E0A2ADFDAFF00580FA0 /* TestNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */; };
 		33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */; };
 		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
+		33E1D1DF2B0133D0007DEEE8 /* WebViewWarmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */; };
 		9B859B2B2AE26C2600025E8B /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */; };
 		9BB3AD6F2AEEC99F004A25DB /* MyProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB3AD6E2AEEC99F004A25DB /* MyProfileTableViewCell.swift */; };
 		9BE049B92AEB968E00A47CFC /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049B82AEB968E00A47CFC /* WebViewController.swift */; };
@@ -131,6 +132,7 @@
 		33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkViewController.swift; sourceTree = "<group>"; };
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
+		33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewWarmer.swift; sourceTree = "<group>"; };
 		9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditViewController.swift; sourceTree = "<group>"; };
 		9BB3AD6E2AEEC99F004A25DB /* MyProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileTableViewCell.swift; sourceTree = "<group>"; };
 		9BE049B82AEB968E00A47CFC /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
@@ -285,6 +287,7 @@
 			children = (
 				3334E1C52AD9112B00D853D7 /* Extensions */,
 				D2A1684B2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift */,
+				33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */,
 				33A4E83B2AF0EB6300E3F55E /* converter.swift */,
 			);
 			path = Utilities;
@@ -589,6 +592,7 @@
 				33A4E8242AECB4C700E3F55E /* UserViewModel.swift in Sources */,
 				3334E1DE2AD918CB00D853D7 /* HomeViewController.swift in Sources */,
 				9BB3AD6F2AEEC99F004A25DB /* MyProfileTableViewCell.swift in Sources */,
+				33E1D1DF2B0133D0007DEEE8 /* WebViewWarmer.swift in Sources */,
 				AB75EDEA2AF0E90300BC1BC9 /* Rss.swift in Sources */,
 				33A4E8322AEFCA7100E3F55E /* LoadingViewController.swift in Sources */,
 				D2CDB70B2AEB68DB00BFD8C2 /* CustomCommunityTILView.swift in Sources */,

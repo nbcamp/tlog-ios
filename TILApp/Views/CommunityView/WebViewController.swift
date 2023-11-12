@@ -4,6 +4,7 @@ import WebKit
 final class WebViewController: UIViewController {
     var url: String? {
         didSet {
+            loadingView.isHidden = false
             if let url, let url = URL(string: url) {
                 let request = URLRequest(url: url)
                 webView.load(request)
@@ -11,12 +12,15 @@ final class WebViewController: UIViewController {
         }
     }
 
-    // TODO: false -> 포스트의 하트버튼의 bool 로
-    private var isHeartFilled = false
-
-    private lazy var webView = WKWebView().then {
+    private lazy var webView = WKWebViewWarmer.shared.dequeue().then {
         $0.navigationDelegate = self
         $0.allowsBackForwardNavigationGestures = true
+        view.addSubview($0)
+    }
+
+    private lazy var loadingView = UIActivityIndicatorView().then {
+        $0.startAnimating()
+        $0.transform = .init(scaleX: 1.5, y: 1.5)
         view.addSubview($0)
     }
 
@@ -53,27 +57,27 @@ final class WebViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = false
-        addBottomToolBar()
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.setToolbarHidden(false, animated: true)
+
+        let flexibleSpaceButtonItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        toolbarItems = [backButton, flexibleSpaceButtonItem, reloadButton, flexibleSpaceButtonItem, forwardButton]
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setToolbarHidden(true, animated: true)
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        setUpUI()
+        webView.pin.all(view.pin.safeArea)
+        loadingView.pin.all(view.pin.safeArea)
+        view.bringSubviewToFront(loadingView)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
-    }
-
-    private func setUpUI() {
-        webView.pin.all(view.pin.safeArea)
-    }
-
-    private func addBottomToolBar() {
-        let flexibleSpaceButtonItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        toolbarItems = [backButton, flexibleSpaceButtonItem, reloadButton, flexibleSpaceButtonItem, forwardButton]
-        navigationController?.isToolbarHidden = false
     }
 
     @objc private func backButtonTapped() {
@@ -92,7 +96,7 @@ final class WebViewController: UIViewController {
 extension WebViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
         backButton.isEnabled = webView.canGoBack
-
         forwardButton.isEnabled = webView.canGoForward
+        loadingView.isHidden = true
     }
 }
