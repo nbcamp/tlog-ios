@@ -4,9 +4,11 @@ final class UserProfileViewController: UIViewController {
     var user: User? {
         didSet {
             nicknameLabel.text = user?.username
-            if let avatarUrl = user?.avatarUrl,
-               let url = URL(string: avatarUrl)
-            { profileImageView.load(url: url) }
+            profileImageView.load(
+                url: user?.avatarUrl,
+                loading: UIColor.systemGray5.image(.init(width: 100, height: 100)),
+                fallback: .init(systemName: "person.circle.fill")
+            )
         }
     }
 

@@ -67,11 +67,11 @@ class CustomUserView: UIView {
     }
 
     func setup(username: String, avatarUrl: String? = nil, content: String, variant: CustomFollowButton.Variant) {
-        if let avatarUrl, let url = URL(string: avatarUrl) {
-            imageView.load(url: url)
-        } else {
-            image = UIImage(systemName: "person.circle.fill")
-        }
+        imageView.load(
+            url: avatarUrl,
+            loading: UIColor.systemGray5.image(.init(width: 100, height: 100)),
+            fallback: .init(systemName: "person.circle.fill")
+        )
         nicknameText = username
         contentText = content
         self.variant = variant

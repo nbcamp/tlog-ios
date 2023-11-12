@@ -1,13 +1,17 @@
 import UIKit
 
 extension UIImageView {
-    func load(url: URL) {
+    func load(
+        url: String?,
+        loading: UIImage? = nil,
+        fallback: UIImage? = nil
+    ) {
+        image = loading
         DispatchQueue.global().async { [weak self] in
-            guard let data = try? Data(contentsOf: url),
-                  let image = UIImage(data: data)
-            else { debugPrint(#function, "이미지 불러오기 실패"); return }
-            DispatchQueue.main.async {
-                self?.image = image
+            guard let self, let url, let url = URL(string: url) else { return }
+            let image = try? UIImage(data: Data(contentsOf: url))
+            DispatchQueue.main.async { [weak self] in
+                self?.image = if let image { image } else { fallback }
             }
         }
     }

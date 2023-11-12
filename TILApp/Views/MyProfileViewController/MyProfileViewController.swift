@@ -9,9 +9,11 @@ final class MyProfileViewController: UIViewController {
     private var user: AuthUser? {
         didSet {
             nicknameLabel.text = user?.username
-            if let avatarUrl = user?.avatarUrl, let url = URL(string: avatarUrl) {
-                profileImageView.load(url: url)
-            }
+            profileImageView.load(
+                url: user?.avatarUrl,
+                loading: UIColor.systemGray5.image(.init(width: 100, height: 100)),
+                fallback: .init(systemName: "person.circle.fill")
+            )
         }
     }
 
@@ -141,10 +143,10 @@ final class MyProfileViewController: UIViewController {
                 flex.addItem().direction(.column).define { flex in
                     flex.addItem(nicknameLabel).marginLeft(15).marginTop(10)
                     flex.addItem(countView).direction(.row).width(210).height(75).define { flex in
-                            flex.addItem(postButton).width(70)
-                            flex.addItem(followersButton).width(70)
-                            flex.addItem(followingButton).width(70)
-                        }.layout()
+                        flex.addItem(postButton).width(70)
+                        flex.addItem(followersButton).width(70)
+                        flex.addItem(followingButton).width(70)
+                    }.layout()
                 }
             }
             flex.addItem(editBlogButton).height(40)

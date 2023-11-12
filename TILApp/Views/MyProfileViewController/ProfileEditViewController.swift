@@ -150,7 +150,7 @@ extension ProfileEditViewController: UIImagePickerControllerDelegate, UINavigati
             switch file {
             case .success(let file):
                 avatarUrl = file.url
-                editProfileImageView.load(url: URL(string: file.url)!)
+                editProfileImageView.load(url: file.url)
             case .failure(let error):
                 // TODO: 에러 처리
                 debugPrint(#function, error)
