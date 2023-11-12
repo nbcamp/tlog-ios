@@ -113,9 +113,9 @@ extension FollowListViewController: UITableViewDataSource {
         }
 
         cell.customUserView.setup(
-            image: UIImage(),
-            nicknameText: user.username,
-            contentText: content,
+            username: user.username,
+            avatarUrl: user.avatarUrl,
+            content: content,
             variant: isFollowing ? .unfollow : .follow
         )
 

@@ -8,8 +8,10 @@ final class MyProfileViewController: UIViewController {
     private let authViewModel = AuthViewModel.shared
     private var user: AuthUser? {
         didSet {
-            // TODO: 아바타 이미지 추가
             nicknameLabel.text = user?.username
+            if let avatarUrl = user?.avatarUrl, let url = URL(string: avatarUrl) {
+                profileImageView.load(url: url)
+            }
         }
     }
 
@@ -31,6 +33,7 @@ final class MyProfileViewController: UIViewController {
         $0.image = UIImage(systemName: "person.circle.fill")
         $0.tintColor = .accent
         $0.layer.borderColor = UIColor.accent.cgColor
+        $0.clipsToBounds = true
     }
 
     private lazy var nicknameLabel = UILabel().then {
@@ -296,6 +299,7 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             let profileEditViewController = ProfileEditViewController()
             profileEditViewController.hidesBottomBarWhenPushed = true
             profileEditViewController.username = user?.username
+            profileEditViewController.avatarImage = profileImageView.image
             dismiss(animated: true) { [weak self] in
                 self?.navigationController?.pushViewController(profileEditViewController, animated: true)
             }

@@ -1,26 +1,36 @@
 import UIKit
 
 final class ProfileEditViewController: UIViewController {
-    var username: String?
-    var userImage: String?
+    var username: String? {
+        get { nicknameTextFieldView.mainText }
+        set { nicknameTextFieldView.mainText = newValue ?? "" }
+    }
+
+    var avatarImage: UIImage? {
+        get { editProfileImageView.image }
+        set { editProfileImageView.image = newValue }
+    }
     
+    private var avatarUrl: String?
+
     private lazy var componentView = UIView().then {
         view.addSubview($0)
     }
 
     private lazy var editProfileImageView = UIImageView().then {
-        // TODO: 이미지 구현후 수정
         $0.image = UIImage(systemName: "person.circle.fill")
         $0.tintColor = .accent
         $0.layer.borderColor = UIColor.accent.cgColor
         $0.layer.cornerRadius = 50
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
+        $0.isUserInteractionEnabled = true
+        $0.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileTapped)))
     }
 
     private lazy var editProfileButton = UIButton().then {
         $0.setImage(UIImage(systemName: "camera.circle"), for: .normal)
-        $0.addTarget(self, action: #selector(editProfileButtonTapped), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(profileTapped), for: .touchUpInside)
         $0.backgroundColor = .white
     }
 
@@ -35,7 +45,6 @@ final class ProfileEditViewController: UIViewController {
 
     private lazy var nicknameTextFieldView = CustomTextFieldViewWithValidation().then {
         $0.titleText = "유저 닉네임"
-        $0.mainText = username ?? ""
         $0.placeholder = "닉네임을 입력하세요"
         $0.validationText = ""
     }
@@ -53,10 +62,12 @@ final class ProfileEditViewController: UIViewController {
         hideKeyboardWhenTappedAround()
 
         navigationItem.title = "프로필 수정"
-        let doneBarButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonTapped))
-        navigationItem.rightBarButtonItem = doneBarButton
-        editProfileImageView.isUserInteractionEnabled = true
-        editProfileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped(_:))))
+        navigationItem.rightBarButtonItem = .init(
+            title: "완료",
+            style: .plain,
+            target: self,
+            action: #selector(completeButtonTapped)
+        )
     }
 
     override func viewDidLayoutSubviews() {
@@ -82,26 +93,16 @@ final class ProfileEditViewController: UIViewController {
         memberWithdrawalButton.pin.bottom(view.pin.safeArea).hCenter()
     }
 
-    // TODO: 이미지 업데이트 구현 후 주석 풀기
-    @objc private func editProfileButtonTapped() {
-//        let imagePicker = UIImagePickerController()
-//        imagePicker.delegate = self
-//        imagePicker.allowsEditing = true
-//        present(imagePicker, animated: true, completion: nil)
-    }
-
-    @objc private func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
-//        let imagePicker = UIImagePickerController()
-//        imagePicker.delegate = self
-//        imagePicker.allowsEditing = true
-//        present(imagePicker, animated: true, completion: nil)
+    @objc private func profileTapped() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = true
+        present(imagePicker, animated: true, completion: nil)
     }
 
     @objc private func completeButtonTapped() {
         let newNickname = nicknameTextFieldView.mainText
-        let newAvatar = editProfileImageView.image
-        // TODO: avatarURL 변경
-        AuthViewModel.shared.update(.init(username: newNickname, avatarUrl: nil)) { [weak self] result in
+        AuthViewModel.shared.update(.init(username: newNickname, avatarUrl: avatarUrl)) { [weak self] result in
             guard let self else { return }
             if case let .failure(error) = result {
                 // TODO: 에러처리
@@ -138,17 +139,27 @@ final class ProfileEditViewController: UIViewController {
     }
 }
 
-// TODO: 이미구현후 주석 풀기
-// extension ProfileEditViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-//        if let editedImage = info[.editedImage] as? UIImage {
-//            editProfileImageView.image = editedImage
-//            print("선택한 이미지: \(editedImage)")
-//        }
-//        picker.dismiss(animated: true, completion: nil)
-//    }
-//
-//    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-//        picker.dismiss(animated: true, completion: nil)
-//    }
-// }
+extension ProfileEditViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
+        guard let image = info[.editedImage] as? UIImage else { return }
+        APIService.shared.request(.uploadImage(image), to: File.self) { [weak self] file in
+            guard let self else { return }
+            switch file {
+            case .success(let file):
+                avatarUrl = file.url
+                editProfileImageView.load(url: URL(string: file.url)!)
+            case .failure(let error):
+                // TODO: 에러 처리
+                debugPrint(#function, error)
+            }
+            picker.dismiss(animated: true, completion: nil)
+        }
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+}

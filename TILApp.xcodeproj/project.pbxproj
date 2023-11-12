@@ -49,6 +49,8 @@
 		33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */; };
 		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
 		33E1D1DF2B0133D0007DEEE8 /* WebViewWarmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */; };
+		33E1D1D42B00F916007DEEE8 /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D32B00F916007DEEE8 /* UIImage+Ext.swift */; };
+		33E1D1D62B00FF58007DEEE8 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D52B00FF58007DEEE8 /* File.swift */; };
 		9B859B2B2AE26C2600025E8B /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */; };
 		9BB3AD6F2AEEC99F004A25DB /* MyProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB3AD6E2AEEC99F004A25DB /* MyProfileTableViewCell.swift */; };
 		9BE049B92AEB968E00A47CFC /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049B82AEB968E00A47CFC /* WebViewController.swift */; };
@@ -133,6 +135,8 @@
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
 		33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewWarmer.swift; sourceTree = "<group>"; };
+		33E1D1D32B00F916007DEEE8 /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
+		33E1D1D52B00FF58007DEEE8 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditViewController.swift; sourceTree = "<group>"; };
 		9BB3AD6E2AEEC99F004A25DB /* MyProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileTableViewCell.swift; sourceTree = "<group>"; };
 		9BE049B82AEB968E00A47CFC /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
@@ -269,6 +273,7 @@
 				33A4E82F2AEF740600E3F55E /* Community.swift */,
 				D20DC9E52AF2098F001F83D0 /* KeywordInput.swift */,
 				AB75EDE92AF0E90300BC1BC9 /* Rss.swift */,
+				33E1D1D52B00FF58007DEEE8 /* File.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -311,6 +316,7 @@
 				3334E1C62AD9113900D853D7 /* UIViewController+Ext.swift */,
 				D2A168492AE8D4E5006BD2C4 /* UIView+Ext.swift */,
 				D29F54C42AF9FC970064B9B3 /* UITableView+Ext.swift */,
+				33E1D1D32B00F916007DEEE8 /* UIImage+Ext.swift */,
 				3334E1D42AD913FE00D853D7 /* Date+Ext.swift */,
 				33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */,
 			);
@@ -536,6 +542,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33E1D1D42B00F916007DEEE8 /* UIImage+Ext.swift in Sources */,
 				3334E1EB2AD919D700D853D7 /* MyProfileViewController.swift in Sources */,
 				3334E1AC2AD6BC1800D853D7 /* RootViewController.swift in Sources */,
 				D2CDB7132AEB699000BFD8C2 /* CustomTagView.swift in Sources */,
@@ -552,6 +559,7 @@
 				3334E1CB2AD9121700D853D7 /* AuthUser.swift in Sources */,
 				33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */,
 				33A4E82A2AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift in Sources */,
+				33E1D1D62B00FF58007DEEE8 /* File.swift in Sources */,
 				D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */,
 				33A4E81C2AEBB14800E3F55E /* BlogViewModel.swift in Sources */,
 				D2CDB7152AEB69DB00BFD8C2 /* TestComponentsViewController.swift in Sources */,
