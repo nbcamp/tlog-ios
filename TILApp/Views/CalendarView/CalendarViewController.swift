@@ -113,8 +113,13 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = true
-        navigationController?.isToolbarHidden = true
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        WKWebViewWarmer.shared.prepare()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        WKWebViewWarmer.shared.clear()
     }
 
     override func viewDidLayoutSubviews() {

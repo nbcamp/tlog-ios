@@ -44,8 +44,7 @@ final class ProfileEditViewController: UIViewController {
         super.viewWillAppear(animated)
         view.backgroundColor = .systemBackground
 
-        navigationController?.isNavigationBarHidden = false
-        navigationController?.hidesBottomBarWhenPushed = true
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
     override func viewDidLoad() {

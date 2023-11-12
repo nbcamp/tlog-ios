@@ -40,7 +40,7 @@ final class FollowListViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
     override func viewDidLayoutSubviews() {
@@ -106,7 +106,7 @@ extension FollowListViewController: UITableViewDataSource {
             : userViewModel.myFollowings[indexPath.row]
 
         let isFollowing = userViewModel.isMyFollowing(user: user)
-        
+
         var content = "작성한 TIL이 없습니다."
         if let lastPublishedAt = user.lastPublishedAt {
             content = "마지막 TIL 작성일 | " + lastPublishedAt.format()
@@ -149,6 +149,8 @@ extension FollowListViewController: UITableViewDataSource {
                 break
             }
         }
+
+        cell.selectionStyle = .none
         return cell
     }
 
