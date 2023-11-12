@@ -7,11 +7,16 @@ final class FollowListViewController: UIViewController {
 
     private let authViewModel = AuthViewModel.shared
     private let userViewModel = UserViewModel.shared
-    private lazy var user = authViewModel.user
+    private var myProfile: AuthUser? {
+        didSet {
+            segmentedControl.setTitle("팔로워 \(myProfile?.followers ?? 0)", forSegmentAt: 0)
+            segmentedControl.setTitle("팔로잉 \(myProfile?.followings ?? 0)", forSegmentAt: 1)
+        }
+    }
 
     private lazy var segmentedControl = CustomSegmentedControl(items: [
-        "팔로워 \(user?.followers ?? 0)",
-        "팔로잉 \(user?.followings ?? 0)"
+        "팔로워 \(myProfile?.followers ?? 0)",
+        "팔로잉 \(myProfile?.followings ?? 0)"
     ]).then {
         $0.selectedSegmentIndex = selectedIndex
         $0.addTarget(self, action: #selector(segmentedControlSelected(_:)), for: .valueChanged)
@@ -36,6 +41,8 @@ final class FollowListViewController: UIViewController {
             tableView.reloadData()
             tableView.layoutIfNeeded()
         }
+
+        myProfile = authViewModel.user
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -56,6 +63,7 @@ final class FollowListViewController: UIViewController {
             tableView.layoutIfNeeded()
 
             let selectedIndex = control.selectedSegmentIndex
+
             if let ratio = scrollRatios[selectedIndex] {
                 let totalScrollableHeight = tableView.contentSize.height - tableView.bounds.height
                 let yOffset = totalScrollableHeight * ratio
@@ -131,7 +139,10 @@ extension FollowListViewController: UITableViewDataSource {
                         return
                     }
                     cell.customUserView.variant = .unfollow
-                    segmentedControl.setTitle("팔로잉 \(userViewModel.myFollowings.count)", forSegmentAt: 1)
+                    authViewModel.profile { [weak self] result in
+                        guard case let .success(authUser) = result else { return }
+                        self?.myProfile = authUser
+                    }
                 }
             case .unfollow:
                 userViewModel.unfollow(user: user) { [weak self] result in
@@ -141,7 +152,10 @@ extension FollowListViewController: UITableViewDataSource {
                         return
                     }
                     cell.customUserView.variant = .follow
-                    segmentedControl.setTitle("팔로잉 \(userViewModel.myFollowings.count)", forSegmentAt: 1)
+                    authViewModel.profile { [weak self] result in
+                        guard case let .success(authUser) = result else { return }
+                        self?.myProfile = authUser
+                    }
                 }
             default:
                 break

@@ -10,6 +10,8 @@ final class MyProfileViewController: UIViewController {
         didSet {
             // TODO: 아바타 이미지 추가
             nicknameLabel.text = user?.username
+            followersButton.setTitle("\(user?.followers ?? 0)\n팔로워", for: .normal)
+            followingButton.setTitle("\(user?.followings ?? 0)\n팔로잉", for: .normal)
         }
     }
 
@@ -114,6 +116,10 @@ final class MyProfileViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         user = authViewModel.user
+        authViewModel.profile { [weak self] result in
+            guard case let .success(authUser) = result else { return }
+            self?.user = authUser
+        }
         navigationController?.isNavigationBarHidden = true
     }
 
@@ -226,7 +232,7 @@ extension MyProfileViewController: UITableViewDataSource {
                 switch cell.customCommunityTILView.variant {
                 case .follow:
                     UserViewModel.shared.follow(user: post.user) { [weak cell] result in
-                        guard case .success(let success) = result else {
+                        guard case .success(_) = result else {
                             // TODO: 에러 처리
                             return
                         }
@@ -234,7 +240,7 @@ extension MyProfileViewController: UITableViewDataSource {
                     }
                 case .unfollow:
                     UserViewModel.shared.unfollow(user: post.user) { [weak cell] result in
-                        guard case .success(let success) = result else {
+                        guard case .success(_) = result else {
                             // TODO: 에러 처리
                             return
                         }
