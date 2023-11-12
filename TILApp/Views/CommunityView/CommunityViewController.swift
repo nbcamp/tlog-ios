@@ -50,7 +50,7 @@ final class CommunityViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
         communityViewModel.refresh()
-        WKWebViewWarmer.shared.prepare()
+        WKWebViewWarmer.shared.prepare(10)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -136,10 +136,11 @@ extension CommunityViewController: UITableViewDataSource {
                 }
             }
 
-            let webViewController = WebViewController()
-            webViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
-            webViewController.hidesBottomBarWhenPushed = true
-            webViewController.url = post.url
+            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                $0.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
+                $0.hidesBottomBarWhenPushed = true
+                $0.url = post.url
+            }
             navigationController?.pushViewController(webViewController, animated: true)
         }
 

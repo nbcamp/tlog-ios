@@ -24,11 +24,8 @@ class WebViewWarmer<Warmer: WebViewWarmerProtocol> {
     }
 
     func dequeue() -> Warmer {
-        return warmers[warmers.indices].popFirst() ?? {
-            let warmer = provider()
-            warmer.provide()
-            return warmer
-        }()
+        if warmers.isEmpty { prepare() }
+        return warmers.popLast()!
     }
 
     func clear() {

@@ -1,6 +1,7 @@
 import Combine
 import FSCalendar
 import UIKit
+import WebKit
 import XMLCoder
 
 final class CalendarViewController: UIViewController, UIGestureRecognizerDelegate {
@@ -119,7 +120,7 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        WKWebViewWarmer.shared.clear()
+        WKWebViewWarmer.shared.prepare()
     }
 
     override func viewDidLayoutSubviews() {
@@ -268,10 +269,10 @@ extension CalendarViewController: UITableViewDataSource {
 
 extension CalendarViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let post = posts[indexPath.row]
-        let webViewController = WebViewController()
-        webViewController.url = post.url
-        webViewController.hidesBottomBarWhenPushed = true
+        let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+            $0.url = posts[indexPath.row].url
+            $0.hidesBottomBarWhenPushed = true
+        }
         navigationController?.pushViewController(webViewController, animated: true)
     }
 

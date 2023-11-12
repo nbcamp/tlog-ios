@@ -6,30 +6,31 @@ final class WebViewController: UIViewController {
         didSet {
             loadingView.isHidden = false
             if let url, let url = URL(string: url) {
-                let request = URLRequest(url: url)
+                let request = URLRequest(
+                    url: url, 
+                    cachePolicy: .returnCacheDataElseLoad,
+                    timeoutInterval: 5.0
+                )
                 webView.load(request)
             }
         }
     }
 
-    private lazy var webView = WKWebViewWarmer.shared.dequeue().then {
-        $0.navigationDelegate = self
-        $0.allowsBackForwardNavigationGestures = true
-        view.addSubview($0)
-    }
+    private let webView: WKWebView
 
     private lazy var loadingView = UIActivityIndicatorView().then {
         $0.startAnimating()
         $0.transform = .init(scaleX: 1.5, y: 1.5)
         view.addSubview($0)
     }
-
+        
     private lazy var backButton = UIBarButtonItem(
         image: UIImage(systemName: "chevron.left"),
         style: .plain, target: self,
         action: #selector(backButtonTapped)
     ).then {
         $0.tintColor = .systemBlue
+        $0.isEnabled = false
     }
 
     private lazy var forwardButton = UIBarButtonItem(
@@ -39,6 +40,7 @@ final class WebViewController: UIViewController {
         action: #selector(forwardButtonTapped)
     ).then {
         $0.tintColor = .systemBlue
+        $0.isEnabled = false
     }
 
     private lazy var reloadButton = UIBarButtonItem(
@@ -48,6 +50,21 @@ final class WebViewController: UIViewController {
         action: #selector(reloadButtonTapped)
     ).then {
         $0.tintColor = .systemBlue
+        $0.isEnabled = false
+    }
+
+    init(webView: WKWebView = WKWebView()) {
+        self.webView = webView
+        super.init(nibName: nil, bundle: nil)
+
+        webView.navigationDelegate = self
+        webView.allowsBackForwardNavigationGestures = true
+        view.addSubview(webView)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
@@ -98,5 +115,9 @@ extension WebViewController: WKNavigationDelegate {
         backButton.isEnabled = webView.canGoBack
         forwardButton.isEnabled = webView.canGoForward
         loadingView.isHidden = true
+    }
+    
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        print("페이지를 찾을 수 없습니다.")
     }
 }

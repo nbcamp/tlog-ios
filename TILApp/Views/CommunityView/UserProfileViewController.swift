@@ -122,6 +122,12 @@ final class UserProfileViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
+        WKWebViewWarmer.shared.prepare(3)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        WKWebViewWarmer.shared.clear()
     }
 
     override func viewDidLayoutSubviews() {
@@ -197,9 +203,10 @@ final class UserProfileViewController: UIViewController {
 
     @objc private func blogURLTapped() {
         if let blogURL = userBlogURL.title(for: .normal) {
-            let webViewController = WebViewController()
-            webViewController.url = blogURL
-            webViewController.hidesBottomBarWhenPushed = true
+            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                $0.hidesBottomBarWhenPushed = true
+                $0.url = blogURL
+            }
             navigationController?.pushViewController(webViewController, animated: true)
         }
     }

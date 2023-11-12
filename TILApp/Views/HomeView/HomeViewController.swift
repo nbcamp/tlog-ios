@@ -62,7 +62,6 @@ final class HomeViewController: UIViewController {
         view.backgroundColor = .systemBackground
         configureUI()
         updateCountTILLabel()
-        RssViewModel.shared.prepare()
     }
 
     override func viewWillAppear(_ animated: Bool) {

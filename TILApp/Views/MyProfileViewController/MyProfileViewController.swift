@@ -115,6 +115,12 @@ final class MyProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         user = authViewModel.user
         navigationController?.setNavigationBarHidden(true, animated: true)
+        WKWebViewWarmer.shared.prepare(3)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        WKWebViewWarmer.shared.clear()
     }
 
     override func viewDidLayoutSubviews() {
@@ -255,8 +261,6 @@ extension MyProfileViewController: UITableViewDataSource {
 
             cell.customCommunityTILView.postTapped = { [weak self] in
                 guard let self else { return }
-                let webViewController = WebViewController()
-                webViewController.url = post.url
                 let likeButton = LikeButton(liked: post.liked)
                 likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
                     APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
@@ -264,9 +268,11 @@ extension MyProfileViewController: UITableViewDataSource {
                         completion()
                     }
                 }
-                webViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
-
-                webViewController.hidesBottomBarWhenPushed = true
+                let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                    $0.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
+                    $0.hidesBottomBarWhenPushed = true
+                    $0.url = post.url
+                }
                 navigationController?.pushViewController(webViewController, animated: true)
             }
             cell.selectionStyle = .none
@@ -294,21 +300,24 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
                 self?.navigationController?.pushViewController(profileEditViewController, animated: true)
             }
         } else if title == "자주 묻는 질문" {
-            let webViewController = WebViewController()
-            webViewController.url = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
-            webViewController.hidesBottomBarWhenPushed = true
+            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                $0.url = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
+                $0.hidesBottomBarWhenPushed = true
+            }
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true)
         } else if title == "이용 약관" {
-            let webViewController = WebViewController()
-            webViewController.url = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
-            webViewController.hidesBottomBarWhenPushed = true
+            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                $0.url = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
+                $0.hidesBottomBarWhenPushed = true
+            }
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true)
         } else if title == "개인 정보 처리 방침" {
-            let webViewController = WebViewController()
-            webViewController.url = "https:plip.kr/pcc/96e3cd8c-700d-46a1-b007-37443c721874/privacy-policy"
-            webViewController.hidesBottomBarWhenPushed = true
+            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                $0.url = "https:plip.kr/pcc/96e3cd8c-700d-46a1-b007-37443c721874/privacy-policy"
+                $0.hidesBottomBarWhenPushed = true
+            }
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true)
         } else if title == "차단한 사용자 관리" {
