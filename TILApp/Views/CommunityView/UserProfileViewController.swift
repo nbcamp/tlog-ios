@@ -1,7 +1,14 @@
 import UIKit
 
 final class UserProfileViewController: UIViewController {
-    var user: User?
+    var user: User? {
+        didSet {
+            nicknameLabel.text = user?.username
+            if let avatarUrl = user?.avatarUrl,
+               let url = URL(string: avatarUrl)
+            { profileImageView.load(url: url) }
+        }
+    }
 
     private enum Section {
         case posts, likedPosts
@@ -26,6 +33,7 @@ final class UserProfileViewController: UIViewController {
     private lazy var profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.circle.fill")
         $0.layer.cornerRadius = 50
+        $0.clipsToBounds = true
     }
 
     private lazy var nicknameLabel = UILabel().then {
@@ -152,7 +160,7 @@ final class UserProfileViewController: UIViewController {
                     }
                 }
             }
-            flex.addItem(followButtonView).direction(.row).paddingHorizontal(15).define { flex in
+            flex.addItem(followButtonView).direction(.row).marginTop(10).paddingHorizontal(15).define { flex in
                 flex.addItem(doingFollowButton).width(100).height(30)
                 flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).grow(1)
             }
