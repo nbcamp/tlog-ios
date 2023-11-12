@@ -7,16 +7,16 @@ final class FollowListViewController: UIViewController {
 
     private let authViewModel = AuthViewModel.shared
     private let userViewModel = UserViewModel.shared
-    private var myProfile: AuthUser? {
+    private var authUser: AuthUser? {
         didSet {
-            segmentedControl.setTitle("팔로워 \(myProfile?.followers ?? 0)", forSegmentAt: 0)
-            segmentedControl.setTitle("팔로잉 \(myProfile?.followings ?? 0)", forSegmentAt: 1)
+            segmentedControl.setTitle("팔로워 \(authUser?.followers ?? 0)", forSegmentAt: 0)
+            segmentedControl.setTitle("팔로잉 \(authUser?.followings ?? 0)", forSegmentAt: 1)
         }
     }
 
     private lazy var segmentedControl = CustomSegmentedControl(items: [
-        "팔로워 \(myProfile?.followers ?? 0)",
-        "팔로잉 \(myProfile?.followings ?? 0)"
+        "팔로워 \(authUser?.followers ?? 0)",
+        "팔로잉 \(authUser?.followings ?? 0)"
     ]).then {
         $0.selectedSegmentIndex = selectedIndex
         $0.addTarget(self, action: #selector(segmentedControlSelected(_:)), for: .valueChanged)
@@ -42,7 +42,7 @@ final class FollowListViewController: UIViewController {
             tableView.layoutIfNeeded()
         }
 
-        myProfile = authViewModel.user
+        authUser = authViewModel.user
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -141,7 +141,7 @@ extension FollowListViewController: UITableViewDataSource {
                     cell.customUserView.variant = .unfollow
                     authViewModel.profile { [weak self] result in
                         guard case let .success(authUser) = result else { return }
-                        self?.myProfile = authUser
+                        self?.authUser = authUser
                     }
                 }
             case .unfollow:
@@ -154,7 +154,7 @@ extension FollowListViewController: UITableViewDataSource {
                     cell.customUserView.variant = .follow
                     authViewModel.profile { [weak self] result in
                         guard case let .success(authUser) = result else { return }
-                        self?.myProfile = authUser
+                        self?.authUser = authUser
                     }
                 }
             default:
