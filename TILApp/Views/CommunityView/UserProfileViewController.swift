@@ -97,6 +97,7 @@ final class UserProfileViewController: UIViewController {
 
     private lazy var userProfileTableView = UITableView().then {
         $0.register(UserTableViewCell.self, forCellReuseIdentifier: UserTableViewCell.identifier)
+        $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: CommunityTableViewCell.identifier)
         $0.delegate = self
         $0.dataSource = self
         $0.applyCustomSeparator()
@@ -301,7 +302,7 @@ extension UserProfileViewController: UITableViewDataSource {
             cell.customCommunityTILView.setup(post: post)
             if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
                 cell.customCommunityTILView.variant = .hidden
-            } else if UserViewModel.shared.isMyFollowing(user: post.user) {
+            } else if post.user.isMyFollowing {
                 cell.customCommunityTILView.variant = .unfollow
             } else {
                 cell.customCommunityTILView.variant = .follow
