@@ -1,17 +1,15 @@
 import UIKit
 
 final class ProfileEditViewController: UIViewController {
-    var username: String? {
+    var username: String {
         get { nicknameTextFieldView.mainText }
-        set { nicknameTextFieldView.mainText = newValue ?? "" }
+        set { nicknameTextFieldView.mainText = newValue }
     }
 
     var avatarImage: UIImage? {
         get { editProfileImageView.image }
         set { editProfileImageView.image = newValue }
     }
-    
-    private var avatarUrl: String?
 
     private lazy var componentView = UIView().then {
         view.addSubview($0)
@@ -101,15 +99,21 @@ final class ProfileEditViewController: UIViewController {
     }
 
     @objc private func completeButtonTapped() {
-        let newNickname = nicknameTextFieldView.mainText
-        AuthViewModel.shared.update(.init(username: newNickname, avatarUrl: avatarUrl)) { [weak self] result in
-            guard let self else { return }
-            if case let .failure(error) = result {
-                // TODO: 에러처리
-                debugPrint(#function, error)
-                return
+        Task {
+            var avatarUrl: String?
+            if let avatarImage {
+                let file = try? await APIService.shared.request(.uploadImage(avatarImage), to: File.self)
+                avatarUrl = file?.url
             }
-            navigationController?.popViewController(animated: true)
+            AuthViewModel.shared.update(.init(username: username, avatarUrl: avatarUrl)) { [weak self] result in
+                guard let self else { return }
+                if case let .failure(error) = result {
+                    // TODO: 에러처리
+                    debugPrint(#function, error)
+                    return
+                }
+                navigationController?.popViewController(animated: true)
+            }
         }
     }
 
@@ -144,18 +148,9 @@ extension ProfileEditViewController: UIImagePickerControllerDelegate, UINavigati
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
-        guard let image = info[.editedImage] as? UIImage else { return }
-        APIService.shared.request(.uploadImage(image), to: File.self) { [weak self] file in
-            guard let self else { return }
-            switch file {
-            case .success(let file):
-                avatarUrl = file.url
-                editProfileImageView.load(url: file.url)
-            case .failure(let error):
-                // TODO: 에러 처리
-                debugPrint(#function, error)
-            }
-            picker.dismiss(animated: true, completion: nil)
+        picker.dismiss(animated: true, completion: nil)
+        if let image = info[.editedImage] as? UIImage {
+            editProfileImageView.image = image
         }
     }
 

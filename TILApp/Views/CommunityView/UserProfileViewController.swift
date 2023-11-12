@@ -4,11 +4,7 @@ final class UserProfileViewController: UIViewController {
     var user: User? {
         didSet {
             nicknameLabel.text = user?.username
-            profileImageView.load(
-                url: user?.avatarUrl,
-                loading: UIColor.systemGray5.image(.init(width: 100, height: 100)),
-                fallback: .init(systemName: "person.circle.fill")
-            )
+            profileImageView.url = user?.avatarUrl
         }
     }
 
@@ -32,11 +28,7 @@ final class UserProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
-    private lazy var profileImageView = UIImageView().then {
-        $0.image = UIImage(systemName: "person.circle.fill")
-        $0.layer.cornerRadius = 50
-        $0.clipsToBounds = true
-    }
+    private lazy var profileImageView = AvatarImageView()
 
     private lazy var nicknameLabel = UILabel().then {
         $0.font = UIFont.boldSystemFont(ofSize: 20)
