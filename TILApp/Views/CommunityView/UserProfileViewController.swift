@@ -119,7 +119,7 @@ final class UserProfileViewController: UIViewController {
                 }
             }
         }
-        
+
         loadPosts { [weak self] in
             self?.userProfileTableView.reloadData()
             self?.userProfileTableView.layoutIfNeeded()
@@ -313,7 +313,8 @@ extension UserProfileViewController: UITableViewDataSource {
             cell.customCommunityTILView.setup(post: post)
 
             cell.customCommunityTILView.userProfileTapped = { [weak self] in
-                guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
+                guard let self, let authUser = AuthViewModel.shared.user,
+                      post.user.id != authUser.id, post.user.id != self.user?.id else { return }
                 let userProfileViewController = UserProfileViewController()
                 userProfileViewController.user = post.user
                 navigationController?.pushViewController(userProfileViewController, animated: true)
