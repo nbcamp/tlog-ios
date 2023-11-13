@@ -62,9 +62,6 @@ final class AuthViewModel {
         api.request(.updateMyProfile(input), to: AuthUser.self) { [unowned self] result in
             if case let .success(model) = result {
                 user = model
-            } else {
-                isAuthenticated = false
-                user = nil
             }
             handler(result)
         }
