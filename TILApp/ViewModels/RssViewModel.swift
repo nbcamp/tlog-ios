@@ -1,112 +1,130 @@
+import Combine
 import Foundation
 import XMLCoder
 
 final class RssViewModel {
-    let dateFormatter = DateFormatter()
-    let calendar = Calendar.current
     static let shared: RssViewModel = .init()
     private init() {}
-    private(set) var rss: RSS?
-    private(set) var rssPostData: [Date: [RssPostData]] = [:]
-    private(set) var rssPostAllData: [RssPostData] = []
-    private(set) var continueFirstDate: Date?
 
-    func respondData(urlString: String, tag: [String]) {
-        guard let url = URL(string: urlString) else { return }
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("Error: \(error)")
-            } else if let data = data, let response = response as? HTTPURLResponse, response.statusCode == 200 {
+    struct Post {
+        let blog: Blog
+        let title: String
+        let content: String
+        let url: String
+        let tags: [String]
+        let publishedAt: Date
+    }
+
+    private let calendar = Calendar.current
+    private let rss = RssService.shared
+    private let api = APIService.shared
+    private var prepared = false
+
+    private(set) var postsMap: [Date: [Post]] = [:]
+    private(set) var postsByBlogMap: [Int: [Post]] = [:]
+    private(set) var postsByMonthMap: [Date: [Post]] = [:]
+    private(set) var allPosts: [Post] = []
+    private(set) var startOfStreakDays: Date?
+    @Published private(set) var loading = false
+
+    var streakDays: Int? {
+        guard let startOfStreakDays else { return nil }
+        let components = calendar.dateComponents([.day], from: startOfStreakDays, to: Date())
+        if let days = components.day { return days + 1 } else { return nil }
+    }
+
+    func prepare(_ completion: ((Bool) -> Void)? = nil) {
+        if prepared { completion?(true); return }
+        prepared = true
+
+        guard let authUser = AuthViewModel.shared.user, authUser.hasBlog else {
+            completion?(false); return
+        }
+
+        Task {
+            loading = true
+            do {
+                let blogs = try await api.request(.getMyBlogs, to: [Blog].self)
+                await prepareDatasets(blogs: blogs)
+                findStartOfStreakDays()
+
+                await sendPostsToServer(lastPublishedAt: authUser.lastPublishedAt)
+                completion?(true)
+            } catch {
+                debugPrint(#function, error)
+                completion?(false)
+            }
+            loading = false
+        }
+    }
+
+    func reload(_ completion: ((Bool) -> Void)? = nil) {}
+
+    func isDateInStreakDays(date: Date) -> Bool {
+        guard let startOfStreakDays else { return false }
+        return startOfStreakDays <= date && date <= .now
+    }
+
+    private func prepareDatasets(blogs: [Blog]) async {
+        for blog in blogs {
+            do {
+                let posts = try await rss.loadDocument(url: blog.rss)
+                for post in posts {
+                    guard let keywordMap = (blog.keywords.first { post.title.contains($0.keyword) }) else { continue }
+                    allPosts.append(.init(
+                        blog: blog,
+                        title: post.title,
+                        content: post.content,
+                        url: post.url,
+                        tags: keywordMap.tags,
+                        publishedAt: post.publishedAt
+                    ))
+                }
+            } catch {
+                debugPrint(#function, error)
+            }
+        }
+
+        allPosts.sort { $0.publishedAt > $1.publishedAt }
+
+        for post in allPosts {
+            let startOfDay = post.publishedAt.startOfDay
+            let startOfMonth = post.publishedAt.startOfMonth
+            postsMap[startOfDay, default: []].append(post)
+            postsByBlogMap[post.blog.id, default: []].append(post)
+            postsByMonthMap[startOfMonth, default: []].append(post)
+        }
+    }
+
+    private func sendPostsToServer(lastPublishedAt: Date?) async {
+        for (blogId, posts) in postsByBlogMap {
+            for post in posts {
                 do {
-                    self.rss = try XMLDecoder().decode(RSS.self, from: data)
-                    self.creatRssData(tag: tag)
-
+                    guard lastPublishedAt == nil || post.publishedAt > lastPublishedAt! else { return }
+                    _ = try await api.request(.createMyBlogPost(blogId, .init(
+                        title: post.title,
+                        content: post.content,
+                        url: post.url,
+                        publishedAt: post.publishedAt
+                    )))
                 } catch {
-                    print("Error parsing JSON response")
+                    debugPrint(#function, error)
                 }
+            }
+        }
+    }
+
+    private func findStartOfStreakDays() {
+        guard !postsMap.isEmpty else { return }
+        var startOfDate = Date().startOfDay
+        for _ in 0 ..< allPosts.count {
+            guard let posts = postsMap[startOfDate], !posts.isEmpty else { break }
+            startOfStreakDays = startOfDate
+            if let date = calendar.date(byAdding: .day, value: -1, to: startOfDate) {
+                startOfDate = date
             } else {
-                print("에러에러에러에러")
+                debugPrint("캘린더 연산 실패")
             }
         }
-        task.resume()
-    }
-
-    func creatRssData(tag: [String]) {
-        dateFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss z"
-        dateFormatter.locale = Locale(identifier: "en_US")
-        guard let rssChannelPost = rss!.channel?.posts else { return }
-        rssChannelPost.enumerated().forEach { index, indexData in
-
-            var postTitle = indexData.title ?? ""
-            var postUrl = indexData.link ?? ""
-            var postPublishedAt = Date()
-
-            if let convertDate = indexData.pubDate {
-                postPublishedAt = dateFormatter.date(from: convertDate)!
-            }
-
-            if let convertLink = rss!.channel!.posts[index].link {
-                let convertUrlString = replacingStr(data: convertLink)
-                postUrl = convertUrlString
-            }
-
-            var content = indexData.content ?? indexData.contentEncoded
-            var contentData = ""
-            if let unwrapContent = content {
-                content = replacingStr(data: unwrapContent)
-                contentData = String(content!.prefix(20))
-            }
-
-            if let convertTitle = indexData.title {
-                let apendData = RssPostData(title: postTitle,
-                                            content: contentData,
-                                            url: postUrl,
-                                            publishedAt: postPublishedAt)
-                postTitle = convertTitle
-                tag.forEach {
-                    if convertTitle.contains($0) {
-                        rssPostAllData.append(apendData)
-                        if rssPostData[utcTimeConvert(date: postPublishedAt)] == nil {
-                            rssPostData[utcTimeConvert(date: postPublishedAt)] = [apendData]
-                        } else {
-                            rssPostData[utcTimeConvert(date: postPublishedAt)]!.append(apendData)
-                        }
-                    }
-                }
-            }
-        }
-        rssPostAllData.sort {
-            $0.publishedAt.compare($1.publishedAt) == .orderedDescending
-        }
-        continuDate()
-    }
-
-    func continuDate() {
-        var utcTime = utcTimeConvert(date: Date())
-        if rssPostData[utcTime] != nil {
-            for _ in rssPostAllData {
-                continueFirstDate = utcTime
-                utcTime = timePlusDate(date: utcTime, dayPlus: -1)
-                if rssPostData[utcTime] == nil {
-                    break
-                }
-            }
-        }
-    }
-
-    func timePlusDate(date: Date, dayPlus: Int) -> Date {
-        return Calendar.current.date(
-            byAdding: .day,
-            value: dayPlus,
-            to: date
-        )!
-    }
-
-    func utcTimeConvert(date: Date) -> Date {
-        return calendar.date(from: calendar.dateComponents([.year, .month, .day], from: date))!
-    }
-
-    func replacingStr(data: String) -> String {
-        return data.replacingOccurrences(of: "<[^>]+>|\t|\n|;|&nbsp", with: "", options: .regularExpression, range: nil)
     }
 }

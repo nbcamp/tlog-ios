@@ -28,7 +28,7 @@ final class BlogListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        navigationController?.isNavigationBarHidden = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
         tabBarController?.tabBar.isHidden = true
 
         KeywordInputViewModel.shared.clear()
@@ -42,7 +42,7 @@ final class BlogListViewController: UIViewController {
     }
 
     @objc private func addBlogButtonTapped() {
-        navigationController?.pushViewController(BlogRegisterViewController(), animated: false)
+        navigationController?.pushViewController(BlogRegisterViewController(), animated: true)
     }
 }
 

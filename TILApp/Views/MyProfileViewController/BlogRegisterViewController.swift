@@ -74,7 +74,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
             guard let self else { return }
             if case let .failure(error) = result {
                 // TODO: 에러 처리
-                debugPrint(error)
+                debugPrint(#function, error)
                 return
             }
             navigationController?.popViewController(animated: true)
@@ -85,7 +85,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        navigationController?.isNavigationBarHidden = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
         view.setNeedsLayout()
 
         updateDoneButtonState()

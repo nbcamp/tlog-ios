@@ -5,14 +5,14 @@ struct RSS: Codable {
 }
 
 struct RSSChannel: Codable {
-    let posts: [RSSPost]
+    let items: [RSSItem]
 
     enum CodingKeys: String, CodingKey {
-        case posts = "item"
+        case items = "item"
     }
 }
 
-struct RSSPost: Codable {
+struct RSSItem: Codable {
     let title: String?
     let content: String?
     let pubDate: String?
@@ -26,7 +26,7 @@ struct RSSPost: Codable {
     }
 }
 
-struct RssPostData: Codable {
+struct RSSPost: Codable {
     let title: String
     let content: String
     let url: String

@@ -1,4 +1,5 @@
 import Dispatch
+import Foundation
 
 final class PostViewModel {
     static let shared: PostViewModel = .init()
@@ -52,5 +53,21 @@ final class PostViewModel {
         group.notify(queue: .main) {
             handler(.success(posts))
         }
+    }
+    
+    func updateLikedPosts(forUser updatedUser: User) -> [IndexPath] {
+        var updatedIndexPaths: [IndexPath] = []
+
+        for (index, post) in myLikedPosts.enumerated() where post.user.id == updatedUser.id {
+            let updatedPost = CommunityPost(
+                id: post.id, title: post.title, content: post.content,
+                url: post.url, tags: post.tags, user: updatedUser,
+                liked: post.liked, publishedAt: post.publishedAt
+            )
+            myLikedPosts[index] = updatedPost
+            updatedIndexPaths.append(IndexPath(row: index, section: 0))
+        }
+        
+        return updatedIndexPaths
     }
 }

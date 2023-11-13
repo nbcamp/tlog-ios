@@ -50,19 +50,20 @@ class SeeMoreBottomSheetViewController: UIViewController {
         $0.addGestureRecognizer(gesture)
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setUpUI()
-    }
-
-    private func setUpUI() {
+    override func viewDidLoad() {
+        super.viewDidLoad()
         view.flex.direction(.column).define { flex in
             flex.addItem(emptyView).height(40%)
             flex.addItem(backgroundView).grow(1).direction(.column).define { flex in
                 flex.addItem(handleView).width(60).height(6).marginTop(15).alignSelf(.center)
                 flex.addItem(moreTableView).grow(1).marginTop(10)
             }
-        }.layout()
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        view.flex.layout()
     }
 
     @objc func emptyViewTapped() {

@@ -4,14 +4,9 @@ class CustomCommunityTILView: UIView {
     var userProfileTapped: (() -> Void)?
     var postTapped: (() -> Void)?
 
-    var variant: CustomFollowButton.Variant {
-        get { userView.variant }
-        set { userView.variant = newValue }
-    }
-
-    var followButtonTapped: (() -> Void)? {
-        get { userView.followButtonTapped }
-        set { userView.followButtonTapped = newValue }
+    var contentText: String {
+        get { userView.contentText }
+        set { userView.contentText = newValue }
     }
 
     private lazy var userView = CustomUserView().then {
@@ -69,7 +64,7 @@ class CustomCommunityTILView: UIView {
         tilView.pin.below(of: userView).horizontally().marginTop(-15)
         dateLabel.pin.left(20).bottom(10)
         heartButton.pin.top(to: dateLabel.edge.top).right(20).bottom(10)
-        tagsCollectionView.pin.after(of: dateLabel).top(to: dateLabel.edge.top).width(60%)
+        tagsCollectionView.pin.after(of: dateLabel, aligned: .center).width(60%).marginLeft(10)
 
         tilView.resizeText()
     }
@@ -85,10 +80,10 @@ class CustomCommunityTILView: UIView {
     // TODO: 팔로워 옆에 연속 작성 일수 추가해야 함
     func setup(post: CommunityPost) {
         userView.setup(
-            image: UIImage(),
-            nicknameText: post.user.username,
-            contentText: "팔로워 \(post.user.followers)",
-            variant: .follow
+            username: post.user.username,
+            avatarUrl: post.user.avatarUrl,
+            content: "팔로워 \(post.user.followers)",
+            variant: .hidden
         )
         tilView.setup(withTitle: post.title, content: post.content, date: "")
         tagsCollectionView.tags = post.tags

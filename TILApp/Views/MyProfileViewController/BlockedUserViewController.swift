@@ -2,7 +2,7 @@ import UIKit
 
 final class BlockedUserViewController: UIViewController {
     let blockedUsers: [User] = [
-        //        .init(id: 999, username: "차단1", avatarUrl: "", posts: 0, followers: 0, followings: 0),
+//        .init(id: 999, username: "차단1", avatarUrl: "", posts: 0, followers: 0, followings: 0),
 //        .init(id: 9999, username: "차단2", avatarUrl: "", posts: 0, followers: 0, followings: 0)
     ]
 
@@ -25,7 +25,7 @@ final class BlockedUserViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
     override func viewDidLayoutSubviews() {
@@ -48,8 +48,8 @@ extension BlockedUserViewController: UITableViewDataSource {
         let user: User = blockedUsers[indexPath.row]
 
         cell.customBlockedUserView.setup(
-            image: UIImage(),
-            nicknameText: user.username
+            username: user.username,
+            avatarUrl: user.avatarUrl
         )
 
         cell.customBlockedUserView.unblockButtonTapped = { [weak self, weak cell] in

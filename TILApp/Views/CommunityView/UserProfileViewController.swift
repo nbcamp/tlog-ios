@@ -1,7 +1,18 @@
 import UIKit
 
 final class UserProfileViewController: UIViewController {
-    var user: User?
+    var user: User? {
+        didSet {
+            if let user = user {
+                nicknameLabel.text = user.username
+                profileImageView.url = user.avatarUrl
+                doingFollowButton.variant = user.isMyFollowing ? .unfollow : .follow
+                postButton.setTitle("\(user.posts)\n포스트", for: .normal)
+                followersButton.setTitle("\(user.followers)\n팔로워", for: .normal)
+                followingButton.setTitle("\(user.followings)\n팔로잉", for: .normal)
+            }
+        }
+    }
 
     private enum Section {
         case posts, likedPosts
@@ -23,10 +34,7 @@ final class UserProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
-    private lazy var profileImageView = UIImageView().then {
-        $0.image = UIImage(systemName: "person.circle.fill")
-        $0.layer.cornerRadius = 50
-    }
+    private lazy var profileImageView = AvatarImageView()
 
     private lazy var nicknameLabel = UILabel().then {
         $0.font = UIFont.boldSystemFont(ofSize: 20)
@@ -40,13 +48,13 @@ final class UserProfileViewController: UIViewController {
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
         $0.imageEdgeInsets = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 25)
-        $0.addTarget(self, action: #selector(moreButtonTapped), for: .touchUpInside)
+        $0.showsMenuAsPrimaryAction = true
+        $0.menu = makeMenuItems()
         view.addSubview($0)
     }
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("\(user?.posts ?? 0)\n포스트", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -58,14 +66,12 @@ final class UserProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("\(user?.followers ?? 0)\n팔로워", for: .normal)
         $0.setTitleColor(.black, for: .normal)
     }
 
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("\(user?.followings ?? 0)\n팔로잉", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
@@ -77,11 +83,12 @@ final class UserProfileViewController: UIViewController {
     }
 
     private lazy var userBlogURL = UIButton().then {
-        $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         $0.titleLabel?.textAlignment = .left
         $0.setTitleColor(.systemGray, for: .normal)
         $0.addTarget(self, action: #selector(blogURLTapped), for: .touchUpInside)
+        $0.titleLabel?.lineBreakMode = .byTruncatingTail
+        $0.contentHorizontalAlignment = .left
     }
 
     private lazy var userSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요한 글"]).then {
@@ -91,6 +98,7 @@ final class UserProfileViewController: UIViewController {
 
     private lazy var userProfileTableView = UITableView().then {
         $0.register(UserTableViewCell.self, forCellReuseIdentifier: UserTableViewCell.identifier)
+        $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: CommunityTableViewCell.identifier)
         $0.delegate = self
         $0.dataSource = self
         $0.applyCustomSeparator()
@@ -117,47 +125,78 @@ final class UserProfileViewController: UIViewController {
             self?.userProfileTableView.layoutIfNeeded()
             self?.updatePlaceholderIfNeeded()
         }
+        
+        screenView.flex.direction(.column).define { flex in
+            flex.addItem().direction(.row).padding(10).define { flex in
+                flex.addItem(profileImageView).width(100).height(100).cornerRadius(100 / 2)
+                flex.addItem().direction(.column).width(200).define { flex in
+                    flex.addItem(nicknameLabel).width(200).height(25).marginLeft(15).marginTop(5)
+                    flex.addItem(countView).direction(.row).width(210).height(75).define { flex in
+                        flex.addItem(postButton).width(75)
+                        flex.addItem(followersButton).width(75)
+                        flex.addItem(followingButton).width(75)
+                    }
+                }
+            }
+            flex.addItem(followButtonView).direction(.row).marginTop(10).paddingHorizontal(15).define { flex in
+                flex.addItem(doingFollowButton).width(100).height(30)
+                flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).grow(1)
+            }
+            flex.addItem(userSegmentedControl).height(40)
+            flex.addItem(userProfileTableView).grow(1)
+        }
+
+        doingFollowButton.buttonTapped = { [weak self] in
+            guard let self, let user else { return }
+            switch doingFollowButton.variant {
+            case .follow:
+                UserViewModel.shared.follow(user: user) { [weak self] result in
+                    guard let self else { return }
+                    guard case let .success(success) = result else {
+                        // TODO: 에러 처리
+                        return
+                    }
+                    updateUserFollowers(user: user)
+                }
+            case .unfollow:
+                UserViewModel.shared.unfollow(user: user) { [weak self] result in
+                    guard let self else { return }
+                    guard case let .success(success) = result else {
+                        // TODO: 에러 처리
+                        return
+                    }
+                    updateUserFollowers(user: user)
+                }
+            default:
+                break
+            }
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = false
+
+        if let user = user {
+            updateUserFollowers(user: user)
+        }
+
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        WKWebViewWarmer.shared.prepare(3)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        WKWebViewWarmer.shared.clear()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        setUpUI()
-        moreButton.showsMenuAsPrimaryAction = true
-    }
-
-    private func setUpUI() {
         screenView.pin.all(view.pin.safeArea)
         moreButton.pin.top(view.pin.safeArea).right(25)
-
-        screenView.flex.direction(.column).define { flex in
-            flex.addItem().direction(.row).paddingHorizontal(10).define { flex in
-                flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2)
-                flex.addItem().direction(.column).width(200).define { flex in
-                    flex.addItem(nicknameLabel).width(200).height(25).marginLeft(15).marginTop(5)
-                    flex.addItem(countView).direction(.row).width(200).height(75)
-                    countView.flex.direction(.row)
-                        .width(210).define { flex in
-                            flex.addItem(postButton).width(70)
-                            flex.addItem(followersButton).width(70)
-                            flex.addItem(followingButton).width(70)
-                        }
-                }
-            }.layout()
-            flex.addItem(followButtonView).direction(.row).paddingHorizontal(15).define { flex in
-                flex.addItem(doingFollowButton).width(100).height(30).direction(.row)
-                flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).minWidth(100).maxWidth(200)
-            }.layout()
-            flex.addItem(userSegmentedControl).height(45)
-            flex.addItem(userProfileTableView).grow(1)
-        }.layout()
+        screenView.flex.layout()
     }
 
-    @objc private func moreButtonTapped() {
+    private func makeMenuItems() -> UIMenu {
         // TODO: 차단하기 생각해보기
         let reportAction = UIAction(
             title: "차단하기",
@@ -194,17 +233,15 @@ final class UserProfileViewController: UIViewController {
             self.present(alertController, animated: true, completion: nil)
         }
 
-        let menu = UIMenu(children: [reportAction, reportSpamAction])
-
-        moreButton.showsMenuAsPrimaryAction = true
-        moreButton.menu = menu
+        return UIMenu(children: [reportAction, reportSpamAction])
     }
 
     @objc private func blogURLTapped() {
         if let blogURL = userBlogURL.title(for: .normal) {
-            let webViewController = WebViewController()
-            webViewController.postURL = blogURL
-            webViewController.hidesBottomBarWhenPushed = true
+            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                $0.hidesBottomBarWhenPushed = true
+                $0.url = blogURL
+            }
             navigationController?.pushViewController(webViewController, animated: true)
         }
     }
@@ -235,6 +272,23 @@ final class UserProfileViewController: UIViewController {
         }
     }
 
+    func updateUserFollowers(user: User) {
+        UserViewModel.shared.withProfile(user: user) { [weak self] result in
+            guard let self else { return }
+            guard case let .success(userProfile) = result else {
+                // TODO: 에러 처리
+                return
+            }
+            self.user = userProfile
+            if section == .likedPosts {
+                loadPosts { [weak self] in
+                    self?.userProfileTableView.reloadData()
+                    self?.userProfileTableView.layoutIfNeeded()
+                }
+            }
+        }
+    }
+    
     private func updatePlaceholderIfNeeded() {
         let selectedIndex = userSegmentedControl.selectedSegmentIndex
         if selectedIndex == 0 {
@@ -275,40 +329,10 @@ extension UserProfileViewController: UITableViewDataSource {
             ) as? CommunityTableViewCell else { return UITableViewCell() }
             let post = likedPosts[indexPath.row]
             cell.customCommunityTILView.setup(post: post)
-            if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
-                cell.customCommunityTILView.variant = .hidden
-            } else if UserViewModel.shared.isMyFollowing(user: post.user) {
-                cell.customCommunityTILView.variant = .unfollow
-            } else {
-                cell.customCommunityTILView.variant = .follow
-            }
-
-            cell.customCommunityTILView.followButtonTapped = { [weak cell] in
-                guard let cell else { return }
-                switch cell.customCommunityTILView.variant {
-                case .follow:
-                    UserViewModel.shared.follow(user: post.user) { [weak cell] result in
-                        guard case let .success(success) = result, success else {
-                            // TODO: 에러 처리
-                            return
-                        }
-                        cell?.customCommunityTILView.variant = .unfollow
-                    }
-                case .unfollow:
-                    UserViewModel.shared.unfollow(user: post.user) { [weak cell] result in
-                        guard case let .success(success) = result, success else {
-                            // TODO: 에러 처리
-                            return
-                        }
-                        cell?.customCommunityTILView.variant = .follow
-                    }
-                default:
-                    break
-                }
-            }
 
             cell.customCommunityTILView.userProfileTapped = { [weak self] in
-                guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
+                guard let self, let authUser = AuthViewModel.shared.user,
+                      post.user.id != authUser.id, post.user.id != self.user?.id else { return }
                 let userProfileViewController = UserProfileViewController()
                 userProfileViewController.user = post.user
                 navigationController?.pushViewController(userProfileViewController, animated: true)
@@ -317,7 +341,7 @@ extension UserProfileViewController: UITableViewDataSource {
             cell.customCommunityTILView.postTapped = { [weak self] in
                 guard let self else { return }
                 let webViewController = WebViewController()
-                webViewController.postURL = post.url
+                webViewController.url = post.url
                 let likeButton = LikeButton(liked: post.liked)
                 likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
                     APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in

@@ -31,6 +31,7 @@
 		3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3334E1F72AD91DCB00D853D7 /* FlexLayoutYogaKit */; };
 		3373D55F2AF4ECC30057A23B /* MoyaSugar in Frameworks */ = {isa = PBXBuildFile; productRef = 3373D55E2AF4ECC30057A23B /* MoyaSugar */; };
 		3373D5662AFA2EDE0057A23B /* LikeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3373D5652AFA2EDE0057A23B /* LikeButton.swift */; };
+		3373D56B2AFB7F820057A23B /* RssService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3373D56A2AFB7F820057A23B /* RssService.swift */; };
 		33A4E81C2AEBB14800E3F55E /* BlogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E81B2AEBB14800E3F55E /* BlogViewModel.swift */; };
 		33A4E81E2AEBB24A00E3F55E /* Exported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E81D2AEBB24A00E3F55E /* Exported.swift */; };
 		33A4E8242AECB4C700E3F55E /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4E8232AECB4C700E3F55E /* UserViewModel.swift */; };
@@ -47,6 +48,13 @@
 		33DC8E0A2ADFDAFF00580FA0 /* TestNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */; };
 		33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */; };
 		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
+		33E1D1DF2B0133D0007DEEE8 /* WebViewWarmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */; };
+		33E1D1D42B00F916007DEEE8 /* UIImageView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D32B00F916007DEEE8 /* UIImageView+Ext.swift */; };
+		33E1D1D62B00FF58007DEEE8 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D52B00FF58007DEEE8 /* File.swift */; };
+		33E1D1D82B011C7C007DEEE8 /* UIColor+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D72B011C7C007DEEE8 /* UIColor+Ext.swift */; };
+		33E1D1DB2B0124CF007DEEE8 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 33E1D1DA2B0124CF007DEEE8 /* Kingfisher */; };
+		33E1D1DD2B012524007DEEE8 /* AvatarImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1DC2B012524007DEEE8 /* AvatarImageView.swift */; };
+		33E1D1E12B016545007DEEE8 /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1E02B016545007DEEE8 /* UIImage+Ext.swift */; };
 		9B859B2B2AE26C2600025E8B /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */; };
 		9BB3AD6F2AEEC99F004A25DB /* MyProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB3AD6E2AEEC99F004A25DB /* MyProfileTableViewCell.swift */; };
 		9BE049B92AEB968E00A47CFC /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049B82AEB968E00A47CFC /* WebViewController.swift */; };
@@ -116,6 +124,7 @@
 		3334E1EA2AD919D700D853D7 /* MyProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileViewController.swift; sourceTree = "<group>"; };
 		3334E1ED2AD919F500D853D7 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		3373D5652AFA2EDE0057A23B /* LikeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeButton.swift; sourceTree = "<group>"; };
+		3373D56A2AFB7F820057A23B /* RssService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RssService.swift; sourceTree = "<group>"; };
 		33A4E81B2AEBB14800E3F55E /* BlogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogViewModel.swift; sourceTree = "<group>"; };
 		33A4E81D2AEBB24A00E3F55E /* Exported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exported.swift; sourceTree = "<group>"; };
 		33A4E8232AECB4C700E3F55E /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
@@ -129,6 +138,12 @@
 		33DC8E092ADFDAFF00580FA0 /* TestNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkViewController.swift; sourceTree = "<group>"; };
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
+		33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewWarmer.swift; sourceTree = "<group>"; };
+		33E1D1D32B00F916007DEEE8 /* UIImageView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Ext.swift"; sourceTree = "<group>"; };
+		33E1D1D52B00FF58007DEEE8 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		33E1D1D72B011C7C007DEEE8 /* UIColor+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Ext.swift"; sourceTree = "<group>"; };
+		33E1D1DC2B012524007DEEE8 /* AvatarImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarImageView.swift; sourceTree = "<group>"; };
+		33E1D1E02B016545007DEEE8 /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
 		9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditViewController.swift; sourceTree = "<group>"; };
 		9BB3AD6E2AEEC99F004A25DB /* MyProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileTableViewCell.swift; sourceTree = "<group>"; };
 		9BE049B82AEB968E00A47CFC /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
@@ -188,6 +203,7 @@
 				3373D55F2AF4ECC30057A23B /* MoyaSugar in Frameworks */,
 				3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */,
 				AB8F2A1A2AEF9B260022D3E4 /* FSCalendar in Frameworks */,
+				33E1D1DB2B0124CF007DEEE8 /* Kingfisher in Frameworks */,
 				33DC8E052ADFC9CC00580FA0 /* Moya in Frameworks */,
 				3334E1F62AD91DCB00D853D7 /* FlexLayoutYoga in Frameworks */,
 			);
@@ -265,6 +281,7 @@
 				33A4E82F2AEF740600E3F55E /* Community.swift */,
 				D20DC9E52AF2098F001F83D0 /* KeywordInput.swift */,
 				AB75EDE92AF0E90300BC1BC9 /* Rss.swift */,
+				33E1D1D52B00FF58007DEEE8 /* File.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -273,6 +290,7 @@
 			isa = PBXGroup;
 			children = (
 				3334E1D02AD9129600D853D7 /* APIService.swift */,
+				3373D56A2AFB7F820057A23B /* RssService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -282,6 +300,7 @@
 			children = (
 				3334E1C52AD9112B00D853D7 /* Extensions */,
 				D2A1684B2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift */,
+				33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */,
 				33A4E83B2AF0EB6300E3F55E /* converter.swift */,
 			);
 			path = Utilities;
@@ -305,6 +324,9 @@
 				3334E1C62AD9113900D853D7 /* UIViewController+Ext.swift */,
 				D2A168492AE8D4E5006BD2C4 /* UIView+Ext.swift */,
 				D29F54C42AF9FC970064B9B3 /* UITableView+Ext.swift */,
+				33E1D1D32B00F916007DEEE8 /* UIImageView+Ext.swift */,
+				33E1D1E02B016545007DEEE8 /* UIImage+Ext.swift */,
+				33E1D1D72B011C7C007DEEE8 /* UIColor+Ext.swift */,
 				3334E1D42AD913FE00D853D7 /* Date+Ext.swift */,
 				33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */,
 			);
@@ -412,6 +434,7 @@
 				D20DC9E92AF3AA9E001F83D0 /* HorizontalTagsCollectionView.swift */,
 				D2BEB5082AF8BB9C00C1BF30 /* CustomBlockedUserView.swift */,
 				3373D5652AFA2EDE0057A23B /* LikeButton.swift */,
+				33E1D1DC2B012524007DEEE8 /* AvatarImageView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -444,6 +467,7 @@
 				AB8F2A192AEF9B260022D3E4 /* FSCalendar */,
 				AB75EDE72AEF9CBB00BC1BC9 /* XMLCoder */,
 				3373D55E2AF4ECC30057A23B /* MoyaSugar */,
+				33E1D1DA2B0124CF007DEEE8 /* Kingfisher */,
 			);
 			productName = TILApp;
 			productReference = 3334E1A42AD6BC1800D853D7 /* TILApp.app */;
@@ -481,6 +505,7 @@
 				AB8F2A182AEF9B260022D3E4 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				AB75EDE62AEF9CBB00BC1BC9 /* XCRemoteSwiftPackageReference "XMLCoder" */,
 				3373D55D2AF4ECC30057A23B /* XCRemoteSwiftPackageReference "MoyaSugar" */,
+				33E1D1D92B0124CE007DEEE8 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 3334E1A52AD6BC1800D853D7 /* Products */;
 			projectDirPath = "";
@@ -530,6 +555,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33E1D1D42B00F916007DEEE8 /* UIImageView+Ext.swift in Sources */,
 				3334E1EB2AD919D700D853D7 /* MyProfileViewController.swift in Sources */,
 				3334E1AC2AD6BC1800D853D7 /* RootViewController.swift in Sources */,
 				D2CDB7132AEB699000BFD8C2 /* CustomTagView.swift in Sources */,
@@ -546,6 +572,7 @@
 				3334E1CB2AD9121700D853D7 /* AuthUser.swift in Sources */,
 				33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */,
 				33A4E82A2AECBE0800E3F55E /* SeeMoreBottomSheetViewController.swift in Sources */,
+				33E1D1D62B00FF58007DEEE8 /* File.swift in Sources */,
 				D28DC8072AE21E9D00D00EC6 /* BlogRegisterViewController.swift in Sources */,
 				33A4E81C2AEBB14800E3F55E /* BlogViewModel.swift in Sources */,
 				D2CDB7152AEB69DB00BFD8C2 /* TestComponentsViewController.swift in Sources */,
@@ -579,6 +606,7 @@
 				D2CDB7032AEB680300BFD8C2 /* CustomTextFieldViewWithValidation.swift in Sources */,
 				33A4E8262AECB57000E3F55E /* PostViewModel.swift in Sources */,
 				D29659F02AE7EEEB000C28A6 /* TagCollectionViewFlowLayout.swift in Sources */,
+				33E1D1DD2B012524007DEEE8 /* AvatarImageView.swift in Sources */,
 				D2BEB5072AF8B78700C1BF30 /* BlockedUserViewController.swift in Sources */,
 				D20DC9E62AF2098F001F83D0 /* KeywordInput.swift in Sources */,
 				D20DC9EA2AF3AA9E001F83D0 /* HorizontalTagsCollectionView.swift in Sources */,
@@ -586,6 +614,7 @@
 				33A4E8242AECB4C700E3F55E /* UserViewModel.swift in Sources */,
 				3334E1DE2AD918CB00D853D7 /* HomeViewController.swift in Sources */,
 				9BB3AD6F2AEEC99F004A25DB /* MyProfileTableViewCell.swift in Sources */,
+				33E1D1DF2B0133D0007DEEE8 /* WebViewWarmer.swift in Sources */,
 				AB75EDEA2AF0E90300BC1BC9 /* Rss.swift in Sources */,
 				33A4E8322AEFCA7100E3F55E /* LoadingViewController.swift in Sources */,
 				D2CDB70B2AEB68DB00BFD8C2 /* CustomCommunityTILView.swift in Sources */,
@@ -598,10 +627,13 @@
 				3334E1D52AD913FE00D853D7 /* Date+Ext.swift in Sources */,
 				D2CDB7092AEB689D00BFD8C2 /* CustomTILView.swift in Sources */,
 				D2A1684C2AE8D7AE006BD2C4 /* ContextTapGestureRecognizer.swift in Sources */,
+				33E1D1D82B011C7C007DEEE8 /* UIColor+Ext.swift in Sources */,
 				3334E1D72AD914EF00D853D7 /* User.swift in Sources */,
 				D24BB9932AE107F800ED7028 /* BlogListTableViewCell.swift in Sources */,
 				D29F54C52AF9FC970064B9B3 /* UITableView+Ext.swift in Sources */,
+				3373D56B2AFB7F820057A23B /* RssService.swift in Sources */,
 				33A4E83C2AF0EB6300E3F55E /* converter.swift in Sources */,
+				33E1D1E12B016545007DEEE8 /* UIImage+Ext.swift in Sources */,
 				D2CDB70F2AEB693C00BFD8C2 /* CustomSegmentedControl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -873,6 +905,14 @@
 				minimumVersion = 15.0.3;
 			};
 		};
+		33E1D1D92B0124CE007DEEE8 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.10.0;
+			};
+		};
 		AB75EDE62AEF9CBB00BC1BC9 /* XCRemoteSwiftPackageReference "XMLCoder" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CoreOffice/XMLCoder";
@@ -931,6 +971,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 33DC8E012ADFC9CC00580FA0 /* XCRemoteSwiftPackageReference "Moya" */;
 			productName = Moya;
+		};
+		33E1D1DA2B0124CF007DEEE8 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 33E1D1D92B0124CE007DEEE8 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 		AB75EDE72AEF9CBB00BC1BC9 /* XMLCoder */ = {
 			isa = XCSwiftPackageProductDependency;

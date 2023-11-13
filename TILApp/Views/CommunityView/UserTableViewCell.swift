@@ -8,7 +8,7 @@
 import UIKit
 
 final class UserTableViewCell: UITableViewCell {
-    static let identifier = "UserCell"
+    static let identifier = #function
     let userTILView = CustomTILView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

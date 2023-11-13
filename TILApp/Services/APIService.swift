@@ -1,6 +1,8 @@
+import Combine
 import Foundation
 import Moya
 import MoyaSugar
+import UIKit
 
 enum APIError: Error {
     case error(_ reason: String)
@@ -12,15 +14,15 @@ private enum Coder {
 }
 
 typealias Handler<T, E: Error> = (_ result: APIResult<T>) -> Void
-typealias APIResult<T> = Result<T, MoyaError>
-typealias APIHandler<T> = Handler<T, MoyaError>
+typealias APIResult<T> = Result<T, APIError>
+typealias APIHandler<T> = Handler<T, APIError>
 
 final class APIService {
     static let shared: APIService = .init()
     private init() {}
 
     private let provider = MoyaSugarProvider<APIRequest>(plugins: [
-//        NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
+          // NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
     ])
 
     func request(_ target: APIRequest, handler: @escaping APIHandler<Response>) {
@@ -29,21 +31,38 @@ final class APIService {
             case .success(let response):
                 guard let response = try? response.filterSuccessfulStatusCodes() else {
                     if let message = getErrorMessage(of: response) {
-                        return handler(.failure(.underlying(APIError.error(message), response)))
+                        return handler(.failure(.error(message)))
                     }
-                    return handler(.failure(.statusCode(response)))
+                    return handler(.failure(.error("예상치 못한 에러가 발생했습니다.")))
                 }
                 return handler(.success(response))
             case .failure(let error):
-                return handler(.failure(error))
+                debugPrint(#function, error)
+                if let response = error.response, let message = getErrorMessage(of: response) {
+                    return handler(.failure(.error(message)))
+                }
+                return handler(.failure(.error("예상치 못한 에러가 발생했습니다.")))
             }
         }
     }
 
-    func request(_ target: APIRequest) async -> APIResult<Response> {
-        return await withCheckedContinuation { [unowned self] continuation in
-            request(target) { continuation.resume(returning: $0) }
+    func request(_ target: APIRequest) async throws -> Response {
+        return try await withCheckedThrowingContinuation { [unowned self] continuation in
+            request(target) { result in
+                switch result {
+                case .success(let response):
+                    continuation.resume(returning: response)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
         }
+    }
+
+    func request(_ target: APIRequest) -> AnyPublisher<Response, APIError> {
+        return Future { [unowned self] promise in
+            request(target) { promise($0) }
+        }.eraseToAnyPublisher()
     }
 
     func request<Model: Decodable>(_ target: APIRequest, to model: Model.Type, _ handler: @escaping APIHandler<Model>) {
@@ -52,25 +71,40 @@ final class APIService {
             case .success(let response):
                 guard let response = try? response.filterSuccessfulStatusCodes() else {
                     if let message = getErrorMessage(of: response) {
-                        return handler(.failure(.underlying(APIError.error(message), response)))
+                        return handler(.failure(.error(message)))
                     }
-                    return handler(.failure(.statusCode(response)))
+                    return handler(.failure(.error("예상치 못한 에러가 발생했습니다.")))
                 }
                 guard let model = try? response.map(model, using: Coder.decoder) else {
                     printJsonAsString(json: response.data, to: model)
-                    return handler(.failure(.jsonMapping(response)))
+                    return handler(.failure(.error("잘못된 응답입니다.")))
                 }
                 return handler(.success(model))
             case .failure(let error):
-                return handler(.failure(error))
+                debugPrint(#function, error)
+                if let response = error.response, let message = getErrorMessage(of: response) {
+                    return handler(.failure(.error(message)))
+                }
+                return handler(.failure(.error("예상치 못한 에러가 발생했습니다.")))
             }
         }
     }
 
-    func request<Model: Decodable>(_ target: APIRequest, to model: Model.Type) async -> APIResult<Model> {
-        return await withCheckedContinuation { [unowned self] continuation in
-            request(target, to: model) { continuation.resume(returning: $0) }
+    func request<Model: Decodable>(_ target: APIRequest, to model: Model.Type) async throws -> Model {
+        return try await withCheckedThrowingContinuation { [unowned self] continuation in
+            request(target, to: model) { result in
+                switch result {
+                case .success(let response): continuation.resume(returning: response)
+                case .failure(let error): continuation.resume(throwing: error)
+                }
+            }
         }
+    }
+
+    func request<Model: Decodable>(_ target: APIRequest, to model: Model.Type) -> AnyPublisher<Model, APIError> {
+        return Future { [unowned self] promise in
+            request(target, to: model) { promise($0) }
+        }.eraseToAnyPublisher()
     }
 
     private func getErrorMessage(of response: Response) -> String? {
@@ -82,7 +116,7 @@ final class APIService {
     }
 
     private func printJsonAsString<Model>(json: Data, to model: Model) {
-        debugPrint("Failed to convert json to data(\(String(describing: model))")
+        debugPrint("[\(#function)] Failed to convert json to data(\(String(describing: model))")
         if let string = String(data: json, encoding: .utf8) {
             debugPrint("Stringify:", string)
         }
@@ -95,6 +129,9 @@ enum APIRequest {
 
     // Authenticate
     case signIn(_ input: SignInInput)
+
+    // Upload File
+    case uploadImage(_ image: UIImage)
 
     // My Profile
     case getMyProfile,
@@ -149,6 +186,9 @@ extension APIRequest: SugarTargetType {
 
         // Authenticate
         case .signIn: return .post("/auth/sign-in")
+
+        // Upload File
+        case .uploadImage: return .post("/upload/image")
 
         // My Profile
         case .getMyProfile: return .get("/my/profile")
@@ -206,6 +246,26 @@ extension APIRequest: SugarTargetType {
         }
     }
 
+    var task: Task {
+        switch self {
+        case .uploadImage(let image):
+            guard let data = image
+                .resized(to: .init(width: 100, height: 100))
+                .jpegData(compressionQuality: 0.3)
+            else { return .requestPlain }
+
+            return .uploadMultipart([.init(
+                provider: .data(data),
+                name: "file",
+                fileName: "image.jpg",
+                mimeType: "image/jpeg"
+            )])
+        default:
+            guard let parameters else { return .requestPlain }
+            return .requestParameters(parameters: parameters.values, encoding: parameters.encoding)
+        }
+    }
+
     private func toBody<T: Codable>(_ input: T) -> MoyaSugar.Parameters? {
         JSONEncoding() => toDictionary(from: input, with: Coder.encoder)
     }
@@ -216,9 +276,15 @@ extension APIRequest: SugarTargetType {
 
     var headers: [String: String]? {
         var headers: [String: String] = [:]
-        headers.updateValue("application/json", forKey: "Content-type")
         if let accessToken = AuthViewModel.shared.accessToken {
             headers.updateValue("Bearer \(accessToken)", forKey: "Authorization")
+        }
+
+        switch self {
+        case .uploadImage:
+            headers.updateValue("multipart/form-data", forKey: "Content-type")
+        default:
+            headers.updateValue("application/json", forKey: "Content-type")
         }
         return headers
     }
