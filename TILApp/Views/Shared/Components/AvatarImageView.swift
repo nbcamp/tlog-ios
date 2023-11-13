@@ -49,7 +49,7 @@ final class AvatarImageView: UIImageView {
         super.layoutSubviews()
         setupUI()
 
-        if !initialized {
+        if !initialized, image == nil {
             setDefault()
         }
     }
