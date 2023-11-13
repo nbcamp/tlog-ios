@@ -62,13 +62,12 @@ final class HomeViewController: UIViewController {
         view.backgroundColor = .systemBackground
         configureUI()
         updateCountTILLabel()
-        RssViewModel.shared.prepare()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        navigationController?.isNavigationBarHidden = true
+        navigationController?.setNavigationBarHidden(true, animated: true)
         if let username = user?.username {
             greetingLabel.text = "\(username)님, 안녕하세요!"
         } else {
