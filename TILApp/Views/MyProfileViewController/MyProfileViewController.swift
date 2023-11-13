@@ -199,13 +199,13 @@ final class MyProfileViewController: UIViewController {
         }
     }
 
-    func updateAuthUser() {
+    private func updateAuthUser() {
         authUser = authViewModel.user
-        authViewModel.profile { [weak self] result in
-            guard case let .success(authUser) = result else { return }
-            self?.authUser = authUser
-            if self?.section == .myLikedPosts {
-                self?.loadMyPosts { [weak self] in
+        authViewModel.sync { [weak self] result in
+            guard let self, case let .success(authUser) = result else { return }
+            self.authUser = authUser
+            if section == .myLikedPosts {
+                loadMyPosts { [weak self] in
                     self?.myProfileTableView.reloadData()
                     self?.myProfileTableView.setNeedsLayout()
                 }
