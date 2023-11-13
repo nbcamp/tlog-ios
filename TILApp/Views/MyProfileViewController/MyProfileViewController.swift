@@ -6,10 +6,12 @@ final class MyProfileViewController: UIViewController {
     }
 
     private let authViewModel = AuthViewModel.shared
-    private var user: AuthUser? {
+    private var authUser: AuthUser? {
         didSet {
-            nicknameLabel.text = user?.username
-            profileImageView.url = user?.avatarUrl
+            nicknameLabel.text = authUser?.username
+            profileImageView.url = authUser?.avatarUrl
+            followersButton.setTitle("\(authUser?.followers ?? 0)\n팔로워", for: .normal)
+            followingButton.setTitle("\(authUser?.followings ?? 0)\n팔로잉", for: .normal)
         }
     }
 
@@ -31,7 +33,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var nicknameLabel = UILabel().then {
         $0.font = UIFont.boldSystemFont(ofSize: 20)
-        $0.text = user?.username
+        $0.text = authUser?.username
         $0.sizeToFit()
     }
 
@@ -47,7 +49,7 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("\(user?.posts ?? 0)\n작성글", for: .normal)
+        $0.setTitle("\(authUser?.posts ?? 0)\n작성글", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -59,7 +61,7 @@ final class MyProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("\(user?.followers ?? 0)\n팔로워", for: .normal)
+        $0.setTitle("\(authUser?.followers ?? 0)\n팔로워", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
     }
@@ -67,7 +69,7 @@ final class MyProfileViewController: UIViewController {
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("\(user?.followings ?? 0)\n팔로잉", for: .normal)
+        $0.setTitle("\(authUser?.followings ?? 0)\n팔로잉", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
@@ -126,7 +128,7 @@ final class MyProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        user = authViewModel.user
+        updateAuthUser()
         navigationController?.setNavigationBarHidden(true, animated: true)
         WKWebViewWarmer.shared.prepare(3)
     }
@@ -135,7 +137,7 @@ final class MyProfileViewController: UIViewController {
         super.viewWillDisappear(animated)
         WKWebViewWarmer.shared.clear()
     }
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         screenView.pin.all(view.pin.safeArea)
@@ -184,6 +186,20 @@ final class MyProfileViewController: UIViewController {
             PostViewModel.shared.withMyLikedPosts { _ in completion() }
         }
     }
+    
+    func updateAuthUser() {
+        authUser = authViewModel.user
+        authViewModel.profile { [weak self] result in
+            guard case let .success(authUser) = result else { return }
+            self?.authUser = authUser
+            if self?.section == .myLikedPosts {
+                self?.loadMyPosts { [weak self] in
+                    self?.myProfileTableView.reloadData()
+                    self?.myProfileTableView.setNeedsLayout()
+                }
+            }
+        }
+    }
 }
 
 extension MyProfileViewController: UITableViewDataSource {
@@ -210,37 +226,6 @@ extension MyProfileViewController: UITableViewDataSource {
             ) as? CommunityTableViewCell else { return UITableViewCell() }
             let post = myLikedPosts[indexPath.row]
             cell.customCommunityTILView.setup(post: post)
-            if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
-                cell.customCommunityTILView.variant = .hidden
-            } else if UserViewModel.shared.isMyFollowing(user: post.user) {
-                cell.customCommunityTILView.variant = .unfollow
-            } else {
-                cell.customCommunityTILView.variant = .follow
-            }
-
-            cell.customCommunityTILView.followButtonTapped = { [weak cell] in
-                guard let cell else { return }
-                switch cell.customCommunityTILView.variant {
-                case .follow:
-                    UserViewModel.shared.follow(user: post.user) { [weak cell] result in
-                        guard case .success(let success) = result, success else {
-                            // TODO: 에러 처리
-                            return
-                        }
-                        cell?.customCommunityTILView.variant = .unfollow
-                    }
-                case .unfollow:
-                    UserViewModel.shared.unfollow(user: post.user) { [weak cell] result in
-                        guard case .success(let success) = result, success else {
-                            // TODO: 에러 처리
-                            return
-                        }
-                        cell?.customCommunityTILView.variant = .follow
-                    }
-                default:
-                    break
-                }
-            }
 
             cell.customCommunityTILView.userProfileTapped = { [weak self] in
                 guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
@@ -286,7 +271,7 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
         if title == "회원 정보 수정" {
             let profileEditViewController = ProfileEditViewController()
             profileEditViewController.hidesBottomBarWhenPushed = true
-            profileEditViewController.username = user?.username ?? ""
+            profileEditViewController.username = authUser?.username ?? ""
             profileEditViewController.avatarImage = profileImageView.image
             dismiss(animated: true) { [weak self] in
                 self?.navigationController?.pushViewController(profileEditViewController, animated: true)

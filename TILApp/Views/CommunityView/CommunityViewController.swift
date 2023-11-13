@@ -82,38 +82,8 @@ extension CommunityViewController: UITableViewDataSource {
         }
 
         let post = posts[indexPath.row]
-        cell.customCommunityTILView.setup(post: post)
-        if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
-            cell.customCommunityTILView.variant = .hidden
-        } else if userViewModel.isMyFollowing(user: post.user) {
-            cell.customCommunityTILView.variant = .unfollow
-        } else {
-            cell.customCommunityTILView.variant = .follow
-        }
 
-        cell.customCommunityTILView.followButtonTapped = { [weak self, weak cell] in
-            guard let self, let cell else { return }
-            switch cell.customCommunityTILView.variant {
-            case .follow:
-                userViewModel.follow(user: post.user) { [weak cell] result in
-                    guard case .success(let success) = result, success else {
-                        // TODO: 에러 처리
-                        return
-                    }
-                    cell?.customCommunityTILView.variant = .unfollow
-                }
-            case .unfollow:
-                userViewModel.unfollow(user: post.user) { [weak cell] result in
-                    guard case .success(let success) = result, success else {
-                        // TODO: 에러 처리
-                        return
-                    }
-                    cell?.customCommunityTILView.variant = .follow
-                }
-            default:
-                break
-            }
-        }
+        cell.customCommunityTILView.setup(post: post)
 
         cell.selectionStyle = .none
 
@@ -189,6 +159,10 @@ extension CommunityViewController: UITextFieldDelegate {
 }
 
 extension CommunityViewController: CommunityViewModelDelegate {
+    func itemsUpdated(_: CommunityViewModel, updatedIndexPaths: [IndexPath]) {
+        tableView.reloadRows(at: updatedIndexPaths, with: .none)
+    }
+
     func itemsUpdated(_: CommunityViewModel, items _: [CommunityPost], range: Range<Int>) {
         if range.lowerBound > 0 {
             let indexPaths = range.map { IndexPath(row: $0, section: 0) }

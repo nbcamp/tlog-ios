@@ -9,6 +9,8 @@ struct User: Codable {
     let followings: Int
     let lastPublishedAt: Date?
     let hasBlog: Bool
+    let isMyFollower: Bool
+    let isMyFollowing: Bool
 }
 
 struct UpdateUserInput: Codable {

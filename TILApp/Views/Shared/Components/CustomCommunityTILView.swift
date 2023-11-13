@@ -4,14 +4,9 @@ class CustomCommunityTILView: UIView {
     var userProfileTapped: (() -> Void)?
     var postTapped: (() -> Void)?
 
-    var variant: CustomFollowButton.Variant {
-        get { userView.variant }
-        set { userView.variant = newValue }
-    }
-
-    var followButtonTapped: (() -> Void)? {
-        get { userView.followButtonTapped }
-        set { userView.followButtonTapped = newValue }
+    var contentText: String {
+        get { userView.contentText }
+        set { userView.contentText = newValue }
     }
 
     private lazy var userView = CustomUserView().then {
@@ -88,7 +83,7 @@ class CustomCommunityTILView: UIView {
             username: post.user.username,
             avatarUrl: post.user.avatarUrl,
             content: "팔로워 \(post.user.followers)",
-            variant: .follow
+            variant: .hidden
         )
         tilView.setup(withTitle: post.title, content: post.content, date: "")
         tagsCollectionView.tags = post.tags

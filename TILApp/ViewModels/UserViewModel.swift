@@ -11,29 +11,39 @@ final class UserViewModel {
         api.request(.getUserProfile(user.id), to: User.self, handler)
     }
 
-    func follow(user: User, _ handler: @escaping APIHandler<Bool>) {
-        api.request(.followUser(user.id)) { [unowned self] result in
-            if case .success = result {
-                myFollowings.append(user)
+    func follow(user: User, _ handler: @escaping APIHandler<User>) {
+        api.request(.followUser(user.id), to: User.self) { [unowned self] result in
+            switch result {
+            case .success(let updatedUser):
+                if let index = myFollowings.firstIndex(where: { $0.id == user.id }) {
+                    myFollowings[index] = updatedUser
+                } else {
+                    myFollowings.append(updatedUser)
+                }
+                handler(.success(updatedUser))
+            case .failure(let error):
+                handler(.failure(error))
             }
-            handler(.success(true))
         }
     }
 
-    func unfollow(user: User, _ handler: @escaping APIHandler<Bool>) {
-        api.request(.unfollowUser(user.id)) { [unowned self] _ in
-            if let index = myFollowings.firstIndex(where: { $0.id == user.id }) {
-                myFollowings.remove(at: index)
-                handler(.success(true))
-                return
+    func unfollow(user: User, _ handler: @escaping APIHandler<User>) {
+        api.request(.unfollowUser(user.id), to: User.self) { [unowned self] result in
+            switch result {
+            case .success(let updatedUser):
+                if let index = myFollowings.firstIndex(where: { $0.id == user.id }) {
+                    myFollowings.remove(at: index)
+                }
+                handler(.success(updatedUser))
+            case .failure(let error):
+                handler(.failure(error))
             }
-            handler(.success(false))
         }
     }
 
     func withMyFollowers(_ handler: @escaping APIHandler<[User]>) {
         api.request(.getMyFollowers, to: [User].self) { [unowned self] result in
-            if case let .success(model) = result {
+            if case .success(let model) = result {
                 myFollowers = model
             }
             handler(result)
@@ -42,7 +52,7 @@ final class UserViewModel {
 
     func withMyFollowings(_ handler: @escaping APIHandler<[User]>) {
         api.request(.getMyFollowings, to: [User].self) { [unowned self] result in
-            if case let .success(model) = result {
+            if case .success(let model) = result {
                 myFollowings = model
             }
             handler(result)

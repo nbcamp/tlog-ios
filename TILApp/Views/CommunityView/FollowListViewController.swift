@@ -7,11 +7,16 @@ final class FollowListViewController: UIViewController {
 
     private let authViewModel = AuthViewModel.shared
     private let userViewModel = UserViewModel.shared
-    private lazy var user = authViewModel.user
+    private var authUser: AuthUser? {
+        didSet {
+            segmentedControl.setTitle("팔로워 \(authUser?.followers ?? 0)", forSegmentAt: 0)
+            segmentedControl.setTitle("팔로잉 \(authUser?.followings ?? 0)", forSegmentAt: 1)
+        }
+    }
 
     private lazy var segmentedControl = CustomSegmentedControl(items: [
-        "팔로워 \(user?.followers ?? 0)",
-        "팔로잉 \(user?.followings ?? 0)"
+        "팔로워 \(authUser?.followers ?? 0)",
+        "팔로잉 \(authUser?.followings ?? 0)"
     ]).then {
         $0.selectedSegmentIndex = selectedIndex
         $0.addTarget(self, action: #selector(segmentedControlSelected(_:)), for: .valueChanged)
@@ -36,6 +41,8 @@ final class FollowListViewController: UIViewController {
             tableView.reloadData()
             tableView.layoutIfNeeded()
         }
+
+        authUser = authViewModel.user
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -57,6 +64,7 @@ final class FollowListViewController: UIViewController {
             tableView.layoutIfNeeded()
 
             let selectedIndex = control.selectedSegmentIndex
+
             if let ratio = scrollRatios[selectedIndex] {
                 let totalScrollableHeight = tableView.contentSize.height - tableView.bounds.height
                 let yOffset = totalScrollableHeight * ratio
@@ -78,9 +86,9 @@ final class FollowListViewController: UIViewController {
 
     private func loadFollowList() async -> APIResult<[User]> {
         return await withCheckedContinuation { continuation in
-            if selectedIndex == 0 {
+            if segmentedControl.selectedSegmentIndex == 0 {
                 userViewModel.withMyFollowers { continuation.resume(returning: $0) }
-            } else if selectedIndex == 1 {
+            } else if segmentedControl.selectedSegmentIndex == 1 {
                 userViewModel.withMyFollowings { continuation.resume(returning: $0) }
             }
         }
@@ -117,7 +125,7 @@ extension FollowListViewController: UITableViewDataSource {
             username: user.username,
             avatarUrl: user.avatarUrl,
             content: content,
-            variant: isFollowing ? .unfollow : .follow
+            variant: user.isMyFollowing ? .unfollow : .follow
         )
 
         cell.customUserView.followButtonTapped = { [weak self, weak cell] in
@@ -129,22 +137,28 @@ extension FollowListViewController: UITableViewDataSource {
             case .follow:
                 userViewModel.follow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case .success(let success) = result, success else {
+                    guard case .success = result else {
                         // TODO: 에러 처리
                         return
                     }
                     cell.customUserView.variant = .unfollow
-                    segmentedControl.setTitle("팔로잉 \(userViewModel.myFollowings.count)", forSegmentAt: 1)
+                    authViewModel.profile { [weak self] result in
+                        guard case let .success(authUser) = result else { return }
+                        self?.authUser = authUser
+                    }
                 }
             case .unfollow:
                 userViewModel.unfollow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case .success(let success) = result, success else {
+                    guard case .success = result else {
                         // TODO: 에러 처리
                         return
                     }
                     cell.customUserView.variant = .follow
-                    segmentedControl.setTitle("팔로잉 \(userViewModel.myFollowings.count)", forSegmentAt: 1)
+                    authViewModel.profile { [weak self] result in
+                        guard case let .success(authUser) = result else { return }
+                        self?.authUser = authUser
+                    }
                 }
             default:
                 break

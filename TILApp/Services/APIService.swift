@@ -22,7 +22,7 @@ final class APIService {
     private init() {}
 
     private let provider = MoyaSugarProvider<APIRequest>(plugins: [
-        //                NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
+          // NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
     ])
 
     func request(_ target: APIRequest, handler: @escaping APIHandler<Response>) {
