@@ -13,7 +13,7 @@ final class RootViewController: UITabBarController {
         let tabs: [Tab] = [
 //            .init(title: "홈", icon: "house", controller: HomeViewController()),
             .init(title: "홈", icon: "house", controller: CalendarViewController()),
-            .init(title: "커뮤니티", icon: "bubble", controller: CommunityViewController()),
+            .init(title: "커뮤니티", icon: "bubble.left", controller: CommunityViewController()),
             .init(title: "내 정보", icon: "person", controller: MyProfileViewController()),
         ]
 
