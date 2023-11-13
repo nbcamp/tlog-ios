@@ -115,11 +115,7 @@ final class MyProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        authUser = authViewModel.user
-        authViewModel.profile { [weak self] result in
-            guard case let .success(authUser) = result else { return }
-            self?.authUser = authUser
-        }
+        updateAuthUser()
         navigationController?.isNavigationBarHidden = true
     }
 
@@ -191,6 +187,20 @@ final class MyProfileViewController: UIViewController {
             PostViewModel.shared.withMyPosts { _ in completion() }
         case .myLikedPosts:
             PostViewModel.shared.withMyLikedPosts { _ in completion() }
+        }
+    }
+    
+    func updateAuthUser() {
+        authUser = authViewModel.user
+        authViewModel.profile { [weak self] result in
+            guard case let .success(authUser) = result else { return }
+            self?.authUser = authUser
+            if self?.section == .myLikedPosts {
+                self?.loadMyPosts { [weak self] in
+                    self?.myProfileTableView.reloadData()
+                    self?.myProfileTableView.setNeedsLayout()
+                }
+            }
         }
     }
 }
