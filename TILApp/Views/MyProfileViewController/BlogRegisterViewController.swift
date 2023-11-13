@@ -85,7 +85,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        navigationController?.isNavigationBarHidden = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
         view.setNeedsLayout()
 
         updateDoneButtonState()

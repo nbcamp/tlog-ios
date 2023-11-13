@@ -48,13 +48,13 @@ final class CommunityViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = true
-        communityViewModel.refresh()
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        WKWebViewWarmer.shared.prepare(10)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        navigationController?.isNavigationBarHidden = false
+        WKWebViewWarmer.shared.clear()
     }
 
     override func viewDidLayoutSubviews() {
@@ -97,8 +97,6 @@ extension CommunityViewController: UITableViewDataSource {
 
         cell.customCommunityTILView.postTapped = { [weak self] in
             guard let self else { return }
-            let webViewController = WebViewController()
-            webViewController.url = post.url
             let likeButton = LikeButton(liked: post.liked)
             likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
                 APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
@@ -106,9 +104,12 @@ extension CommunityViewController: UITableViewDataSource {
                     completion()
                 }
             }
-            webViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
 
-            webViewController.hidesBottomBarWhenPushed = true
+            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                $0.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
+                $0.hidesBottomBarWhenPushed = true
+                $0.url = post.url
+            }
             navigationController?.pushViewController(webViewController, animated: true)
         }
 

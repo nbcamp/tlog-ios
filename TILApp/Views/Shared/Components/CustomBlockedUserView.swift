@@ -2,8 +2,8 @@ import UIKit
 
 class CustomBlockedUserView: UIView {
     var image: UIImage? {
-        get { imageView.image }
-        set { imageView.image = newValue }
+        get { profileImageView.image }
+        set { profileImageView.image = newValue }
     }
 
     var unblockButtonTapped: (() -> Void)? {
@@ -16,11 +16,7 @@ class CustomBlockedUserView: UIView {
         $0.sizeToFit()
     }
 
-    private let imageView = UIImageView().then {
-        $0.backgroundColor = .systemGray5
-        $0.contentMode = .scaleAspectFit
-        $0.clipsToBounds = true
-    }
+    private let profileImageView = AvatarImageView()
 
     private let button = CustomFollowButton().then {
         $0.variant = .unblock
@@ -31,7 +27,7 @@ class CustomBlockedUserView: UIView {
 
         pin.height(67)
 
-        addSubview(imageView)
+        addSubview(profileImageView)
         addSubview(nicknameLabel)
         addSubview(button)
     }
@@ -44,15 +40,18 @@ class CustomBlockedUserView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        imageView.pin.vCenter().left(10).width(47).height(47)
+        profileImageView.pin.vCenter().left(10).width(47).height(47)
         button.pin.right(10).vCenter()
-        nicknameLabel.pin.after(of: imageView).before(of: button).vCenter().sizeToFit().marginLeft(10).marginRight(10)
-
-        imageView.layer.cornerRadius = imageView.bounds.size.width / 2.0
+        nicknameLabel.pin
+            .after(of: profileImageView)
+            .before(of: button, aligned: .center)
+            .sizeToFit()
+            .marginLeft(10)
+            .marginRight(10)
     }
 
-    func setup(image: UIImage, nicknameText: String) {
-        self.image = image
-        self.nicknameLabel.text = nicknameText
+    func setup(username: String, avatarUrl: String?) {
+        self.nicknameLabel.text = username
+        self.profileImageView.url = avatarUrl
     }
 }

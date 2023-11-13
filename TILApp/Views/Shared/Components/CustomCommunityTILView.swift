@@ -64,7 +64,7 @@ class CustomCommunityTILView: UIView {
         tilView.pin.below(of: userView).horizontally().marginTop(-15)
         dateLabel.pin.left(20).bottom(10)
         heartButton.pin.top(to: dateLabel.edge.top).right(20).bottom(10)
-        tagsCollectionView.pin.after(of: dateLabel).top(to: dateLabel.edge.top).width(60%)
+        tagsCollectionView.pin.after(of: dateLabel, aligned: .center).width(60%).marginLeft(10)
 
         tilView.resizeText()
     }
@@ -80,9 +80,9 @@ class CustomCommunityTILView: UIView {
     // TODO: 팔로워 옆에 연속 작성 일수 추가해야 함
     func setup(post: CommunityPost) {
         userView.setup(
-            image: UIImage(),
-            nicknameText: post.user.username,
-            contentText: "팔로워 \(post.user.followers)",
+            username: post.user.username,
+            avatarUrl: post.user.avatarUrl,
+            content: "팔로워 \(post.user.followers)",
             variant: .hidden
         )
         tilView.setup(withTitle: post.title, content: post.content, date: "")
@@ -90,14 +90,5 @@ class CustomCommunityTILView: UIView {
         dateLabel.text = post.publishedAt.relativeFormat()
         dateLabel.sizeToFit()
         heartButton.isSelected = post.liked
-    }
-
-    func updateUser(user: User, variant: CustomFollowButton.Variant) {
-        userView.setup(
-            image: UIImage(),
-            nicknameText: user.username,
-            contentText: "팔로워 \(user.followers)",
-            variant: variant
-        )
     }
 }

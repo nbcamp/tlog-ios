@@ -84,7 +84,7 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
 
             AuthViewModel.shared.signIn(.init(
                 username: username ?? "이름없음",
-                avatarUrl: "",
+                avatarUrl: nil,
                 provider: "APPLE",
                 providerId: userIdentifier
             )) { [weak self] result in

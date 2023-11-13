@@ -1,6 +1,7 @@
 import Combine
 import FSCalendar
 import UIKit
+import WebKit
 import XMLCoder
 
 final class CalendarViewController: UIViewController, UIGestureRecognizerDelegate {
@@ -109,21 +110,28 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
                 loadingView.removeFromSuperview()
                 tableView.reloadData()
             }.store(in: &cancellable)
+
+        rootView.flex.direction(.column).define {
+            $0.addItem(calendarView).marginLeft(20).marginRight(20).aspectRatio(1)
+            $0.addItem(tableView).grow(1)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = true
-        navigationController?.isToolbarHidden = true
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        WKWebViewWarmer.shared.prepare()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        WKWebViewWarmer.shared.prepare()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         rootView.pin.all(view.pin.safeArea)
-        rootView.flex.direction(.column).define {
-            $0.addItem(calendarView).marginLeft(20).marginRight(20).aspectRatio(1)
-            $0.addItem(tableView).grow(1)
-        }.layout()
+        rootView.flex.layout()
         if rssViewModel.loading {
             view.addSubview(loadingView)
             loadingView.pin.all(view.pin.safeArea)
@@ -263,10 +271,10 @@ extension CalendarViewController: UITableViewDataSource {
 
 extension CalendarViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let post = posts[indexPath.row]
-        let webViewController = WebViewController()
-        webViewController.url = post.url
-        webViewController.hidesBottomBarWhenPushed = true
+        let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+            $0.url = posts[indexPath.row].url
+            $0.hidesBottomBarWhenPushed = true
+        }
         navigationController?.pushViewController(webViewController, animated: true)
     }
 

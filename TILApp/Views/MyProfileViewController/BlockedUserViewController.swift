@@ -26,7 +26,7 @@ final class BlockedUserViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
     override func viewDidLayoutSubviews() {
@@ -48,8 +48,8 @@ extension BlockedUserViewController: UITableViewDataSource {
         let user: User = blockedUsers[indexPath.row]
 
         cell.customBlockedUserView.setup(
-            image: UIImage(),
-            nicknameText: user.username
+            username: user.username,
+            avatarUrl: user.avatarUrl
         )
 
         cell.customBlockedUserView.unblockButtonTapped = { [weak self, weak cell] in
