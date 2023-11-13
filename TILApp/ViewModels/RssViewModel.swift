@@ -37,11 +37,16 @@ final class RssViewModel {
         if prepared { completion?(true); return }
         prepared = true
 
-        guard let authUser = AuthViewModel.shared.user, authUser.hasBlog else {
-            completion?(false); return
-        }
+        postsMap = [:]
+        postsByBlogMap = [:]
+        postsByMonthMap = [:]
+        allPosts = []
+        startOfStreakDays = nil
 
         Task {
+            let authUser = try await AuthViewModel.shared.sync()
+            guard authUser.hasBlog else { completion?(false); return }
+
             loading = true
             do {
                 let blogs = try await api.request(.getMyBlogs, to: [Blog].self)
@@ -58,7 +63,10 @@ final class RssViewModel {
         }
     }
 
-    func reload(_ completion: ((Bool) -> Void)? = nil) {}
+    func reload(_ completion: ((Bool) -> Void)? = nil) {
+        prepared = false
+        prepare(completion)
+    }
 
     func isDateInStreakDays(date: Date) -> Bool {
         guard let startOfStreakDays else { return false }

@@ -65,7 +65,6 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         contentView.addSubview(customKeywordView)
     }
 
-    // TODO: 프린트문 삭제
     @objc private func doneButtonTapped() {
         blogViewModel.create(.init(
             name: blogNameTextField.mainText,
@@ -79,6 +78,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
                 debugPrint(#function, error)
                 return
             }
+            RssViewModel.shared.reload()
             onRegistered?()
             navigationController?.popViewController(animated: true)
         }

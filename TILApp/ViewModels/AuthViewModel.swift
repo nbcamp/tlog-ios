@@ -3,7 +3,7 @@ import Foundation
 final class AuthViewModel {
     static let shared: AuthViewModel = .init()
     private init() {}
-    
+
     private let api = APIService.shared
 
     enum Token {
@@ -29,12 +29,23 @@ final class AuthViewModel {
         }
     }
 
-    func profile(_ handler: @escaping APIHandler<AuthUser>) {
+    func sync(_ handler: APIHandler<AuthUser>? = nil) {
         api.request(.getMyProfile, to: AuthUser.self) { [unowned self] result in
             if case let .success(model) = result {
                 user = model
             }
-            handler(result)
+            handler?(result)
+        }
+    }
+
+    func sync() async throws -> AuthUser {
+        return try await withCheckedThrowingContinuation { [unowned self] continuation in
+            sync { result in
+                switch result {
+                case let .success(user): continuation.resume(returning: user)
+                case let .failure(error): continuation.resume(throwing: error)
+                }
+            }
         }
     }
 
