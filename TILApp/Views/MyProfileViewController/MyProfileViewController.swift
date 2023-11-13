@@ -99,6 +99,20 @@ final class MyProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
+    private lazy var placeholderLabel = UILabel().then {
+        $0.text = "등록한 게시글이 없어요."
+        $0.textColor = .systemGray3
+        $0.font = .boldSystemFont(ofSize: 20)
+        $0.textAlignment = .center
+    }
+
+    private lazy var placeholderView = UIView().then {
+        $0.backgroundColor = .systemBackground
+        $0.flex.alignItems(.center).define { flex in
+            flex.addItem(placeholderLabel).marginTop(80)
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -137,7 +151,7 @@ final class MyProfileViewController: UIViewController {
         super.viewWillDisappear(animated)
         WKWebViewWarmer.shared.clear()
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         screenView.pin.all(view.pin.safeArea)
@@ -186,7 +200,7 @@ final class MyProfileViewController: UIViewController {
             PostViewModel.shared.withMyLikedPosts { _ in completion() }
         }
     }
-    
+
     func updateAuthUser() {
         authUser = authViewModel.user
         authViewModel.profile { [weak self] result in
@@ -203,11 +217,22 @@ final class MyProfileViewController: UIViewController {
 }
 
 extension MyProfileViewController: UITableViewDataSource {
-    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection _: Int) -> Int {
+        var count = 0
         switch section {
-        case .myPosts: return myPosts.count
-        case .myLikedPosts: return myLikedPosts.count
+        case .myPosts:
+            placeholderLabel.text = "등록한 게시글이 없어요."
+            tableView.backgroundView = myPosts.count == 0 ? placeholderView : nil
+            count = myPosts.count
+        case .myLikedPosts:
+            placeholderLabel.text = "좋아요한 게시글이 없어요."
+            tableView.backgroundView = myLikedPosts.count == 0 ? placeholderView : nil
+            count = myLikedPosts.count
         }
+        placeholderLabel.sizeToFit()
+        placeholderLabel.flex.markDirty()
+        placeholderView.flex.layout()
+        return count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

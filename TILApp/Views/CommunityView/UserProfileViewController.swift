@@ -105,6 +105,20 @@ final class UserProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
+    private lazy var placeholderLabel = UILabel().then {
+        $0.text = "등록한 게시글이 없어요."
+        $0.textColor = .systemGray3
+        $0.font = .boldSystemFont(ofSize: 20)
+        $0.textAlignment = .center
+    }
+
+    private lazy var placeholderView = UIView().then {
+        $0.backgroundColor = .systemBackground
+        $0.flex.alignItems(.center).define { flex in
+            flex.addItem(placeholderLabel).marginTop(80)
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -296,11 +310,22 @@ final class UserProfileViewController: UIViewController {
 }
 
 extension UserProfileViewController: UITableViewDataSource {
-    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection _: Int) -> Int {
+        var count = 0
         switch section {
-        case .posts: return posts.count
-        case .likedPosts: return likedPosts.count
+        case .posts:
+            placeholderLabel.text = "등록한 게시글이 없어요."
+            tableView.backgroundView = posts.count == 0 ? placeholderView : nil
+            count = posts.count
+        case .likedPosts:
+            placeholderLabel.text = "좋아요한 게시글이 없어요."
+            tableView.backgroundView = likedPosts.count == 0 ? placeholderView : nil
+            count = likedPosts.count
         }
+        placeholderLabel.sizeToFit()
+        placeholderLabel.flex.markDirty()
+        placeholderView.flex.layout()
+        return count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
