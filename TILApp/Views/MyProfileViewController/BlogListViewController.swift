@@ -1,6 +1,9 @@
 import UIKit
 
 final class BlogListViewController: UIViewController {
+    private let blogViewModel = BlogViewModel.shared
+    private var blogs: [Blog] { blogViewModel.blogs }
+
     private lazy var tableView = UITableView().then {
         $0.dataSource = self
         $0.delegate = self
@@ -8,7 +11,17 @@ final class BlogListViewController: UIViewController {
         $0.register(BlogListTableViewCell.self, forCellReuseIdentifier: "CustomBlogCell")
     }
 
-    private let blogViewModel = BlogViewModel.shared
+    private lazy var placeholderView = UIView().then {
+        $0.backgroundColor = .systemBackground
+        $0.flex.alignItems(.center).define { flex in
+            flex.addItem(UILabel().then {
+                $0.text = "새로운 블로그를 등록해주세요!"
+                $0.textColor = .systemGray3
+                $0.font = .boldSystemFont(ofSize: 20)
+                $0.textAlignment = .center
+            }).marginTop(50)
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,25 +60,20 @@ final class BlogListViewController: UIViewController {
 }
 
 extension BlogListViewController: UITableViewDataSource {
-    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return blogViewModel.blogs.count
+    func tableView(_ tableView: UITableView, numberOfRowsInSection _: Int) -> Int {
+        tableView.backgroundView = blogs.count == 0 ? placeholderView : nil
+        tableView.backgroundView?.flex.layout()
+        return blogs.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell
-            = tableView.dequeueReusableCell(withIdentifier: "CustomBlogCell", for: indexPath) as? BlogListTableViewCell
-        else {
-            return UITableViewCell()
-        }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CustomBlogCell", for: indexPath)
+            as? BlogListTableViewCell else { return UITableViewCell() }
 
-        let blog = blogViewModel.blogs[indexPath.row]
+        let blog = blogs[indexPath.row]
         cell.customBlogView.blogNameText = blog.name
         cell.customBlogView.blogURLText = blog.url
-        if blog.main {
-            cell.customBlogView.variant = .primary
-        } else {
-            cell.customBlogView.variant = .normal
-        }
+        cell.customBlogView.variant = blog.main ? .primary : .normal
 
         return cell
     }
@@ -79,8 +87,7 @@ extension BlogListViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedRow = indexPath.row
 
-        let blog = blogViewModel.blogs[selectedRow]
-
+        let blog = blogs[selectedRow]
         let blogEditViewController = BlogEditViewController()
         blogEditViewController.id = blog.id
 
