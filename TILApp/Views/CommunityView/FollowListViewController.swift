@@ -142,7 +142,7 @@ extension FollowListViewController: UITableViewDataSource {
                         return
                     }
                     cell.customUserView.variant = .unfollow
-                    authViewModel.profile { [weak self] result in
+                    authViewModel.sync { [weak self] result in
                         guard case let .success(authUser) = result else { return }
                         self?.authUser = authUser
                     }
@@ -155,7 +155,7 @@ extension FollowListViewController: UITableViewDataSource {
                         return
                     }
                     cell.customUserView.variant = .follow
-                    authViewModel.profile { [weak self] result in
+                    authViewModel.sync { [weak self] result in
                         guard case let .success(authUser) = result else { return }
                         self?.authUser = authUser
                     }
