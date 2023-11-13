@@ -116,8 +116,4 @@ extension WebViewController: WKNavigationDelegate {
         forwardButton.isEnabled = webView.canGoForward
         loadingView.isHidden = true
     }
-    
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        print("페이지를 찾을 수 없습니다.")
-    }
 }
