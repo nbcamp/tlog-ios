@@ -84,37 +84,6 @@ extension CommunityViewController: UITableViewDataSource {
         let post = posts[indexPath.row]
 
         cell.customCommunityTILView.setup(post: post)
-        if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
-            cell.customCommunityTILView.variant = .hidden
-        } else if post.user.isMyFollowing {
-            cell.customCommunityTILView.variant = .unfollow
-        } else {
-            cell.customCommunityTILView.variant = .follow
-        }
-
-        cell.customCommunityTILView.followButtonTapped = { [weak self, weak cell] in
-            guard let self, let cell else { return }
-            switch cell.customCommunityTILView.variant {
-            case .follow:
-                userViewModel.follow(user: post.user) { result in
-                    guard case let .success(updatedUser) = result else {
-                        // TODO: 에러 처리
-                        return
-                    }
-                    CommunityViewModel.shared.updatePosts(forUser: updatedUser)
-                }
-            case .unfollow:
-                userViewModel.unfollow(user: post.user) { result in
-                    guard case let .success(updatedUser) = result else {
-                        // TODO: 에러 처리
-                        return
-                    }
-                    CommunityViewModel.shared.updatePosts(forUser: updatedUser)
-                }
-            default:
-                break
-            }
-        }
 
         cell.selectionStyle = .none
 

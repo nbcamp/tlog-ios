@@ -219,47 +219,6 @@ extension MyProfileViewController: UITableViewDataSource {
             ) as? CommunityTableViewCell else { return UITableViewCell() }
             let post = myLikedPosts[indexPath.row]
             cell.customCommunityTILView.setup(post: post)
-            if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
-                cell.customCommunityTILView.variant = .hidden
-            } else if post.user.isMyFollowing {
-                cell.customCommunityTILView.variant = .unfollow
-            } else {
-                cell.customCommunityTILView.variant = .follow
-            }
-
-            cell.customCommunityTILView.followButtonTapped = { [weak cell] in
-                guard let cell else { return }
-                switch cell.customCommunityTILView.variant {
-                case .follow:
-                    UserViewModel.shared.follow(user: post.user) { result in
-                        guard case let .success(updatedUser) = result else {
-                            // TODO: 에러 처리
-                            return
-                        }
-                        let updatedIndexPaths = PostViewModel.shared.updateLikedPosts(forUser: updatedUser)
-                        tableView.reloadRows(at: updatedIndexPaths, with: .none)
-                        AuthViewModel.shared.profile { [weak self] result in
-                            guard case let .success(authUser) = result else { return }
-                            self?.authUser = authUser
-                        }
-                    }
-                case .unfollow:
-                    UserViewModel.shared.unfollow(user: post.user) { result in
-                        guard case let .success(updatedUser) = result else {
-                            // TODO: 에러 처리
-                            return
-                        }
-                        let updatedIndexPaths = PostViewModel.shared.updateLikedPosts(forUser: updatedUser)
-                        tableView.reloadRows(at: updatedIndexPaths, with: .none)
-                        AuthViewModel.shared.profile { [weak self] result in
-                            guard case let .success(authUser) = result else { return }
-                            self?.authUser = authUser
-                        }
-                    }
-                default:
-                    break
-                }
-            }
 
             cell.customCommunityTILView.userProfileTapped = { [weak self] in
                 guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }

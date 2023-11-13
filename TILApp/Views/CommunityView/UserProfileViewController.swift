@@ -1,7 +1,16 @@
 import UIKit
 
 final class UserProfileViewController: UIViewController {
-    var user: User?
+    var user: User? {
+        didSet {
+            if let user = user {
+                doingFollowButton.variant = user.isMyFollowing ? .unfollow : .follow
+                postButton.setTitle("\(user.posts)\n포스트", for: .normal)
+                followersButton.setTitle("\(user.followers)\n팔로워", for: .normal)
+                followingButton.setTitle("\(user.followings)\n팔로잉", for: .normal)
+            }
+        }
+    }
 
     private enum Section {
         case posts, likedPosts
@@ -46,7 +55,6 @@ final class UserProfileViewController: UIViewController {
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("\(user?.posts ?? 0)\n포스트", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -58,14 +66,12 @@ final class UserProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("\(user?.followers ?? 0)\n팔로워", for: .normal)
         $0.setTitleColor(.black, for: .normal)
     }
 
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("\(user?.followings ?? 0)\n팔로잉", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
@@ -74,11 +80,6 @@ final class UserProfileViewController: UIViewController {
     private lazy var doingFollowButton = CustomFollowButton().then {
         $0.setTitle("팔로우", for: .normal)
         $0.backgroundColor = .accent
-
-        if let user = self.user {
-            $0.variant = user.isMyFollowing ? .unfollow : .follow
-            print(user.isMyFollowing)
-        }
     }
 
     private lazy var userBlogURL = UIButton().then {
@@ -155,6 +156,11 @@ final class UserProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        if let user = user {
+            updateUserFollowers(user: user)
+        }
+
         navigationController?.isNavigationBarHidden = false
     }
 
@@ -270,8 +276,7 @@ final class UserProfileViewController: UIViewController {
                 // TODO: 에러 처리
                 return
             }
-            followersButton.setTitle("\(userProfile.followers)\n팔로워", for: .normal)
-            // self.user = userProfile
+            self.user = userProfile
         }
     }
 }
@@ -300,37 +305,6 @@ extension UserProfileViewController: UITableViewDataSource {
             ) as? CommunityTableViewCell else { return UITableViewCell() }
             let post = likedPosts[indexPath.row]
             cell.customCommunityTILView.setup(post: post)
-            if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
-                cell.customCommunityTILView.variant = .hidden
-            } else if post.user.isMyFollowing {
-                cell.customCommunityTILView.variant = .unfollow
-            } else {
-                cell.customCommunityTILView.variant = .follow
-            }
-
-            cell.customCommunityTILView.followButtonTapped = { [weak cell] in
-                guard let cell else { return }
-                switch cell.customCommunityTILView.variant {
-                case .follow:
-                    UserViewModel.shared.follow(user: post.user) { [weak cell] result in
-                        guard case let .success(success) = result else {
-                            // TODO: 에러 처리
-                            return
-                        }
-                        cell?.customCommunityTILView.variant = .unfollow
-                    }
-                case .unfollow:
-                    UserViewModel.shared.unfollow(user: post.user) { [weak cell] result in
-                        guard case let .success(success) = result else {
-                            // TODO: 에러 처리
-                            return
-                        }
-                        cell?.customCommunityTILView.variant = .follow
-                    }
-                default:
-                    break
-                }
-            }
 
             cell.customCommunityTILView.userProfileTapped = { [weak self] in
                 guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }

@@ -4,16 +4,6 @@ class CustomCommunityTILView: UIView {
     var userProfileTapped: (() -> Void)?
     var postTapped: (() -> Void)?
 
-    var variant: CustomFollowButton.Variant {
-        get { userView.variant }
-        set { userView.variant = newValue }
-    }
-
-    var followButtonTapped: (() -> Void)? {
-        get { userView.followButtonTapped }
-        set { userView.followButtonTapped = newValue }
-    }
-
     var contentText: String {
         get { userView.contentText }
         set { userView.contentText = newValue }
@@ -93,7 +83,7 @@ class CustomCommunityTILView: UIView {
             image: UIImage(),
             nicknameText: post.user.username,
             contentText: "팔로워 \(post.user.followers)",
-            variant: .follow
+            variant: .hidden
         )
         tilView.setup(withTitle: post.title, content: post.content, date: "")
         tagsCollectionView.tags = post.tags
@@ -101,7 +91,7 @@ class CustomCommunityTILView: UIView {
         dateLabel.sizeToFit()
         heartButton.isSelected = post.liked
     }
-    
+
     func updateUser(user: User, variant: CustomFollowButton.Variant) {
         userView.setup(
             image: UIImage(),
