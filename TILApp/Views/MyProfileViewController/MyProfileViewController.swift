@@ -10,6 +10,7 @@ final class MyProfileViewController: UIViewController {
         didSet {
             nicknameLabel.text = authUser?.username
             profileImageView.url = authUser?.avatarUrl
+            postButton.setTitle("\(authUser?.posts ?? 0)\n작성글", for: .normal)
             followersButton.setTitle("\(authUser?.followers ?? 0)\n팔로워", for: .normal)
             followingButton.setTitle("\(authUser?.followings ?? 0)\n팔로잉", for: .normal)
         }
@@ -49,7 +50,6 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("\(authUser?.posts ?? 0)\n작성글", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -61,7 +61,6 @@ final class MyProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("\(authUser?.followers ?? 0)\n팔로워", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
     }
@@ -69,7 +68,6 @@ final class MyProfileViewController: UIViewController {
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("\(authUser?.followings ?? 0)\n팔로잉", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)

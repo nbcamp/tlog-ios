@@ -5,27 +5,30 @@ final class ProfileEditViewController: UIViewController {
         get { nicknameTextFieldView.mainText }
         set { nicknameTextFieldView.mainText = newValue }
     }
-
+    
     var avatarImage: UIImage? {
         get { editProfileImageView.image }
         set { editProfileImageView.image = newValue }
     }
-
+    
+    private lazy var oldUserName = username
+    private var isAvatarChanged = false
+    
     private lazy var componentView = UIView().then {
         view.addSubview($0)
     }
-
+    
     private lazy var editProfileImageView = AvatarImageView().then {
         $0.isUserInteractionEnabled = true
         $0.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileTapped)))
     }
-
+    
     private lazy var editProfileButton = UIButton().then {
         $0.setImage(UIImage(systemName: "photo.circle"), for: .normal)
         $0.addTarget(self, action: #selector(profileTapped), for: .touchUpInside)
         $0.backgroundColor = .white
     }
-
+    
     private lazy var memberWithdrawalButton = UIButton().then {
         $0.setTitle("회원 탈퇴", for: .normal)
         $0.setTitleColor(.systemRed, for: .normal)
@@ -34,25 +37,27 @@ final class ProfileEditViewController: UIViewController {
         view.addSubview($0)
         $0.addTarget(self, action: #selector(memberWithdrawalTapped), for: .touchUpInside)
     }
-
+    
     private lazy var nicknameTextFieldView = CustomTextFieldViewWithValidation().then {
         $0.titleText = "유저 닉네임"
-        $0.placeholder = "닉네임을 입력하세요"
+        $0.placeholder = "닉네임을 입력해주세요."
         $0.validationText = ""
+        $0.isValid = false
+        $0.delegate = self
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.backgroundColor = .systemBackground
-
+        
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         hideKeyboardWhenTappedAround()
-
+        
         navigationItem.title = "프로필 수정"
         navigationItem.rightBarButtonItem = .init(
             title: "완료",
@@ -60,6 +65,7 @@ final class ProfileEditViewController: UIViewController {
             target: self,
             action: #selector(completeButtonTapped)
         )
+        navigationItem.rightBarButtonItem?.isEnabled = false
         
         componentView.flex.direction(.column).marginTop(40).define { flex in
             flex.addItem().direction(.row).justifyContent(.center).define { flex in
@@ -70,25 +76,25 @@ final class ProfileEditViewController: UIViewController {
             flex.addItem(nicknameTextFieldView).marginTop(10)
         }
     }
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         memberWithdrawalButton.pin.bottom(view.pin.safeArea).hCenter()
         componentView.pin.top(view.pin.safeArea).bottom(50%).horizontally(view.pin.safeArea)
         componentView.flex.layout()
     }
-
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
-
+    
     @objc private func profileTapped() {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.allowsEditing = true
         present(imagePicker, animated: true, completion: nil)
     }
-
+    
     @objc private func completeButtonTapped() {
         Task {
             var avatarUrl: String?
@@ -107,7 +113,7 @@ final class ProfileEditViewController: UIViewController {
             }
         }
     }
-
+    
     @objc private func memberWithdrawalTapped() {
         let alertController = UIAlertController(
             title: "회원 탈퇴",
@@ -120,17 +126,9 @@ final class ProfileEditViewController: UIViewController {
         alertController.addAction(.init(title: "취소", style: .cancel, handler: nil))
         present(alertController, animated: true)
     }
-
-    private func validateNickname() {
-        // TODO: 닉네임 유효성 검사 로직
-//        let nickname = nicknameTextFieldView.text
-//        if {
-//            print("통과")
-//            nicknameTextFieldView.validationText = "유효한 닉네임입니다."
-//        } else {
-//            print("불통")
-//            nicknameTextFieldView.validationText = "사용 불가능한 닉네임입니다.."
-//        }
+    
+    private func updateCompleteButtonState() {
+        navigationItem.rightBarButtonItem?.isEnabled = (isAvatarChanged && username == oldUserName) || nicknameTextFieldView.isValid
     }
 }
 
@@ -144,9 +142,37 @@ extension ProfileEditViewController: UIImagePickerControllerDelegate, UINavigati
             editProfileImageView.image = image
             editProfileImageView.removeDefault()
         }
+        isAvatarChanged = true
+        updateCompleteButtonState()
     }
-
+    
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
+    }
+}
+
+extension ProfileEditViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if let currentText = textField.text,
+           let range = Range(range, in: currentText)
+        {
+            let updatedText = currentText.replacingCharacters(in: range, with: string)
+
+            if updatedText.isEmpty {
+                nicknameTextFieldView.isValid = false
+                nicknameTextFieldView.validationText = "닉네임을 입력해주세요."
+            } else if updatedText.count > 20 {
+                nicknameTextFieldView.isValid = false
+                nicknameTextFieldView.validationText = "20자 이하의 닉네임을 입력해주세요."
+            } else if updatedText == oldUserName {
+                nicknameTextFieldView.isValid = isAvatarChanged
+                nicknameTextFieldView.validationText = ""
+            } else {
+                nicknameTextFieldView.isValid = true
+                nicknameTextFieldView.validationText = "유효한 닉네임입니다."
+            }
+            updateCompleteButtonState()
+        }
+        return true
     }
 }
