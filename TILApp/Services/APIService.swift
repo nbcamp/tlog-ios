@@ -22,10 +22,10 @@ final class APIService {
     private init() {}
 
     private let provider = MoyaSugarProvider<APIRequest>(plugins: [
-          // NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
+        // NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
     ])
 
-    func request(_ target: APIRequest, handler: @escaping APIHandler<Response>) {
+    func request(_ target: APIRequest, _ handler: @escaping APIHandler<Response>) {
         provider.request(target) { [unowned self] result in
             switch result {
             case .success(let response):
@@ -163,12 +163,20 @@ enum APIRequest {
          unfollowUser(_ userId: Int),
          deleteMyFollower(_ userId: Int)
 
+    // My Blocked Users
+    case getMyBlockedUsers
+
     // User's Information
     case getUserProfile(_ userId: Int),
          getUserBlogs(_ userId: Int),
          getUserMainBlog(_ userId: Int),
          getUserPosts(_ userId: Int),
          getUserLikedPosts(_ userId: Int)
+
+    // User Blocks & Reports
+    case blockUser(_ userId: Int),
+         unblockUser(_ userId: Int),
+         reportUser(_ userId: Int, _ input: ReportUserInput)
 
     // Community
     case getCommunityPosts(GetCommunityQuery),
@@ -220,12 +228,20 @@ extension APIRequest: SugarTargetType {
         case .unfollowUser(let userId): return .delete("/my/followings/\(userId)")
         case .deleteMyFollower(let userId): return .delete("/my/followers/\(userId)")
 
+        // My Blocked Users
+        case .getMyBlockedUsers: return .get("/my/blocked-users")
+
         // User's Information
         case .getUserProfile(let userId): return .get("/users/\(userId)")
         case .getUserBlogs(let userId): return .get("/users/\(userId)/blogs")
         case .getUserMainBlog(let userId): return .get("/users/\(userId)/blogs/main")
         case .getUserPosts(let userId): return .get("/users/\(userId)/posts")
         case .getUserLikedPosts(let userId): return .get("/users/\(userId)/liked-posts")
+
+        // User Blocks & Reports
+        case .blockUser(let userId): return .post("/users/\(userId)/block")
+        case .unblockUser(let userId): return .delete("/users/\(userId)/block")
+        case .reportUser(let userId, _): return .post("/users/\(userId)/report")
 
         // Community
         case .getCommunityPosts: return .get("/community/posts")
@@ -242,6 +258,7 @@ extension APIRequest: SugarTargetType {
         case .updateMyBlog(_, let input): return toBody(input)
         case .createMyBlogPost(_, let input): return toBody(input)
         case .getCommunityPosts(let query): return toParam(query)
+        case .reportUser(_, let input): return toBody(input)
         default: return .none
         }
     }

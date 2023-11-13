@@ -124,7 +124,7 @@ final class UserProfileViewController: UIViewController {
             self?.userProfileTableView.reloadData()
             self?.userProfileTableView.layoutIfNeeded()
         }
-        
+
         screenView.flex.direction(.column).define { flex in
             flex.addItem().direction(.row).padding(10).define { flex in
                 flex.addItem(profileImageView).width(100).height(100).cornerRadius(100 / 2)
@@ -182,7 +182,7 @@ final class UserProfileViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: true)
         WKWebViewWarmer.shared.prepare(3)
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         WKWebViewWarmer.shared.clear()
@@ -196,16 +196,17 @@ final class UserProfileViewController: UIViewController {
     }
 
     private func makeMenuItems() -> UIMenu {
-        // TODO: 차단하기 생각해보기
-        let reportAction = UIAction(
-            title: "차단하기",
-            image: UIImage(systemName: "eye.slash")
-        ) { [weak self] _ in
-            let alertController = UIAlertController(title: "차단 완료", message: "차단되었습니다.", preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-            guard let self else { return }
-
-            self.present(alertController, animated: true, completion: nil)
+        let reportAction = UIAction(title: "차단하기", image: UIImage(systemName: "eye.slash")) { [weak self] _ in
+            guard let self, let user else { return }
+            UserViewModel.shared.blockUser(user: user) { [weak self] _ in
+                let alertController = UIAlertController(title: "차단 완료", message: "차단되었습니다.", preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+                    DispatchQueue.main.async {
+                        self?.navigationController?.popViewController(animated: true)
+                    }
+                })
+                self?.present(alertController, animated: true)
+            }
         }
 
         let reportSpamAction = UIAction(
@@ -219,10 +220,16 @@ final class UserProfileViewController: UIViewController {
                 textField.placeholder = "ex) 부적절한 게시물을 올려요."
             }
 
-            let submitAction = UIAlertAction(title: "제출", style: .default) { _ in
-                if let reason = alertController.textFields?.first?.text {
-                    // TODO: 서버로 보내기
-                    print("신고 사유: \(reason)")
+            let submitAction = UIAlertAction(title: "제출", style: .default) { [weak self] _ in
+                guard let self, let user, let reason = alertController.textFields?.first?.text else { return }
+                UserViewModel.shared.reportUser(user: user, reason: reason) { [weak self] _ in
+                    let alertController = UIAlertController(
+                        title: "신고 완료",
+                        message: "신고 처리되었습니다.",
+                        preferredStyle: .alert
+                    )
+                    alertController.addAction(UIAlertAction(title: "확인", style: .default))
+                    self?.present(alertController, animated: true)
                 }
             }
             alertController.addAction(submitAction)

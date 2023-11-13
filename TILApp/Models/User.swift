@@ -13,7 +13,18 @@ struct User: Codable {
     let isMyFollowing: Bool
 }
 
+struct BlockedUser: Codable {
+    let id: Int
+    let username: String
+    let avatarUrl: String?
+}
+
 struct UpdateUserInput: Codable {
     let username: String
     let avatarUrl: String?
 }
+
+struct ReportUserInput: Codable {
+    let reason: String
+}
+

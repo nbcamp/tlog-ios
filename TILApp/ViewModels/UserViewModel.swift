@@ -1,3 +1,5 @@
+import Moya
+
 final class UserViewModel {
     static let shared: UserViewModel = .init()
     private init() {}
@@ -61,5 +63,21 @@ final class UserViewModel {
 
     func isMyFollowing(user: User) -> Bool {
         return myFollowings.contains(where: { $0.id == user.id })
+    }
+
+    func withMyBlockedUsers(_ handler: @escaping APIHandler<[BlockedUser]>) {
+        api.request(.getMyBlockedUsers, to: [BlockedUser].self, handler)
+    }
+
+    func blockUser(user: User, _ handler: @escaping APIHandler<BlockedUser>) {
+        api.request(.blockUser(user.id), to: BlockedUser.self, handler)
+    }
+
+    func unblockUser(user: BlockedUser, _ handler: @escaping APIHandler<BlockedUser>) {
+        api.request(.unblockUser(user.id), to: BlockedUser.self, handler)
+    }
+
+    func reportUser(user: User, reason: String, _ handler: @escaping APIHandler<Response>) {
+        api.request(.reportUser(user.id, .init(reason: reason)), handler)
     }
 }
