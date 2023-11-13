@@ -22,7 +22,7 @@ final class APIService {
     private init() {}
 
     private let provider = MoyaSugarProvider<APIRequest>(plugins: [
-        //        NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
+        //                NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
     ])
 
     func request(_ target: APIRequest, handler: @escaping APIHandler<Response>) {
@@ -249,7 +249,11 @@ extension APIRequest: SugarTargetType {
     var task: Task {
         switch self {
         case .uploadImage(let image):
-            guard let data = image.jpegData(compressionQuality: 1.0) else { return .requestPlain }
+            guard let data = image
+                .resized(to: .init(width: 100, height: 100))
+                .jpegData(compressionQuality: 0.3)
+            else { return .requestPlain }
+
             return .uploadMultipart([.init(
                 provider: .data(data),
                 name: "file",

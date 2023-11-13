@@ -49,11 +49,12 @@
 		33DC8E0C2ADFFCAB00580FA0 /* Moya+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */; };
 		33DC8E0E2AE0029D00580FA0 /* TestLayoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */; };
 		33E1D1DF2B0133D0007DEEE8 /* WebViewWarmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */; };
-		33E1D1D42B00F916007DEEE8 /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D32B00F916007DEEE8 /* UIImage+Ext.swift */; };
+		33E1D1D42B00F916007DEEE8 /* UIImageView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D32B00F916007DEEE8 /* UIImageView+Ext.swift */; };
 		33E1D1D62B00FF58007DEEE8 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D52B00FF58007DEEE8 /* File.swift */; };
 		33E1D1D82B011C7C007DEEE8 /* UIColor+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D72B011C7C007DEEE8 /* UIColor+Ext.swift */; };
 		33E1D1DB2B0124CF007DEEE8 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 33E1D1DA2B0124CF007DEEE8 /* Kingfisher */; };
 		33E1D1DD2B012524007DEEE8 /* AvatarImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1DC2B012524007DEEE8 /* AvatarImageView.swift */; };
+		33E1D1E12B016545007DEEE8 /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1E02B016545007DEEE8 /* UIImage+Ext.swift */; };
 		9B859B2B2AE26C2600025E8B /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */; };
 		9BB3AD6F2AEEC99F004A25DB /* MyProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB3AD6E2AEEC99F004A25DB /* MyProfileTableViewCell.swift */; };
 		9BE049B92AEB968E00A47CFC /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049B82AEB968E00A47CFC /* WebViewController.swift */; };
@@ -138,10 +139,11 @@
 		33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Moya+Ext.swift"; sourceTree = "<group>"; };
 		33DC8E0D2AE0029D00580FA0 /* TestLayoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutViewController.swift; sourceTree = "<group>"; };
 		33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewWarmer.swift; sourceTree = "<group>"; };
-		33E1D1D32B00F916007DEEE8 /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
+		33E1D1D32B00F916007DEEE8 /* UIImageView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Ext.swift"; sourceTree = "<group>"; };
 		33E1D1D52B00FF58007DEEE8 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		33E1D1D72B011C7C007DEEE8 /* UIColor+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Ext.swift"; sourceTree = "<group>"; };
 		33E1D1DC2B012524007DEEE8 /* AvatarImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarImageView.swift; sourceTree = "<group>"; };
+		33E1D1E02B016545007DEEE8 /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
 		9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditViewController.swift; sourceTree = "<group>"; };
 		9BB3AD6E2AEEC99F004A25DB /* MyProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileTableViewCell.swift; sourceTree = "<group>"; };
 		9BE049B82AEB968E00A47CFC /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
@@ -322,7 +324,8 @@
 				3334E1C62AD9113900D853D7 /* UIViewController+Ext.swift */,
 				D2A168492AE8D4E5006BD2C4 /* UIView+Ext.swift */,
 				D29F54C42AF9FC970064B9B3 /* UITableView+Ext.swift */,
-				33E1D1D32B00F916007DEEE8 /* UIImage+Ext.swift */,
+				33E1D1D32B00F916007DEEE8 /* UIImageView+Ext.swift */,
+				33E1D1E02B016545007DEEE8 /* UIImage+Ext.swift */,
 				33E1D1D72B011C7C007DEEE8 /* UIColor+Ext.swift */,
 				3334E1D42AD913FE00D853D7 /* Date+Ext.swift */,
 				33DC8E0B2ADFFCAB00580FA0 /* Moya+Ext.swift */,
@@ -552,7 +555,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33E1D1D42B00F916007DEEE8 /* UIImage+Ext.swift in Sources */,
+				33E1D1D42B00F916007DEEE8 /* UIImageView+Ext.swift in Sources */,
 				3334E1EB2AD919D700D853D7 /* MyProfileViewController.swift in Sources */,
 				3334E1AC2AD6BC1800D853D7 /* RootViewController.swift in Sources */,
 				D2CDB7132AEB699000BFD8C2 /* CustomTagView.swift in Sources */,
@@ -630,6 +633,7 @@
 				D29F54C52AF9FC970064B9B3 /* UITableView+Ext.swift in Sources */,
 				3373D56B2AFB7F820057A23B /* RssService.swift in Sources */,
 				33A4E83C2AF0EB6300E3F55E /* converter.swift in Sources */,
+				33E1D1E12B016545007DEEE8 /* UIImage+Ext.swift in Sources */,
 				D2CDB70F2AEB693C00BFD8C2 /* CustomSegmentedControl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

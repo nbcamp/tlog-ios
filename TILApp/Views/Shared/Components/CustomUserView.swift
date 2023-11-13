@@ -58,8 +58,6 @@ class CustomUserView: UIView {
         profileImageView.pin.vCenter().left(10).width(47).height(47)
         button.pin.right(10).vCenter()
         customLabelView.pin.after(of: profileImageView).before(of: button).marginLeft(10).marginRight(10)
-
-        profileImageView.layer.cornerRadius = profileImageView.bounds.size.width / 2.0
     }
 
     func setup(username: String, avatarUrl: String? = nil, content: String, variant: CustomFollowButton.Variant) {

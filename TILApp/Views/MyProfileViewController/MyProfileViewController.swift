@@ -108,7 +108,7 @@ final class MyProfileViewController: UIViewController {
 
         screenView.flex.direction(.column).define { flex in
             flex.addItem().direction(.row).paddingVertical(10).paddingHorizontal(20).define { flex in
-                flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2)
+                flex.addItem(profileImageView).width(100).height(100).cornerRadius(100 / 2)
                 flex.addItem().direction(.column).define { flex in
                     flex.addItem(nicknameLabel).marginLeft(15).marginTop(10)
                     flex.addItem(countView).direction(.row).width(210).height(75).define { flex in

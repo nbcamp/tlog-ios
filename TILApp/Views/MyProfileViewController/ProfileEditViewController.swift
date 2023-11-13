@@ -15,19 +15,13 @@ final class ProfileEditViewController: UIViewController {
         view.addSubview($0)
     }
 
-    private lazy var editProfileImageView = UIImageView().then {
-        $0.image = UIImage(systemName: "person.circle.fill")
-        $0.tintColor = .accent
-        $0.layer.borderColor = UIColor.accent.cgColor
-        $0.layer.cornerRadius = 50
-        $0.contentMode = .scaleAspectFill
-        $0.clipsToBounds = true
+    private lazy var editProfileImageView = AvatarImageView().then {
         $0.isUserInteractionEnabled = true
         $0.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileTapped)))
     }
 
     private lazy var editProfileButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "camera.circle"), for: .normal)
+        $0.setImage(UIImage(systemName: "photo.circle"), for: .normal)
         $0.addTarget(self, action: #selector(profileTapped), for: .touchUpInside)
         $0.backgroundColor = .white
     }
@@ -148,6 +142,7 @@ extension ProfileEditViewController: UIImagePickerControllerDelegate, UINavigati
         picker.dismiss(animated: true, completion: nil)
         if let image = info[.editedImage] as? UIImage {
             editProfileImageView.image = image
+            editProfileImageView.removeDefault()
         }
     }
 
