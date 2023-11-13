@@ -12,11 +12,11 @@ struct SeeMoreMenu {
 class SeeMoreBottomSheetViewController: UIViewController {
     let seeMoreMenus: [SeeMoreMenu] = [
         .init(title: "회원 정보 수정", icon: "gearshape"),
-        .init(title: "자주 묻는 질문", icon: "questionmark.app"),
+        .init(title: "자주 묻는 질문", icon: "questionmark.square"),
         .init(title: "이용 약관", icon: "checkmark.shield"),
         .init(title: "개인 정보 처리 방침", icon: "exclamationmark.shield"),
         .init(title: "차단한 사용자 관리", icon: "person.badge.minus"),
-        .init(title: "로그아웃", icon: "rectangle.portrait.and.arrow.forward"),
+        .init(title: "로그아웃", icon: "rectangle.portrait.and.arrow.right"),
     ]
     weak var delegate: SeeMoreBottomSheetDelegate?
 
