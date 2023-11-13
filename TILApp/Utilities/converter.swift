@@ -1,8 +1,16 @@
 import Foundation
 
 func toDictionary<T: Encodable>(from object: T, with encoder: JSONEncoder = JSONEncoder()) -> [String: Any] {
-    guard let data = try? encoder.encode(object) else { return [:] }
-    return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]) ?? [:]
+    guard let json = try? JSONSerialization.jsonObject(
+        with: encoder.encode(object),
+        options: .allowFragments
+    ) as? [String: Any] else { return [:] }
+    return json.mapValues { value in
+        if let boolValue = value as? Bool {
+            return String(boolValue)
+        }
+        return value
+    }
 }
 
 func convertToRssUrl(from blogUrl: String) -> String? {
@@ -19,6 +27,17 @@ func convertToRssUrl(from blogUrl: String) -> String? {
         return "https://" + "v2." + "velog.io/rss/" + splitUrl[1]
     } else if splitUrl[0].contains("medium.com") {
         return "https://" + "medium.com/feed/" + splitUrl[1]
+    }
+    return nil
+}
+
+func toDate(string: String, formats: [String]) -> Date? {
+    let formatter = DateFormatter()
+    for format in formats {
+        formatter.dateFormat = format
+        if let date = formatter.date(from: string) {
+            return date
+        }
     }
     return nil
 }

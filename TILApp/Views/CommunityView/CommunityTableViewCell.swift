@@ -1,14 +1,9 @@
-//
-//  CommunityTableViewCell.swift
-//  TILApp
-//
-//  Created by 이재희 on 10/21/23.
-//
-
 import UIKit
 
 final class CommunityTableViewCell: UITableViewCell {
-    let customCommunityTILView = CustomCommunityTILView()
+    static let identifier = #function
+
+    private(set) var customCommunityTILView = CustomCommunityTILView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -20,10 +15,15 @@ final class CommunityTableViewCell: UITableViewCell {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        customCommunityTILView = CustomCommunityTILView()
+    }
+
     override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         customCommunityTILView.pin.horizontally()
     }
 }

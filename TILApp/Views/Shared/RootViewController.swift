@@ -11,8 +11,8 @@ final class RootViewController: UITabBarController {
         super.viewDidLoad()
 
         let tabs: [Tab] = [
-            .init(title: "홈", icon: "house", controller: HomeViewController()),
-            .init(title: "캘린더", icon: "calendar", controller: CalendarViewController()),
+//            .init(title: "홈", icon: "house", controller: HomeViewController()),
+            .init(title: "홈", icon: "house", controller: CalendarViewController()),
             .init(title: "커뮤니티", icon: "bubble", controller: CommunityViewController()),
             .init(title: "내 정보", icon: "person", controller: MyProfileViewController()),
         ]
@@ -27,6 +27,8 @@ final class RootViewController: UITabBarController {
             navigationController.tabBarItem = tabBarItem
             return navigationController
         }, animated: false)
+
+        RssViewModel.shared.prepare()
     }
 
     override func viewDidLayoutSubviews() {

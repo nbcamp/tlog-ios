@@ -1,6 +1,8 @@
+import Combine
 import Foundation
 import Moya
 import MoyaSugar
+import UIKit
 
 enum APIError: Error {
     case error(_ reason: String)
@@ -12,38 +14,55 @@ private enum Coder {
 }
 
 typealias Handler<T, E: Error> = (_ result: APIResult<T>) -> Void
-typealias APIResult<T> = Result<T, MoyaError>
-typealias APIHandler<T> = Handler<T, MoyaError>
+typealias APIResult<T> = Result<T, APIError>
+typealias APIHandler<T> = Handler<T, APIError>
 
 final class APIService {
     static let shared: APIService = .init()
     private init() {}
 
     private let provider = MoyaSugarProvider<APIRequest>(plugins: [
-        NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
+        // NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 디버그 용
     ])
 
-    func request(_ target: APIRequest, handler: @escaping APIHandler<Response>) {
+    func request(_ target: APIRequest, _ handler: @escaping APIHandler<Response>) {
         provider.request(target) { [unowned self] result in
             switch result {
             case .success(let response):
                 guard let response = try? response.filterSuccessfulStatusCodes() else {
                     if let message = getErrorMessage(of: response) {
-                        return handler(.failure(.underlying(APIError.error(message), response)))
+                        return handler(.failure(.error(message)))
                     }
-                    return handler(.failure(.statusCode(response)))
+                    return handler(.failure(.error("예상치 못한 에러가 발생했습니다.")))
                 }
                 return handler(.success(response))
             case .failure(let error):
-                return handler(.failure(error))
+                debugPrint(#function, error)
+                if let response = error.response, let message = getErrorMessage(of: response) {
+                    return handler(.failure(.error(message)))
+                }
+                return handler(.failure(.error("예상치 못한 에러가 발생했습니다.")))
             }
         }
     }
-    
-    func request(_ target: APIRequest) async -> APIResult<Response> {
-        return await withCheckedContinuation { [unowned self] continuation in
-            request(target) { continuation.resume(returning: $0) }
+
+    func request(_ target: APIRequest) async throws -> Response {
+        return try await withCheckedThrowingContinuation { [unowned self] continuation in
+            request(target) { result in
+                switch result {
+                case .success(let response):
+                    continuation.resume(returning: response)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
         }
+    }
+
+    func request(_ target: APIRequest) -> AnyPublisher<Response, APIError> {
+        return Future { [unowned self] promise in
+            request(target) { promise($0) }
+        }.eraseToAnyPublisher()
     }
 
     func request<Model: Decodable>(_ target: APIRequest, to model: Model.Type, _ handler: @escaping APIHandler<Model>) {
@@ -52,25 +71,40 @@ final class APIService {
             case .success(let response):
                 guard let response = try? response.filterSuccessfulStatusCodes() else {
                     if let message = getErrorMessage(of: response) {
-                        return handler(.failure(.underlying(APIError.error(message), response)))
+                        return handler(.failure(.error(message)))
                     }
-                    return handler(.failure(.statusCode(response)))
+                    return handler(.failure(.error("예상치 못한 에러가 발생했습니다.")))
                 }
                 guard let model = try? response.map(model, using: Coder.decoder) else {
-                    printJsonAsString(json: response.data)
-                    return handler(.failure(.jsonMapping(response)))
+                    printJsonAsString(json: response.data, to: model)
+                    return handler(.failure(.error("잘못된 응답입니다.")))
                 }
                 return handler(.success(model))
             case .failure(let error):
-                return handler(.failure(error))
+                debugPrint(#function, error)
+                if let response = error.response, let message = getErrorMessage(of: response) {
+                    return handler(.failure(.error(message)))
+                }
+                return handler(.failure(.error("예상치 못한 에러가 발생했습니다.")))
             }
         }
     }
 
-    func request<Model: Decodable>(_ target: APIRequest, to model: Model.Type) async -> APIResult<Model> {
-        return await withCheckedContinuation { [unowned self] continuation in
-            request(target, to: model) { continuation.resume(returning: $0) }
+    func request<Model: Decodable>(_ target: APIRequest, to model: Model.Type) async throws -> Model {
+        return try await withCheckedThrowingContinuation { [unowned self] continuation in
+            request(target, to: model) { result in
+                switch result {
+                case .success(let response): continuation.resume(returning: response)
+                case .failure(let error): continuation.resume(throwing: error)
+                }
+            }
         }
+    }
+
+    func request<Model: Decodable>(_ target: APIRequest, to model: Model.Type) -> AnyPublisher<Model, APIError> {
+        return Future { [unowned self] promise in
+            request(target, to: model) { promise($0) }
+        }.eraseToAnyPublisher()
     }
 
     private func getErrorMessage(of response: Response) -> String? {
@@ -81,11 +115,10 @@ final class APIService {
         return error
     }
 
-    private func printJsonAsString(json: Data) {
+    private func printJsonAsString<Model>(json: Data, to model: Model) {
+        debugPrint("[\(#function)] Failed to convert json to data(\(String(describing: model))")
         if let string = String(data: json, encoding: .utf8) {
-            debugPrint(string)
-        } else {
-            debugPrint("Failed to convert data to string.")
+            debugPrint("Stringify:", string)
         }
     }
 }
@@ -96,6 +129,9 @@ enum APIRequest {
 
     // Authenticate
     case signIn(_ input: SignInInput)
+
+    // Upload File
+    case uploadImage(_ image: UIImage)
 
     // My Profile
     case getMyProfile,
@@ -112,17 +148,13 @@ enum APIRequest {
 
     // My Posts
     case getMyPosts,
-         getMyPost(_ postId: Int)
+         getMyPost(_ postId: Int),
+         getMyLikedPosts
 
     // My Posts of Blog
     case getMyBlogPosts(_ blogId: Int),
          getMyBlogPost(_ blogId: Int, _ postId: Int),
          createMyBlogPost(_ blogId: Int, _ input: CreatePostInput)
-
-    // My Liked Posts
-    case getMyLikedPosts,
-         likePost(_ postId: Int),
-         unlikePost(_ postId: Int)
 
     // My Follow
     case getMyFollowers,
@@ -131,6 +163,9 @@ enum APIRequest {
          unfollowUser(_ userId: Int),
          deleteMyFollower(_ userId: Int)
 
+    // My Blocked Users
+    case getMyBlockedUsers
+
     // User's Information
     case getUserProfile(_ userId: Int),
          getUserBlogs(_ userId: Int),
@@ -138,8 +173,15 @@ enum APIRequest {
          getUserPosts(_ userId: Int),
          getUserLikedPosts(_ userId: Int)
 
+    // User Blocks & Reports
+    case blockUser(_ userId: Int),
+         unblockUser(_ userId: Int),
+         reportUser(_ userId: Int, _ input: ReportUserInput)
+
     // Community
-    case getCommunityPosts(GetCommunityQuery)
+    case getCommunityPosts(GetCommunityQuery),
+         likePost(_ postId: Int),
+         unlikePost(_ postId: Int)
 }
 
 extension APIRequest: SugarTargetType {
@@ -152,6 +194,9 @@ extension APIRequest: SugarTargetType {
 
         // Authenticate
         case .signIn: return .post("/auth/sign-in")
+
+        // Upload File
+        case .uploadImage: return .post("/upload/image")
 
         // My Profile
         case .getMyProfile: return .get("/my/profile")
@@ -169,16 +214,12 @@ extension APIRequest: SugarTargetType {
         // My Posts
         case .getMyPosts: return .get("/my/posts")
         case .getMyPost(let postId): return .get("/my/posts/\(postId)")
+        case .getMyLikedPosts: return .get("/my/liked-posts")
 
         // My Posts of Blog
         case .getMyBlogPosts(let blogId): return .get("/my/blogs/\(blogId)/posts")
         case .getMyBlogPost(let blogId, let postId): return .get("/my/blogs/\(blogId)/posts/\(postId)")
         case .createMyBlogPost(let blogId, _): return .post("/my/blogs/\(blogId)/posts")
-
-        // My Liked Posts
-        case .getMyLikedPosts: return .get("/my/likes/posts")
-        case .likePost(let postId): return .post("/my/likes/posts/\(postId)")
-        case .unlikePost(let postId): return .delete("/my/likes/posts/\(postId)")
 
         // My Follows
         case .getMyFollowers: return .get("/my/followers")
@@ -187,15 +228,25 @@ extension APIRequest: SugarTargetType {
         case .unfollowUser(let userId): return .delete("/my/followings/\(userId)")
         case .deleteMyFollower(let userId): return .delete("/my/followers/\(userId)")
 
+        // My Blocked Users
+        case .getMyBlockedUsers: return .get("/my/blocked-users")
+
         // User's Information
         case .getUserProfile(let userId): return .get("/users/\(userId)")
         case .getUserBlogs(let userId): return .get("/users/\(userId)/blogs")
         case .getUserMainBlog(let userId): return .get("/users/\(userId)/blogs/main")
         case .getUserPosts(let userId): return .get("/users/\(userId)/posts")
-        case .getUserLikedPosts(let userId): return .get("/users/\(userId)/likes/posts")
+        case .getUserLikedPosts(let userId): return .get("/users/\(userId)/liked-posts")
+
+        // User Blocks & Reports
+        case .blockUser(let userId): return .post("/users/\(userId)/block")
+        case .unblockUser(let userId): return .delete("/users/\(userId)/block")
+        case .reportUser(let userId, _): return .post("/users/\(userId)/report")
 
         // Community
         case .getCommunityPosts: return .get("/community/posts")
+        case .likePost(let postId): return .post("/community/posts/\(postId)/likes")
+        case .unlikePost(let postId): return .delete("/community/posts/\(postId)/likes")
         }
     }
 
@@ -207,23 +258,50 @@ extension APIRequest: SugarTargetType {
         case .updateMyBlog(_, let input): return toBody(input)
         case .createMyBlogPost(_, let input): return toBody(input)
         case .getCommunityPosts(let query): return toParam(query)
+        case .reportUser(_, let input): return toBody(input)
         default: return .none
+        }
+    }
+
+    var task: Task {
+        switch self {
+        case .uploadImage(let image):
+            guard let data = image
+                .resized(to: .init(width: 100, height: 100))
+                .jpegData(compressionQuality: 0.3)
+            else { return .requestPlain }
+
+            return .uploadMultipart([.init(
+                provider: .data(data),
+                name: "file",
+                fileName: "image.jpg",
+                mimeType: "image/jpeg"
+            )])
+        default:
+            guard let parameters else { return .requestPlain }
+            return .requestParameters(parameters: parameters.values, encoding: parameters.encoding)
         }
     }
 
     private func toBody<T: Codable>(_ input: T) -> MoyaSugar.Parameters? {
         JSONEncoding() => toDictionary(from: input, with: Coder.encoder)
     }
-    
+
     private func toParam<T: Codable>(_ input: T) -> MoyaSugar.Parameters? {
         URLEncoding() => toDictionary(from: input, with: Coder.encoder)
     }
 
     var headers: [String: String]? {
         var headers: [String: String] = [:]
-        headers.updateValue("application/json", forKey: "Content-type")
         if let accessToken = AuthViewModel.shared.accessToken {
             headers.updateValue("Bearer \(accessToken)", forKey: "Authorization")
+        }
+
+        switch self {
+        case .uploadImage:
+            headers.updateValue("multipart/form-data", forKey: "Content-type")
+        default:
+            headers.updateValue("application/json", forKey: "Content-type")
         }
         return headers
     }

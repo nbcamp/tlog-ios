@@ -7,11 +7,16 @@ final class FollowListViewController: UIViewController {
 
     private let authViewModel = AuthViewModel.shared
     private let userViewModel = UserViewModel.shared
-    private lazy var user = authViewModel.user
+    private var authUser: AuthUser? {
+        didSet {
+            segmentedControl.setTitle("팔로워 \(authUser?.followers ?? 0)", forSegmentAt: 0)
+            segmentedControl.setTitle("팔로잉 \(authUser?.followings ?? 0)", forSegmentAt: 1)
+        }
+    }
 
     private lazy var segmentedControl = CustomSegmentedControl(items: [
-        "팔로워 \(user?.followers ?? 0)",
-        "팔로잉 \(user?.followings ?? 0)"
+        "팔로워 \(authUser?.followers ?? 0)",
+        "팔로잉 \(authUser?.followings ?? 0)"
     ]).then {
         $0.selectedSegmentIndex = selectedIndex
         $0.addTarget(self, action: #selector(segmentedControlSelected(_:)), for: .valueChanged)
@@ -22,7 +27,7 @@ final class FollowListViewController: UIViewController {
         $0.dataSource = self
         $0.delegate = self
         $0.register(FollowListTableViewCell.self, forCellReuseIdentifier: "FollowListTableViewCell")
-
+        $0.applyCustomSeparator()
         view.addSubview($0)
     }
 
@@ -30,20 +35,23 @@ final class FollowListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "팔로우 관리"
-        
+
         Task {
             _ = await loadFollowList()
             tableView.reloadData()
             tableView.layoutIfNeeded()
         }
+
+        authUser = authViewModel.user
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
     override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         segmentedControl.pin.top(view.pin.safeArea).horizontally(view.pin.safeArea)
         tableView.pin.top(to: segmentedControl.edge.bottom).horizontally().bottom()
     }
@@ -56,6 +64,7 @@ final class FollowListViewController: UIViewController {
             tableView.layoutIfNeeded()
 
             let selectedIndex = control.selectedSegmentIndex
+
             if let ratio = scrollRatios[selectedIndex] {
                 let totalScrollableHeight = tableView.contentSize.height - tableView.bounds.height
                 let yOffset = totalScrollableHeight * ratio
@@ -64,7 +73,6 @@ final class FollowListViewController: UIViewController {
                 tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
             }
         }
-
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -78,9 +86,9 @@ final class FollowListViewController: UIViewController {
 
     private func loadFollowList() async -> APIResult<[User]> {
         return await withCheckedContinuation { continuation in
-            if selectedIndex == 0 {
+            if segmentedControl.selectedSegmentIndex == 0 {
                 userViewModel.withMyFollowers { continuation.resume(returning: $0) }
-            } else if selectedIndex == 1 {
+            } else if segmentedControl.selectedSegmentIndex == 1 {
                 userViewModel.withMyFollowings { continuation.resume(returning: $0) }
             }
         }
@@ -108,11 +116,16 @@ extension FollowListViewController: UITableViewDataSource {
 
         let isFollowing = userViewModel.isMyFollowing(user: user)
 
+        var content = "작성한 TIL이 없습니다."
+        if let lastPublishedAt = user.lastPublishedAt {
+            content = "마지막 TIL 작성일 | " + lastPublishedAt.format()
+        }
+
         cell.customUserView.setup(
-            image: UIImage(),
-            nicknameText: user.username,
-            contentText: "TIL 마지막 작성일 | ",
-            variant: isFollowing ? .unfollow : .follow
+            username: user.username,
+            avatarUrl: user.avatarUrl,
+            content: content,
+            variant: user.isMyFollowing ? .unfollow : .follow
         )
 
         cell.customUserView.followButtonTapped = { [weak self, weak cell] in
@@ -124,27 +137,35 @@ extension FollowListViewController: UITableViewDataSource {
             case .follow:
                 userViewModel.follow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case .success(let success) = result, success else {
+                    guard case .success = result else {
                         // TODO: 에러 처리
                         return
                     }
                     cell.customUserView.variant = .unfollow
-                    segmentedControl.setTitle("팔로잉 \(userViewModel.myFollowings.count)", forSegmentAt: 1)
+                    authViewModel.sync { [weak self] result in
+                        guard case let .success(authUser) = result else { return }
+                        self?.authUser = authUser
+                    }
                 }
             case .unfollow:
                 userViewModel.unfollow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case .success(let success) = result, success else {
+                    guard case .success = result else {
                         // TODO: 에러 처리
                         return
                     }
                     cell.customUserView.variant = .follow
-                    segmentedControl.setTitle("팔로잉 \(userViewModel.myFollowings.count)", forSegmentAt: 1)
+                    authViewModel.sync { [weak self] result in
+                        guard case let .success(authUser) = result else { return }
+                        self?.authUser = authUser
+                    }
                 }
             default:
                 break
             }
         }
+
+        cell.selectionStyle = .none
         return cell
     }
 

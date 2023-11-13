@@ -1,17 +1,27 @@
 import UIKit
 
 final class MyProfileViewController: UIViewController {
+    private enum Section {
+        case myPosts, myLikedPosts
+    }
+
     private let authViewModel = AuthViewModel.shared
-    private var user: AuthUser? {
+    private var authUser: AuthUser? {
         didSet {
-            // TODO: 아바타 이미지 추가
-            nicknameLabel.text = user?.username
+            nicknameLabel.text = authUser?.username
+            profileImageView.url = authUser?.avatarUrl
+            postButton.setTitle("\(authUser?.posts ?? 0)\n작성글", for: .normal)
+            followersButton.setTitle("\(authUser?.followers ?? 0)\n팔로워", for: .normal)
+            followingButton.setTitle("\(authUser?.followings ?? 0)\n팔로잉", for: .normal)
         }
     }
 
-    // TODO: 데이터 연결 필요
-    private var posts: [Post] = []
-    private var likePosts: [Post] = []
+    private var section: Section {
+        myProfileSegmentedControl.selectedSegmentIndex == 0 ? .myPosts : .myLikedPosts
+    }
+
+    private var myPosts: [Post] { PostViewModel.shared.myPosts }
+    private var myLikedPosts: [CommunityPost] { PostViewModel.shared.myLikedPosts }
 
     private lazy var screenView = UIView().then {
         view.addSubview($0)
@@ -20,15 +30,11 @@ final class MyProfileViewController: UIViewController {
     private lazy var countView = UIView().then { _ in
     }
 
-    private lazy var profileImageView = UIImageView().then {
-        $0.image = UIImage(systemName: "person.circle.fill")
-        $0.tintColor = .accent
-        $0.layer.borderColor = UIColor.accent.cgColor
-    }
+    private lazy var profileImageView = AvatarImageView()
 
     private lazy var nicknameLabel = UILabel().then {
         $0.font = UIFont.boldSystemFont(ofSize: 20)
-        $0.text = user?.username
+        $0.text = authUser?.username
         $0.sizeToFit()
     }
 
@@ -44,7 +50,6 @@ final class MyProfileViewController: UIViewController {
 
     private lazy var postButton = UIButton().then {
         $0.sizeToFit()
-        $0.setTitle("\(user?.posts ?? 0)\n작성글", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -56,7 +61,6 @@ final class MyProfileViewController: UIViewController {
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
-        $0.setTitle("\(user?.followers ?? 0)\n팔로워", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.addTarget(self, action: #selector(followersButtonTapped), for: .touchUpInside)
     }
@@ -64,7 +68,6 @@ final class MyProfileViewController: UIViewController {
     private lazy var followingButton = UIButton().then {
         $0.sizeToFit()
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        $0.setTitle("\(user?.followings ?? 0)\n팔로잉", for: .normal)
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
         $0.setTitleColor(.black, for: .normal)
@@ -80,58 +83,78 @@ final class MyProfileViewController: UIViewController {
         $0.addTarget(self, action: #selector(editBlogButtonTapped), for: .touchUpInside)
     }
 
-    private lazy var myProfileSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요 목록"]).then {
+    private lazy var myProfileSegmentedControl = CustomSegmentedControl(items: ["작성한 글", "좋아요한 글"]).then {
         view.addSubview($0)
         $0.addTarget(self, action: #selector(myProfileSegmentedControlSelected(_:)), for: .valueChanged)
     }
 
     private lazy var myProfileTableView = UITableView().then {
         $0.register(MyProfileTableViewCell.self, forCellReuseIdentifier: MyProfileTableViewCell.identifier)
+        $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: CommunityTableViewCell.identifier)
         $0.delegate = self
         $0.dataSource = self
+        $0.applyCustomSeparator()
         view.addSubview($0)
+    }
+
+    private lazy var placeholderLabel = UILabel().then {
+        $0.text = "등록한 게시글이 없어요."
+        $0.textColor = .systemGray3
+        $0.font = .boldSystemFont(ofSize: 20)
+        $0.textAlignment = .center
+    }
+
+    private lazy var placeholderView = UIView().then {
+        $0.backgroundColor = .systemBackground
+        $0.flex.alignItems(.center).define { flex in
+            flex.addItem(placeholderLabel).marginTop(80)
+        }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+
+        loadMyPosts { [weak self] in
+            self?.myProfileTableView.reloadData()
+            self?.myProfileTableView.setNeedsLayout()
+        }
+
+        screenView.flex.direction(.column).define { flex in
+            flex.addItem().direction(.row).paddingVertical(10).paddingHorizontal(20).define { flex in
+                flex.addItem(profileImageView).width(100).height(100).cornerRadius(100 / 2)
+                flex.addItem().direction(.column).define { flex in
+                    flex.addItem(nicknameLabel).marginLeft(15).marginTop(10)
+                    flex.addItem(countView).direction(.row).width(210).height(75).define { flex in
+                        flex.addItem(postButton).width(70)
+                        flex.addItem(followersButton).width(70)
+                        flex.addItem(followingButton).width(70)
+                    }.layout()
+                }
+            }
+            flex.addItem(editBlogButton).height(40)
+            flex.addItem(myProfileSegmentedControl).height(40).marginTop(10)
+            flex.addItem(myProfileTableView).grow(1)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        user = authViewModel.user
-        navigationController?.isNavigationBarHidden = true
+        updateAuthUser()
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        WKWebViewWarmer.shared.prepare(3)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        WKWebViewWarmer.shared.clear()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        setUpUI()
-    }
-
-    private func setUpUI() {
-        screenView.flex.direction(.column).define { flex in
-            flex.addItem().direction(.row).define { flex in
-                flex.addItem(profileImageView).width(100).height(100).cornerRadius(100 / 2)
-                flex.addItem().direction(.column).define { flex in
-                    flex.addItem(nicknameLabel).marginLeft(15).marginTop(10)
-                    flex.addItem(countView)
-                    countView.flex.direction(.row)
-                        .width(210).height(75).define { flex in
-                            flex.addItem(postButton).width(70)
-                            flex.addItem(followersButton).width(70)
-                            flex.addItem(followingButton).width(70)
-                        }
-                }
-            }
-        }
-        screenView.flex.layout()
-        countView.flex.layout()
-
-        screenView.pin.top(view.pin.safeArea).bottom(80%).left(20).right(20)
-        editBlogButton.pin.below(of: screenView).left(20).right(20).marginTop(10)
+        screenView.pin.all(view.pin.safeArea)
         moreButton.pin.top(view.pin.safeArea).right(25).marginTop(5)
-        myProfileSegmentedControl.pin.below(of: editBlogButton).marginTop(10)
-        myProfileTableView.pin.below(of: myProfileSegmentedControl).bottom(view.pin.safeArea).left().right()
+        screenView.flex.layout()
     }
 
     @objc private func moreButtonTapped() {
@@ -160,65 +183,149 @@ final class MyProfileViewController: UIViewController {
         navigationController?.pushViewController(blogListViewController, animated: true)
     }
 
-    @objc func myProfileSegmentedControlSelected(_ sender: CustomSegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            myProfileTableView.reloadData()
-        case 1:
-            myProfileTableView.reloadData()
-        default:
-            break
+    @objc func myProfileSegmentedControlSelected(_: CustomSegmentedControl) {
+        loadMyPosts { [weak self] in
+            self?.myProfileTableView.reloadData()
+            self?.myProfileTableView.setNeedsLayout()
+        }
+    }
+
+    private func loadMyPosts(_ completion: @escaping () -> Void) {
+        switch section {
+        case .myPosts:
+            PostViewModel.shared.withMyPosts { _ in completion() }
+        case .myLikedPosts:
+            PostViewModel.shared.withMyLikedPosts { _ in completion() }
+        }
+    }
+
+    private func updateAuthUser() {
+        authUser = authViewModel.user
+        authViewModel.sync { [weak self] result in
+            guard let self, case let .success(authUser) = result else { return }
+            self.authUser = authUser
+            if section == .myLikedPosts {
+                loadMyPosts { [weak self] in
+                    self?.myProfileTableView.reloadData()
+                    self?.myProfileTableView.setNeedsLayout()
+                }
+            }
         }
     }
 }
 
 extension MyProfileViewController: UITableViewDataSource {
-    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        switch myProfileSegmentedControl.selectedSegmentIndex {
-        case 0:
-            return posts.count
-        case 1:
-            return likePosts.count
-        default: break
+    func tableView(_ tableView: UITableView, numberOfRowsInSection _: Int) -> Int {
+        var count = 0
+        switch section {
+        case .myPosts:
+            placeholderLabel.text = "등록한 게시글이 없어요."
+            tableView.backgroundView = myPosts.count == 0 ? placeholderView : nil
+            count = myPosts.count
+        case .myLikedPosts:
+            placeholderLabel.text = "좋아요한 게시글이 없어요."
+            tableView.backgroundView = myLikedPosts.count == 0 ? placeholderView : nil
+            count = myLikedPosts.count
         }
-        return 0
+        placeholderLabel.sizeToFit()
+        placeholderLabel.flex.markDirty()
+        placeholderView.flex.layout()
+        return count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let myPostCell = tableView.dequeueReusableCell(withIdentifier: MyProfileTableViewCell.identifier) as? MyProfileTableViewCell else { return UITableViewCell() }
-        guard let likeCell = tableView.dequeueReusableCell(withIdentifier: MyProfileTableViewCell.identifier) as? MyProfileTableViewCell else { return UITableViewCell() }
+        switch section {
+        case .myPosts:
+            let post = myPosts[indexPath.row]
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: MyProfileTableViewCell.identifier
+            ) as? MyProfileTableViewCell else { return UITableViewCell() }
+            cell.myTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
+            cell.selectionStyle = .none
+            return cell
+        case .myLikedPosts:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: CommunityTableViewCell.identifier
+            ) as? CommunityTableViewCell else { return UITableViewCell() }
+            let post = myLikedPosts[indexPath.row]
+            cell.customCommunityTILView.setup(post: post)
 
-        switch myProfileSegmentedControl.selectedSegmentIndex {
-        case 0:
-            let post = posts[indexPath.row]
-            myPostCell.myTILView.setup(withTitle: post.title, content: post.content, date: post.publishedAt.format())
-            return myPostCell
-        case 1:
-            let likePost = likePosts[indexPath.row]
-            likeCell.myTILView.setup(withTitle: likePost.title, content: likePost.content, date: likePost.publishedAt.format())
-            return likeCell
-        default: break
+            cell.customCommunityTILView.userProfileTapped = { [weak self] in
+                guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
+                let userProfileViewController = UserProfileViewController()
+                userProfileViewController.user = post.user
+                userProfileViewController.hidesBottomBarWhenPushed = true
+                navigationController?.pushViewController(userProfileViewController, animated: true)
+            }
+
+            cell.customCommunityTILView.postTapped = { [weak self] in
+                guard let self else { return }
+                let likeButton = LikeButton(liked: post.liked)
+                likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
+                    APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
+                        guard case .success = result else { return }
+                        completion()
+                    }
+                }
+                let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                    $0.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
+                    $0.hidesBottomBarWhenPushed = true
+                    $0.url = post.url
+                }
+                navigationController?.pushViewController(webViewController, animated: true)
+            }
+            cell.selectionStyle = .none
+            return cell
         }
-        return myPostCell
     }
 
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
-        return 85
+        switch section {
+        case .myPosts: return 85
+        case .myLikedPosts: return 180
+        }
     }
 }
 
-extension MyProfileViewController: UITableViewDelegate {
-    func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
-}
+extension MyProfileViewController: UITableViewDelegate {}
 
 extension MyProfileViewController: SeeMoreBottomSheetDelegate {
     func didSelectSeeMoreMenu(title: String) {
         if title == "회원 정보 수정" {
             let profileEditViewController = ProfileEditViewController()
             profileEditViewController.hidesBottomBarWhenPushed = true
-            profileEditViewController.username = user?.username
-            navigationController?.pushViewController(profileEditViewController, animated: true)
+            profileEditViewController.username = authUser?.username ?? ""
+            profileEditViewController.avatarImage = profileImageView.image
+            dismiss(animated: true) { [weak self] in
+                self?.navigationController?.pushViewController(profileEditViewController, animated: true)
+            }
+        } else if title == "자주 묻는 질문" {
+            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                $0.url = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
+                $0.hidesBottomBarWhenPushed = true
+            }
+            navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true)
+        } else if title == "이용 약관" {
+            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                $0.url = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
+                $0.hidesBottomBarWhenPushed = true
+            }
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true)
+        } else if title == "개인 정보 처리 방침" {
+            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                $0.url = "https:plip.kr/pcc/96e3cd8c-700d-46a1-b007-37443c721874/privacy-policy"
+                $0.hidesBottomBarWhenPushed = true
+            }
+            navigationController?.pushViewController(webViewController, animated: true)
+            dismiss(animated: true)
+        } else if title == "차단한 사용자 관리" {
+            let blockedUserViewController = BlockedUserViewController()
+            blockedUserViewController.hidesBottomBarWhenPushed = true
+            dismiss(animated: true) { [weak self] in
+                self?.navigationController?.pushViewController(blockedUserViewController, animated: true)
+            }
         } else if title == "로그아웃" {
             let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)
             alertController.addAction(.init(title: "계속", style: .destructive, handler: { _ in
@@ -226,29 +333,6 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             }))
             alertController.addAction(.init(title: "취소", style: .cancel))
             topMostViewController.present(alertController, animated: true)
-        } else if title == "자주 묻는 질문" {
-            let webViewController = WebViewController()
-            webViewController.postURL = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
-            webViewController.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(webViewController, animated: true)
-            dismiss(animated: true, completion: nil)
-        } else if title == "개인 정보 처리 방침" {
-            let webViewController = WebViewController()
-            webViewController.postURL = "https:plip.kr/pcc/96e3cd8c-700d-46a1-b007-37443c721874/privacy-policy"
-            webViewController.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(webViewController, animated: true)
-            dismiss(animated: true, completion: nil)
-        } else if title == "이용 약관" {
-            let webViewController = WebViewController()
-            webViewController.postURL = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
-            webViewController.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(webViewController, animated: true)
-            dismiss(animated: true, completion: nil)
-        } else if title == "차단한 사용자 관리" {
-            let blockedUserViewController = BlockedUserViewController()
-            blockedUserViewController.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(blockedUserViewController, animated: true)
-            dismiss(animated: true, completion: nil)
         }
     }
 }

@@ -3,7 +3,7 @@ import UIKit
 final class CommunityViewController: UIViewController {
     private let communityViewModel = CommunityViewModel.shared
     private let userViewModel = UserViewModel.shared
-    private var posts: [CommunityPost] { communityViewModel.items }
+    private var posts: [CommunityPost] { communityViewModel.posts }
     private var cancellables: Set<AnyCancellable> = []
     private var isHeartFilled = false
 
@@ -13,11 +13,13 @@ final class CommunityViewController: UIViewController {
         $0.keyboardDismissMode = .onDrag
         $0.refreshControl = UIRefreshControl()
         $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: "CommunityTableViewCell")
+        $0.applyCustomSeparator()
         view.addSubview($0)
     }
 
     private lazy var searchBar = UISearchBar().then {
         $0.delegate = self
+        $0.searchTextField.delegate = self
         view.addSubview($0)
     }
 
@@ -46,12 +48,13 @@ final class CommunityViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = true
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        WKWebViewWarmer.shared.prepare(10)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        navigationController?.isNavigationBarHidden = false
+        WKWebViewWarmer.shared.clear()
     }
 
     override func viewDidLayoutSubviews() {
@@ -79,40 +82,8 @@ extension CommunityViewController: UITableViewDataSource {
         }
 
         let post = posts[indexPath.row]
-        cell.customCommunityTILView.setup(post: post)
-        if let authUser = AuthViewModel.shared.user, post.user.id == authUser.id {
-            cell.customCommunityTILView.variant = .hidden
-        } else if userViewModel.isMyFollowing(user: post.user) {
-            cell.customCommunityTILView.variant = .unfollow
-        } else {
-            cell.customCommunityTILView.variant = .follow
-        }
 
-        cell.customCommunityTILView.followButtonTapped = { [weak self, weak cell] in
-            guard let self, let cell else { return }
-            switch cell.customCommunityTILView.variant {
-            case .follow:
-                userViewModel.follow(user: post.user) { [weak self] result in
-                    guard let self else { return }
-                    guard case .success(let success) = result, success else {
-                        // TODO: 에러 처리
-                        return
-                    }
-                    cell.customCommunityTILView.variant = .unfollow
-                }
-            case .unfollow:
-                userViewModel.unfollow(user: post.user) { [weak self] result in
-                    guard let self else { return }
-                    guard case .success(let success) = result, success else {
-                        // TODO: 에러 처리
-                        return
-                    }
-                    cell.customCommunityTILView.variant = .follow
-                }
-            default:
-                break
-            }
-        }
+        cell.customCommunityTILView.setup(post: post)
 
         cell.selectionStyle = .none
 
@@ -120,24 +91,25 @@ extension CommunityViewController: UITableViewDataSource {
             guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
             let userProfileViewController = UserProfileViewController()
             userProfileViewController.user = post.user
+            userProfileViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(userProfileViewController, animated: true)
         }
 
         cell.customCommunityTILView.postTapped = { [weak self] in
             guard let self else { return }
-            let webViewController = WebViewController()
-            webViewController.postURL = post.url
-            let heartIconButton = UIButton(type: .system)
-            heartIconButton.setImage(UIImage(systemName: "heart")?
-                .withTintColor(.systemGray2, renderingMode: .alwaysOriginal), for: .normal)
-            heartIconButton.setImage(UIImage(systemName: "heart.fill")?
-                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .selected)
-            heartIconButton.tintColor = .clear
-            heartIconButton.addTarget(self, action: #selector(self.heartButtonTapped), for: .touchUpInside)
-            let heartBarButton = UIBarButtonItem(customView: heartIconButton)
-            webViewController.navigationItem.rightBarButtonItem = heartBarButton
+            let likeButton = LikeButton(liked: post.liked)
+            likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
+                APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
+                    guard case .success = result else { return }
+                    completion()
+                }
+            }
 
-            webViewController.hidesBottomBarWhenPushed = true
+            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                $0.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
+                $0.hidesBottomBarWhenPushed = true
+                $0.url = post.url
+            }
             navigationController?.pushViewController(webViewController, animated: true)
         }
 
@@ -173,19 +145,24 @@ extension CommunityViewController: UISearchBarDelegate {
         }
         searchBar.resignFirstResponder()
     }
+}
 
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.isEmpty {
-            communityViewModel.reload()
-            tableView.reloadData()
-            DispatchQueue.main.async {
-                searchBar.resignFirstResponder()
-            }
+extension CommunityViewController: UITextFieldDelegate {
+    func textFieldShouldClear(_: UITextField) -> Bool {
+        communityViewModel.reload()
+        tableView.reloadData()
+        DispatchQueue.main.async { [weak self] in
+            self?.searchBar.resignFirstResponder()
         }
+        return true
     }
 }
 
 extension CommunityViewController: CommunityViewModelDelegate {
+    func itemsUpdated(_: CommunityViewModel, updatedIndexPaths: [IndexPath]) {
+        tableView.reloadRows(at: updatedIndexPaths, with: .none)
+    }
+
     func itemsUpdated(_: CommunityViewModel, items _: [CommunityPost], range: Range<Int>) {
         if range.lowerBound > 0 {
             let indexPaths = range.map { IndexPath(row: $0, section: 0) }
@@ -195,8 +172,8 @@ extension CommunityViewController: CommunityViewModelDelegate {
         }
     }
 
-    func errorOccurred(_: CommunityViewModel, error: Error) {
+    func errorOccurred(_: CommunityViewModel, error: String) {
         // TODO: 에러처리
-        debugPrint(error)
+        debugPrint(#function, error)
     }
 }

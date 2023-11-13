@@ -1,7 +1,7 @@
 import UIKit
 
 final class MyProfileTableViewCell: UITableViewCell {
-    static let identifier = "MyCell"
+    static let identifier = #function
     let myTILView = CustomTILView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

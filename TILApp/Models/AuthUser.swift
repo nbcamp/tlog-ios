@@ -1,3 +1,5 @@
+import Foundation
+
 struct AuthUser: Codable {
     let id: Int
     let username: String
@@ -5,6 +7,8 @@ struct AuthUser: Codable {
     let posts: Int
     let followers: Int
     let followings: Int
+    let hasBlog: Bool
+    let lastPublishedAt: Date?
 }
 
 struct SignInInput: Codable {

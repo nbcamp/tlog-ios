@@ -1,6 +1,8 @@
 import UIKit
 
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
+    var onRegistered: (() -> Void)?
+
     private let blogViewModel = BlogViewModel.shared
     private let keywordInputViewModel = KeywordInputViewModel.shared
 
@@ -63,7 +65,6 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
         contentView.addSubview(customKeywordView)
     }
 
-    // TODO: 프린트문 삭제
     @objc private func doneButtonTapped() {
         blogViewModel.create(.init(
             name: blogNameTextField.mainText,
@@ -74,9 +75,11 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
             guard let self else { return }
             if case let .failure(error) = result {
                 // TODO: 에러 처리
-                debugPrint(error)
+                debugPrint(#function, error)
                 return
             }
+            RssViewModel.shared.reload()
+            onRegistered?()
             navigationController?.popViewController(animated: true)
         }
         keywordInputViewModel.clear()
@@ -85,7 +88,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        navigationController?.isNavigationBarHidden = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
         view.setNeedsLayout()
 
         updateDoneButtonState()

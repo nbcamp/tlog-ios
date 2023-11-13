@@ -4,6 +4,7 @@ final class BlogListViewController: UIViewController {
     private lazy var tableView = UITableView().then {
         $0.dataSource = self
         $0.delegate = self
+        $0.applyCustomSeparator()
         $0.register(BlogListTableViewCell.self, forCellReuseIdentifier: "CustomBlogCell")
     }
 
@@ -27,7 +28,7 @@ final class BlogListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        navigationController?.isNavigationBarHidden = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
         tabBarController?.tabBar.isHidden = true
 
         KeywordInputViewModel.shared.clear()
@@ -41,7 +42,7 @@ final class BlogListViewController: UIViewController {
     }
 
     @objc private func addBlogButtonTapped() {
-        navigationController?.pushViewController(BlogRegisterViewController(), animated: false)
+        navigationController?.pushViewController(BlogRegisterViewController(), animated: true)
     }
 }
 
