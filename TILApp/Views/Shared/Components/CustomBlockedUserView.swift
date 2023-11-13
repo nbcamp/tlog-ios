@@ -51,7 +51,7 @@ class CustomBlockedUserView: UIView {
     }
 
     func setup(username: String, avatarUrl: String?) {
-        self.nicknameLabel.text = username
-        self.profileImageView.url = avatarUrl
+        nicknameLabel.text = username
+        profileImageView.url = avatarUrl
     }
 }
