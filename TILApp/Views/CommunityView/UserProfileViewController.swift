@@ -119,7 +119,7 @@ final class UserProfileViewController: UIViewController {
                 }
             }
         }
-
+        
         loadPosts { [weak self] in
             self?.userProfileTableView.reloadData()
             self?.userProfileTableView.layoutIfNeeded()
@@ -277,6 +277,12 @@ final class UserProfileViewController: UIViewController {
                 return
             }
             self.user = userProfile
+            if section == .likedPosts {
+                loadPosts { [weak self] in
+                    self?.userProfileTableView.reloadData()
+                    self?.userProfileTableView.layoutIfNeeded()
+                }
+            }
         }
     }
 }
