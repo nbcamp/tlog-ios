@@ -38,7 +38,6 @@ final class CommunityViewModel {
                 handler?(result)
             }
             loading = true
-            completed = false
             initialized = true
         }
     }
@@ -46,6 +45,7 @@ final class CommunityViewModel {
     func reload() {
         posts = cache
         completed = false
+        nextCursor = nil
         query = nil
     }
 
@@ -53,6 +53,8 @@ final class CommunityViewModel {
         guard initialized else { return }
         Task {
             searching = true
+            nextCursor = nil
+            completed = false
             self.query = query
             await _load(
                 limit: 10,
@@ -60,8 +62,6 @@ final class CommunityViewModel {
                 handler
             )
             searching = false
-            nextCursor = nil
-            completed = false
         }
     }
 
@@ -69,14 +69,14 @@ final class CommunityViewModel {
         guard initialized else { return }
         Task {
             refreshing = true
+            nextCursor = nil
+            completed = false
             await _load(
                 limit: 10,
                 desc: true,
                 handler
             )
             refreshing = false
-            nextCursor = nil
-            completed = false
         }
     }
 

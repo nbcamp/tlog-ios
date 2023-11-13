@@ -44,6 +44,7 @@ final class FollowListViewController: UIViewController {
     }
 
     override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         segmentedControl.pin.top(view.pin.safeArea).horizontally(view.pin.safeArea)
         tableView.pin.top(to: segmentedControl.edge.bottom).horizontally().bottom()
     }
@@ -113,9 +114,9 @@ extension FollowListViewController: UITableViewDataSource {
         }
 
         cell.customUserView.setup(
-            image: UIImage(),
-            nicknameText: user.username,
-            contentText: content,
+            username: user.username,
+            avatarUrl: user.avatarUrl,
+            content: content,
             variant: isFollowing ? .unfollow : .follow
         )
 

@@ -8,8 +8,8 @@ final class MyProfileViewController: UIViewController {
     private let authViewModel = AuthViewModel.shared
     private var user: AuthUser? {
         didSet {
-            // TODO: 아바타 이미지 추가
             nicknameLabel.text = user?.username
+            profileImageView.url = user?.avatarUrl
         }
     }
 
@@ -27,11 +27,7 @@ final class MyProfileViewController: UIViewController {
     private lazy var countView = UIView().then { _ in
     }
 
-    private lazy var profileImageView = UIImageView().then {
-        $0.image = UIImage(systemName: "person.circle.fill")
-        $0.tintColor = .accent
-        $0.layer.borderColor = UIColor.accent.cgColor
-    }
+    private lazy var profileImageView = AvatarImageView()
 
     private lazy var nicknameLabel = UILabel().then {
         $0.font = UIFont.boldSystemFont(ofSize: 20)
@@ -109,6 +105,23 @@ final class MyProfileViewController: UIViewController {
             self?.myProfileTableView.reloadData()
             self?.myProfileTableView.setNeedsLayout()
         }
+
+        screenView.flex.direction(.column).define { flex in
+            flex.addItem().direction(.row).paddingVertical(10).paddingHorizontal(20).define { flex in
+                flex.addItem(profileImageView).width(100).height(100).cornerRadius(100 / 2)
+                flex.addItem().direction(.column).define { flex in
+                    flex.addItem(nicknameLabel).marginLeft(15).marginTop(10)
+                    flex.addItem(countView).direction(.row).width(210).height(75).define { flex in
+                        flex.addItem(postButton).width(70)
+                        flex.addItem(followersButton).width(70)
+                        flex.addItem(followingButton).width(70)
+                    }.layout()
+                }
+            }
+            flex.addItem(editBlogButton).height(40)
+            flex.addItem(myProfileSegmentedControl).height(40).marginTop(10)
+            flex.addItem(myProfileTableView).grow(1)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -125,31 +138,9 @@ final class MyProfileViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        setUpUI()
-    }
-
-    private func setUpUI() {
         screenView.pin.all(view.pin.safeArea)
         moreButton.pin.top(view.pin.safeArea).right(25).marginTop(5)
-
-        screenView.flex.direction(.column).define { flex in
-            flex.addItem().direction(.row).paddingHorizontal(20).define { flex in
-                flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2)
-                flex.addItem().direction(.column).define { flex in
-                    flex.addItem(nicknameLabel).marginLeft(15).marginTop(10)
-                    flex.addItem(countView)
-                        .direction(.row)
-                        .width(210).height(75).define { flex in
-                            flex.addItem(postButton).width(70)
-                            flex.addItem(followersButton).width(70)
-                            flex.addItem(followingButton).width(70)
-                        }.layout()
-                }
-            }
-            flex.addItem(editBlogButton).height(40)
-            flex.addItem(myProfileSegmentedControl).height(40).marginTop(10)
-            flex.addItem(myProfileTableView).grow(1)
-        }.layout()
+        screenView.flex.layout()
     }
 
     @objc private func moreButtonTapped() {
@@ -295,7 +286,8 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
         if title == "회원 정보 수정" {
             let profileEditViewController = ProfileEditViewController()
             profileEditViewController.hidesBottomBarWhenPushed = true
-            profileEditViewController.username = user?.username
+            profileEditViewController.username = user?.username ?? ""
+            profileEditViewController.avatarImage = profileImageView.image
             dismiss(animated: true) { [weak self] in
                 self?.navigationController?.pushViewController(profileEditViewController, animated: true)
             }

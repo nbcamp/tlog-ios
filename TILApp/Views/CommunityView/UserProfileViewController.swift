@@ -1,7 +1,12 @@
 import UIKit
 
 final class UserProfileViewController: UIViewController {
-    var user: User?
+    var user: User? {
+        didSet {
+            nicknameLabel.text = user?.username
+            profileImageView.url = user?.avatarUrl
+        }
+    }
 
     private enum Section {
         case posts, likedPosts
@@ -23,10 +28,7 @@ final class UserProfileViewController: UIViewController {
         view.addSubview($0)
     }
 
-    private lazy var profileImageView = UIImageView().then {
-        $0.image = UIImage(systemName: "person.circle.fill")
-        $0.layer.cornerRadius = 50
-    }
+    private lazy var profileImageView = AvatarImageView()
 
     private lazy var nicknameLabel = UILabel().then {
         $0.font = UIFont.boldSystemFont(ofSize: 20)
@@ -40,6 +42,7 @@ final class UserProfileViewController: UIViewController {
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
         $0.imageEdgeInsets = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 25)
+        $0.showsMenuAsPrimaryAction = true
         $0.menu = makeMenuItems()
         view.addSubview($0)
     }
@@ -117,32 +120,10 @@ final class UserProfileViewController: UIViewController {
             self?.userProfileTableView.reloadData()
             self?.userProfileTableView.layoutIfNeeded()
         }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        WKWebViewWarmer.shared.prepare(3)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        WKWebViewWarmer.shared.clear()
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setUpUI()
-        moreButton.showsMenuAsPrimaryAction = true
-    }
-
-    private func setUpUI() {
-        screenView.pin.all(view.pin.safeArea)
-        moreButton.pin.top(view.pin.safeArea).right(25)
-
+        
         screenView.flex.direction(.column).define { flex in
-            flex.addItem().direction(.row).paddingHorizontal(10).define { flex in
-                flex.addItem(profileImageView).width(103).height(100).cornerRadius(100 / 2)
+            flex.addItem().direction(.row).padding(10).define { flex in
+                flex.addItem(profileImageView).width(100).height(100).cornerRadius(100 / 2)
                 flex.addItem().direction(.column).width(200).define { flex in
                     flex.addItem(nicknameLabel).width(200).height(25).marginLeft(15).marginTop(5)
                     flex.addItem(countView).direction(.row).width(210).height(75).define { flex in
@@ -152,13 +133,31 @@ final class UserProfileViewController: UIViewController {
                     }
                 }
             }
-            flex.addItem(followButtonView).direction(.row).paddingHorizontal(15).define { flex in
+            flex.addItem(followButtonView).direction(.row).marginTop(10).paddingHorizontal(15).define { flex in
                 flex.addItem(doingFollowButton).width(100).height(30)
                 flex.addItem(userBlogURL).marginBottom(20).marginLeft(10).grow(1)
             }
             flex.addItem(userSegmentedControl).height(40)
             flex.addItem(userProfileTableView).grow(1)
-        }.layout()
+        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        WKWebViewWarmer.shared.prepare(3)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        WKWebViewWarmer.shared.clear()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        screenView.pin.all(view.pin.safeArea)
+        moreButton.pin.top(view.pin.safeArea).right(25)
+        screenView.flex.layout()
     }
 
     private func makeMenuItems() -> UIMenu {
