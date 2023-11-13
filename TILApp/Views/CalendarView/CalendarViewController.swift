@@ -10,6 +10,14 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
     private let cal = Calendar.current
     private var cancellable: Set<AnyCancellable> = []
 
+    private var hasBlog: Bool {
+        if let user = AuthViewModel.shared.user, user.hasBlog {
+            return true
+        } else {
+            return false
+        }
+    }
+
     private var posts: [RssViewModel.Post] = []
     private var lastSelectedDate: Date? {
         didSet {
@@ -99,6 +107,8 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
         $0.backgroundColor = .systemBackground
     }
 
+    private lazy var flexContainer = UIView()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -114,6 +124,36 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
         rootView.flex.direction(.column).define {
             $0.addItem(calendarView).marginLeft(20).marginRight(20).aspectRatio(1)
             $0.addItem(tableView).grow(1)
+        }
+
+        if !hasBlog {
+            view.addSubview(flexContainer)
+            flexContainer
+                .flex
+                .backgroundColor(.systemBackground)
+                .direction(.column)
+                .justifyContent(.center)
+                .alignItems(.center)
+                .define { flex in
+                    flex.addItem(UILabel().then {
+                        $0.text = "블로그를 등록하시고\nTIL을 작성해주세요!"
+                        $0.numberOfLines = 2
+                        $0.textColor = .black.withAlphaComponent(0.9)
+                        $0.font = .systemFont(ofSize: 30, weight: .heavy)
+                    })
+                    flex.addItem(UILabel().then {
+                        $0.text = "TIL 작성 관리를 도와드릴게요!"
+                        $0.font = .systemFont(ofSize: 16)
+                    }).marginTop(30)
+                    flex.addItem(CustomLargeButton().then {
+                        $0.backgroundColor = .accent
+                        $0.setTitleColor(.white, for: .normal)
+                        $0.setTitle("블로그 등록하기", for: .normal)
+                        $0.layer.cornerRadius = 8
+                        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .heavy)
+                        $0.addTarget(self, action: #selector(registerBlogButtonTapped), for: .touchUpInside)
+                    }).marginTop(20).height(40)
+                }
         }
     }
 
@@ -136,6 +176,11 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
             view.addSubview(loadingView)
             loadingView.pin.all(view.pin.safeArea)
         }
+
+        if !hasBlog {
+            flexContainer.pin.all(view.pin.safeArea)
+            flexContainer.flex.layout()
+        }
     }
 
     @objc private func swipeAction(_ sender: UISwipeGestureRecognizer) {
@@ -146,6 +191,16 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
         ) else { return }
         if date > .now { return }
         calendarView.setCurrentPage(date, animated: false)
+    }
+
+    @objc private func registerBlogButtonTapped() {
+        let blogRegisterVC = BlogRegisterViewController().then {
+            $0.hidesBottomBarWhenPushed = true
+            $0.onRegistered = { [weak self] in
+                self?.flexContainer.removeFromSuperview()
+            }
+        }
+        navigationController?.pushViewController(blogRegisterVC, animated: true)
     }
 }
 

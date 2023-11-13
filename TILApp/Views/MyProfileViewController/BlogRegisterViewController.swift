@@ -1,6 +1,8 @@
 import UIKit
 
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
+    var onRegistered: (() -> Void)?
+
     private let blogViewModel = BlogViewModel.shared
     private let keywordInputViewModel = KeywordInputViewModel.shared
 
@@ -77,6 +79,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
                 debugPrint(#function, error)
                 return
             }
+            onRegistered?()
             navigationController?.popViewController(animated: true)
         }
         keywordInputViewModel.clear()
