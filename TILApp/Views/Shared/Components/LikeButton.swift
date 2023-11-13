@@ -11,7 +11,8 @@ final class LikeButton: UIButton {
         setImage(UIImage(systemName: "heart.fill")?
             .withTintColor(.red, renderingMode: .alwaysOriginal), for: .selected)
         tintColor = .clear
-        addTarget(self, action: #selector(_buttonTapped), for: .touchUpInside)
+        adjustsImageWhenHighlighted = false
+        addTarget(self, action: #selector(_buttonTapped), for: .touchDown)
     }
 
     @available(*, unavailable)
