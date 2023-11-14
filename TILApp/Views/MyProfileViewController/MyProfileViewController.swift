@@ -285,7 +285,18 @@ extension MyProfileViewController: UITableViewDataSource {
     }
 }
 
-extension MyProfileViewController: UITableViewDelegate {}
+extension MyProfileViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+            switch section {
+            case .myPosts: $0.url = myPosts[indexPath.row].url
+            case .myLikedPosts: $0.url = myLikedPosts[indexPath.row].url
+            }
+            $0.hidesBottomBarWhenPushed = true
+        }
+        navigationController?.pushViewController(webViewController, animated: true)
+    }
+}
 
 extension MyProfileViewController: SeeMoreBottomSheetDelegate {
     func didSelectSeeMoreMenu(title: String) {
