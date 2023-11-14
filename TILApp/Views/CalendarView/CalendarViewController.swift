@@ -292,6 +292,10 @@ extension CalendarViewController: FSCalendarDelegateAppearance {
             return .systemGray4
         }
 
+        if cal.isDateInToday(date) {
+            return .accent
+        }
+
         switch cal.component(.weekday, from: date) {
         case 1: return .systemRed
         case 7: return .systemBlue

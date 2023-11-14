@@ -1,4 +1,3 @@
-import Kingfisher
 import UIKit
 
 final class AvatarImageView: UIImageView {
@@ -45,6 +44,7 @@ final class AvatarImageView: UIImageView {
         prevUrl = nil
         image = nil
         initialized = false
+        setNeedsLayout()
     }
 
     func removeDefault() {
