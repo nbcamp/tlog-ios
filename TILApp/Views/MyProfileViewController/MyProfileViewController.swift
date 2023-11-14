@@ -91,6 +91,7 @@ final class MyProfileViewController: UIViewController {
     private lazy var myProfileTableView = UITableView().then {
         $0.register(MyProfileTableViewCell.self, forCellReuseIdentifier: MyProfileTableViewCell.identifier)
         $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: CommunityTableViewCell.identifier)
+        $0.refreshControl = UIRefreshControl()
         $0.delegate = self
         $0.dataSource = self
         $0.applyCustomSeparator()
@@ -286,7 +287,7 @@ extension MyProfileViewController: UITableViewDataSource {
 }
 
 extension MyProfileViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
             switch section {
             case .myPosts: $0.url = myPosts[indexPath.row].url
@@ -295,6 +296,13 @@ extension MyProfileViewController: UITableViewDelegate {
             $0.hidesBottomBarWhenPushed = true
         }
         navigationController?.pushViewController(webViewController, animated: true)
+    }
+
+    func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {
+        loadMyPosts { [weak self] in
+            self?.myProfileTableView.reloadData()
+            self?.myProfileTableView.refreshControl?.endRefreshing()
+        }
     }
 }
 

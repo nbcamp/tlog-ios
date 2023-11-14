@@ -106,6 +106,7 @@ final class UserProfileViewController: UIViewController {
         $0.register(CommunityTableViewCell.self, forCellReuseIdentifier: CommunityTableViewCell.identifier)
         $0.delegate = self
         $0.dataSource = self
+        $0.refreshControl = UIRefreshControl()
         $0.applyCustomSeparator()
         view.addSubview($0)
     }
@@ -400,4 +401,11 @@ extension UserProfileViewController: UITableViewDataSource {
 
 extension UserProfileViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
+
+    func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {
+        loadPosts { [weak self] in
+            self?.userProfileTableView.reloadData()
+            self?.userProfileTableView.refreshControl?.endRefreshing()
+        }
+    }
 }

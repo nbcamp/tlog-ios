@@ -26,6 +26,7 @@ final class FollowListViewController: UIViewController {
     private lazy var tableView = UITableView().then {
         $0.dataSource = self
         $0.delegate = self
+        $0.refreshControl = UIRefreshControl()
         $0.register(FollowListTableViewCell.self, forCellReuseIdentifier: "FollowListTableViewCell")
         $0.applyCustomSeparator()
         view.addSubview($0)
@@ -181,5 +182,13 @@ extension FollowListViewController: UITableViewDelegate {
             }
         }
         navigationController?.pushViewController(userProfileViewController, animated: true)
+    }
+
+    func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {
+        Task {
+            _ = await loadFollowList()
+            tableView.reloadData()
+            tableView.refreshControl?.endRefreshing()
+        }
     }
 }
