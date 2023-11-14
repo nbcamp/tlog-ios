@@ -5,12 +5,7 @@ func toDictionary<T: Encodable>(from object: T, with encoder: JSONEncoder = JSON
         with: encoder.encode(object),
         options: .allowFragments
     ) as? [String: Any] else { return [:] }
-    return json.mapValues { value in
-        if let boolValue = value as? Bool {
-            return String(boolValue)
-        }
-        return value
-    }
+    return json
 }
 
 func convertToRssUrl(from blogUrl: String) -> String? {
