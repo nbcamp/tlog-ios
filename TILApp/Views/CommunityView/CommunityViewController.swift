@@ -89,9 +89,10 @@ extension CommunityViewController: UITableViewDataSource {
 
         cell.customCommunityTILView.userProfileTapped = { [weak self] in
             guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
-            let userProfileViewController = UserProfileViewController()
-            userProfileViewController.user = post.user
-            userProfileViewController.hidesBottomBarWhenPushed = true
+            let userProfileViewController = UserProfileViewController().then {
+                $0.hidesBottomBarWhenPushed = true
+                $0.user = post.user
+            }
             navigationController?.pushViewController(userProfileViewController, animated: true)
         }
 

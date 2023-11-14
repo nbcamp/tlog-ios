@@ -35,19 +35,18 @@ final class FollowListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "팔로우 관리"
-
-        Task {
-            _ = await loadFollowList()
-            tableView.reloadData()
-            tableView.layoutIfNeeded()
-        }
-
-        authUser = authViewModel.user
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
+
+        authUser = authViewModel.user
+        Task {
+            _ = await loadFollowList()
+            tableView.reloadData()
+            tableView.layoutIfNeeded()
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -58,12 +57,11 @@ final class FollowListViewController: UIViewController {
 
     // TODO: 스크롤 위치 에러 수정
     @objc private func segmentedControlSelected(_ control: CustomSegmentedControl) {
+        selectedIndex = control.selectedSegmentIndex
         Task {
             _ = await loadFollowList()
             tableView.reloadData()
             tableView.layoutIfNeeded()
-
-            let selectedIndex = control.selectedSegmentIndex
 
             if let ratio = scrollRatios[selectedIndex] {
                 let totalScrollableHeight = tableView.contentSize.height - tableView.bounds.height
@@ -113,8 +111,6 @@ extension FollowListViewController: UITableViewDataSource {
         let user: User = segmentedControl.selectedSegmentIndex == 0
             ? userViewModel.myFollowers[indexPath.row]
             : userViewModel.myFollowings[indexPath.row]
-
-        let isFollowing = userViewModel.isMyFollowing(user: user)
 
         var content = "작성한 TIL이 없습니다."
         if let lastPublishedAt = user.lastPublishedAt {
@@ -175,5 +171,15 @@ extension FollowListViewController: UITableViewDataSource {
 }
 
 extension FollowListViewController: UITableViewDelegate {
-    func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
+    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let userProfileViewController = UserProfileViewController().then {
+            $0.hidesBottomBarWhenPushed = true
+            switch selectedIndex {
+            case 0: $0.user = userViewModel.myFollowers[indexPath.row]
+            case 1: $0.user = userViewModel.myFollowings[indexPath.row]
+            default: break
+            }
+        }
+        navigationController?.pushViewController(userProfileViewController, animated: true)
+    }
 }
