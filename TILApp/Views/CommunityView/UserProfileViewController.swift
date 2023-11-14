@@ -351,11 +351,22 @@ extension UserProfileViewController: UITableViewDataSource {
                 webViewController.url = post.url
                 let likeButton = LikeButton(liked: post.liked)
                 likeButton.buttonTapped = { liked, completion in
-                    APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
-                        switch result {
-                        case .success: completion(true)
-                        case .failure: completion(false)
-                        }
+                    CommunityViewModel.shared.togglePostLikeState(liked, of: post.id) { [weak self] state in
+                        guard let self else { return }
+                        // TODO: ViewModel class로 변경
+                        let post = likedPosts[indexPath.row]
+                        likedPosts[indexPath.row] = .init(
+                            id: post.id,
+                            title: post.title,
+                            content: post.content,
+                            url: post.url,
+                            tags: post.tags,
+                            user: post.user,
+                            liked: state,
+                            publishedAt: post.publishedAt
+                        )
+                        userProfileTableView.reloadRows(at: [indexPath], with: .none)
+                        completion(state)
                     }
                 }
                 webViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)

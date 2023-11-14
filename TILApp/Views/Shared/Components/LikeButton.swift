@@ -29,12 +29,11 @@ final class LikeButton: UIButton {
     }
 
     @objc func _buttonTapped() {
+        guard let buttonTapped else { return }
         let liked = isSelected
         isSelected.toggle()
-        buttonTapped?(liked, { [weak self] result in
-            if !result {
-                self?.isSelected.toggle()
-            }
-        })
+        buttonTapped(liked) { [weak self] state in
+            self?.isSelected = state
+        }
     }
 }

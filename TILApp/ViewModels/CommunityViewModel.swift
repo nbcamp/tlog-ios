@@ -2,7 +2,6 @@ import Dispatch
 import Foundation
 
 protocol CommunityViewModelDelegate: AnyObject {
-    func itemsUpdated(_ viewModel: CommunityViewModel, updatedIndexPaths: [IndexPath])
     func itemsUpdated(_ viewModel: CommunityViewModel, items: [CommunityPost], range: Range<Int>)
     func errorOccurred(_ viewModel: CommunityViewModel, error: String)
 }
@@ -134,19 +133,33 @@ final class CommunityViewModel {
         }
     }
 
-    func updatePosts(forUser updatedUser: User) {
-        var updatedIndexPaths: [IndexPath] = []
-
-        for (index, post) in posts.enumerated() where post.user.id == updatedUser.id {
-            let updatedPost = CommunityPost(
-                id: post.id, title: post.title, content: post.content,
-                url: post.url, tags: post.tags, user: updatedUser,
-                liked: post.liked, publishedAt: post.publishedAt
+    func togglePostLikeState(
+        _ currentLiked: Bool,
+        of postId: Int,
+        _ handler: @escaping (_ liked: Bool) -> Void
+    ) {
+        Task {
+            let post = try? await APIService.shared.request(
+                currentLiked ? .unlikePost(postId) : .likePost(postId),
+                to: Post.self
             )
-            posts[index] = updatedPost
-            updatedIndexPaths.append(IndexPath(row: index, section: 0))
+            DispatchQueue.main.sync {
+                guard let post else { handler(currentLiked); return }
+                if let index = posts.firstIndex(where: { $0.id == postId }) {
+                    let oldPost = posts[index]
+                    posts[index] = .init(
+                        id: oldPost.id,
+                        title: oldPost.title,
+                        content: oldPost.content,
+                        url: oldPost.url,
+                        tags: oldPost.tags,
+                        user: oldPost.user,
+                        liked: post.liked,
+                        publishedAt: oldPost.publishedAt
+                    )
+                }
+                handler(post.liked)
+            }
         }
-
-        delegate?.itemsUpdated(self, updatedIndexPaths: updatedIndexPaths)
     }
 }

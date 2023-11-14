@@ -97,12 +97,10 @@ extension CommunityViewController: UITableViewDataSource {
         cell.customCommunityTILView.postTapped = { [weak self] in
             guard let self else { return }
             let likeButton = LikeButton(liked: post.liked)
-            likeButton.buttonTapped = { liked, completion in
-                APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
-                    switch result {
-                    case .success: completion(true)
-                    case .failure: completion(false)
-                    }
+            likeButton.buttonTapped = { [weak self] liked, completion in
+                self?.communityViewModel.togglePostLikeState(liked, of: post.id) { [weak self] state in
+                    self?.tableView.reloadRows(at: [indexPath], with: .none)
+                    completion(state)
                 }
             }
 
@@ -160,10 +158,6 @@ extension CommunityViewController: UITextFieldDelegate {
 }
 
 extension CommunityViewController: CommunityViewModelDelegate {
-    func itemsUpdated(_: CommunityViewModel, updatedIndexPaths: [IndexPath]) {
-        tableView.reloadRows(at: updatedIndexPaths, with: .none)
-    }
-
     func itemsUpdated(_: CommunityViewModel, items _: [CommunityPost], range: Range<Int>) {
         if range.lowerBound > 0 {
             let indexPaths = range.map { IndexPath(row: $0, section: 0) }
