@@ -54,6 +54,7 @@
 		33E1D1DD2B012524007DEEE8 /* AvatarImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1DC2B012524007DEEE8 /* AvatarImageView.swift */; };
 		33E1D1DF2B0133D0007DEEE8 /* WebViewWarmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */; };
 		33E1D1E12B016545007DEEE8 /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1E02B016545007DEEE8 /* UIImage+Ext.swift */; };
+		33E1D1E32B025984007DEEE8 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1E22B025984007DEEE8 /* AuthService.swift */; };
 		9B859B2B2AE26C2600025E8B /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */; };
 		9BB3AD6F2AEEC99F004A25DB /* MyProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB3AD6E2AEEC99F004A25DB /* MyProfileTableViewCell.swift */; };
 		9BE049B92AEB968E00A47CFC /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE049B82AEB968E00A47CFC /* WebViewController.swift */; };
@@ -143,6 +144,7 @@
 		33E1D1DC2B012524007DEEE8 /* AvatarImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarImageView.swift; sourceTree = "<group>"; };
 		33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewWarmer.swift; sourceTree = "<group>"; };
 		33E1D1E02B016545007DEEE8 /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
+		33E1D1E22B025984007DEEE8 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		9B859B2A2AE26C2600025E8B /* ProfileEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditViewController.swift; sourceTree = "<group>"; };
 		9BB3AD6E2AEEC99F004A25DB /* MyProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileTableViewCell.swift; sourceTree = "<group>"; };
 		9BE049B82AEB968E00A47CFC /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
@@ -288,6 +290,7 @@
 			isa = PBXGroup;
 			children = (
 				3334E1D02AD9129600D853D7 /* APIService.swift */,
+				33E1D1E22B025984007DEEE8 /* AuthService.swift */,
 				3373D56A2AFB7F820057A23B /* RssService.swift */,
 			);
 			path = Services;
@@ -590,6 +593,7 @@
 				33A4E82C2AECBE3C00E3F55E /* MoreTableViewCell.swift in Sources */,
 				D2CDB6FD2AEB677100BFD8C2 /* CustomTitleLabel.swift in Sources */,
 				D2CDB6F52AEB66A900BFD8C2 /* CustomLargeButton.swift in Sources */,
+				33E1D1E32B025984007DEEE8 /* AuthService.swift in Sources */,
 				D24BB9952AE1104400ED7028 /* BlogEditViewController.swift in Sources */,
 				D2CDB6F72AEB66EC00BFD8C2 /* CustomLargeBorderButton.swift in Sources */,
 				D2BEB50B2AF8BE5200C1BF30 /* BlockedUserTableViewCell.swift in Sources */,

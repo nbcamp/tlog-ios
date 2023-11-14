@@ -40,8 +40,10 @@ final class CommunityViewController: UIViewController {
         communityViewModel.delegate = self
         communityViewModel.load { [weak self] _ in
             guard let self else { return }
-            loadingView.stopAnimating()
-            loadingView.isHidden = true
+            DispatchQueue.main.async { [weak self] in
+                self?.loadingView.stopAnimating()
+                self?.loadingView.isHidden = true
+            }
         }
     }
 

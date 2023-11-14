@@ -31,7 +31,7 @@ final class SignInViewController: UIViewController {
         view.addSubview(authorizationButton)
         view.addSubview(label)
         view.addSubview(privacyLabel)
-        
+
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(privacyLabelTapped))
         privacyLabel.isUserInteractionEnabled = true
         privacyLabel.addGestureRecognizer(tapGestureRecognizer)
@@ -48,63 +48,38 @@ final class SignInViewController: UIViewController {
     }
 
     @objc private func handleAuthorizationAppleIDButtonPress() {
-        let appleIDProvider = ASAuthorizationAppleIDProvider()
-        let request = appleIDProvider.createRequest()
-        request.requestedScopes = [.fullName, .email]
-
-        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
-        authorizationController.delegate = self
-        authorizationController.presentationContextProvider = self
-        authorizationController.performRequests()
+        AuthService.shared.signInWithApple(self) { payload in
+            AuthViewModel.shared.signIn(.init(
+                username: payload.username ?? "이름없음",
+                avatarUrl: nil,
+                provider: payload.provider,
+                providerId: payload.providerId
+            )) { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success:
+                    break
+                case .failure(let error):
+                    debugPrint(#function, error)
+                    showAuthFailedAlert()
+                }
+            }
+        } onError: { [weak self] error in
+            debugPrint(#function, error)
+            self?.showAuthFailedAlert()
+        }
     }
-    
+
+    private func showAuthFailedAlert() {
+        let alert = UIAlertController(title: "로그인 실패", message: "\n다시 시도해 주세요.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
+    }
+
     @objc private func privacyLabelTapped() {
         let webViewController = WebViewController()
         webViewController.url = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
         webViewController.hidesBottomBarWhenPushed = true
         present(webViewController, animated: true)
-    }
-}
-
-extension SignInViewController: ASAuthorizationControllerDelegate {
-    // 로그인 성공 후 동작
-    func authorizationController(
-        controller: ASAuthorizationController,
-        didCompleteWithAuthorization authorization: ASAuthorization
-    ) {
-        switch authorization.credential {
-        case let appleIDCredential as ASAuthorizationAppleIDCredential:
-            let userIdentifier = appleIDCredential.user
-            let fullName = appleIDCredential.fullName
-
-            var username: String?
-            if fullName != nil {
-                username = (fullName?.familyName ?? "") + (fullName?.givenName ?? "")
-            }
-
-            AuthViewModel.shared.signIn(.init(
-                username: username ?? "이름없음",
-                avatarUrl: nil,
-                provider: "APPLE",
-                providerId: userIdentifier
-            )) { [weak self] result in
-                guard let self, case .failure = result else { return }
-                let alert = UIAlertController(title: "로그인 실패", message: "\n다시 시도해 주세요.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-            }
-        default:
-            break
-        }
-    }
-
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        // TODO: 로그인 실패 후 동작    
-    }
-}
-
-extension SignInViewController: ASAuthorizationControllerPresentationContextProviding {
-    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        return view.window!
     }
 }
