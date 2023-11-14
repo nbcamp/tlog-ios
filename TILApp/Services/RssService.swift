@@ -33,7 +33,7 @@ final class RssService {
                           let url = post.link,
                           let pubDate = post.pubDate,
                           let publishedAt = toDate(string: pubDate, formats: [
-                              "EEE, dd MMM yyyy HH:mm:ss z",
+                              "EEE, dd MMM yyyy HH:mm:ss Z",
                           ])
                     else { return nil }
 

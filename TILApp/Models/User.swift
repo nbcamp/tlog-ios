@@ -27,4 +27,3 @@ struct UpdateUserInput: Codable {
 struct ReportUserInput: Codable {
     let reason: String
 }
-
