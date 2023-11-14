@@ -77,13 +77,11 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
             let userIdentifier = appleIDCredential.user
             let fullName = appleIDCredential.fullName
 
-            var username: String?
-            if fullName != nil {
-                username = (fullName?.familyName ?? "") + (fullName?.givenName ?? "")
-            }
+            var username = (fullName?.familyName ?? "") + (fullName?.givenName ?? "")
+            username = username.trimmingCharacters(in: .whitespacesAndNewlines)
 
             AuthViewModel.shared.signIn(.init(
-                username: username ?? "이름없음",
+                username: username.isEmpty ? "이름없음" : username,
                 avatarUrl: nil,
                 provider: "APPLE",
                 providerId: userIdentifier
