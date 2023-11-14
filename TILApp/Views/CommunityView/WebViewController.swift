@@ -57,6 +57,7 @@ final class WebViewController: UIViewController {
         self.webView = webView
         super.init(nibName: nil, bundle: nil)
 
+        webView.uiDelegate = self
         webView.navigationDelegate = self
         webView.allowsBackForwardNavigationGestures = true
         view.addSubview(webView)
@@ -115,5 +116,19 @@ extension WebViewController: WKNavigationDelegate {
         backButton.isEnabled = webView.canGoBack
         forwardButton.isEnabled = webView.canGoForward
         loadingView.isHidden = true
+    }
+}
+
+extension WebViewController: WKUIDelegate {
+    func webView(
+        _ webView: WKWebView,
+        createWebViewWith configuration: WKWebViewConfiguration,
+        for navigationAction: WKNavigationAction,
+        windowFeatures: WKWindowFeatures
+    ) -> WKWebView? {
+        if navigationAction.targetFrame == nil {
+            webView.load(navigationAction.request)
+        }
+        return nil
     }
 }
