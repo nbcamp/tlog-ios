@@ -53,7 +53,7 @@ final class RssViewModel {
                 await prepareDatasets(blogs: blogs)
                 findStartOfStreakDays()
 
-                await sendPostsToServer(lastPublishedAt: authUser.lastPublishedAt)
+                await sendPostsToServer()
                 completion?(true)
             } catch {
                 debugPrint(#function, error)
@@ -78,7 +78,9 @@ final class RssViewModel {
             do {
                 let posts = try await rss.loadDocument(url: blog.rss)
                 for post in posts {
-                    guard let keywordMap = (blog.keywords.first { post.title.contains($0.keyword) }) else { continue }
+                    guard let keywordMap = (blog.keywords.first {
+                        post.title.localizedStandardContains($0.keyword)
+                    }) else { continue }
                     allPosts.append(.init(
                         blog: blog,
                         title: post.title,
@@ -104,11 +106,12 @@ final class RssViewModel {
         }
     }
 
-    private func sendPostsToServer(lastPublishedAt: Date?) async {
+    private func sendPostsToServer() async {
         for (blogId, posts) in postsByBlogMap {
             for post in posts {
                 do {
-                    guard lastPublishedAt == nil || post.publishedAt > lastPublishedAt! else { return }
+                    guard post.blog.lastPublishedAt == nil
+                        || post.publishedAt > post.blog.lastPublishedAt! else { return }
                     _ = try await api.request(.createMyBlogPost(blogId, .init(
                         title: post.title,
                         content: post.content,

@@ -28,6 +28,7 @@ func convertToRssUrl(from blogUrl: String) -> String? {
 
 func toDate(string: String, formats: [String]) -> Date? {
     let formatter = DateFormatter()
+    formatter.locale = .init(identifier: "en_US")
     for format in formats {
         formatter.dateFormat = format
         if let date = formatter.date(from: string) {

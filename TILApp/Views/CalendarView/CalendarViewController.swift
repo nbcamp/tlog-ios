@@ -160,6 +160,11 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
+
+        if hasBlog {
+            flexContainer.removeFromSuperview()
+        }
+
         WKWebViewWarmer.shared.prepare()
     }
 

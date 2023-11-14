@@ -147,6 +147,7 @@ final class BlogEditViewController: UIViewController {
                 debugPrint(#function, error)
                 return
             }
+            RssViewModel.shared.reload()
             navigationController?.popViewController(animated: true)
         }
     }
