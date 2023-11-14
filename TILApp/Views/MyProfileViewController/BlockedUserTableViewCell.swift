@@ -15,7 +15,7 @@ final class BlockedUserTableViewCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        customBlockedUserView = CustomBlockedUserView()
+        customBlockedUserView.clear()
     }
 
     override func layoutSubviews() {

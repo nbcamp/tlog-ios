@@ -59,6 +59,12 @@ final class AvatarImageView: UIImageView {
         clipsToBounds = true
     }
 
+    func cancel() {
+        kf.cancelDownloadTask()
+        image = nil
+        initialized = false
+    }
+
     func removeDefault() {
         layer.borderWidth = 0.0
         layer.borderColor = UIColor.clear.cgColor

@@ -5,7 +5,6 @@ final class CommunityViewController: UIViewController {
     private let userViewModel = UserViewModel.shared
     private var posts: [CommunityPost] { communityViewModel.posts }
     private var cancellables: Set<AnyCancellable> = []
-    private var isHeartFilled = false
 
     private lazy var tableView = UITableView().then {
         $0.dataSource = self
