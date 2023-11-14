@@ -11,9 +11,13 @@ struct CommunityPost: Codable {
     let publishedAt: Date
 }
 
+enum SortKind: String, Codable {
+    case desc, asc
+}
+
 struct GetCommunityQuery: Codable {
     let q: String?
     let limit: Int?
     let cursor: Int?
-    let desc: Bool?
+    let sort: SortKind?
 }

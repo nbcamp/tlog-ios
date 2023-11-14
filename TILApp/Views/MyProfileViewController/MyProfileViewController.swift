@@ -186,7 +186,6 @@ final class MyProfileViewController: UIViewController {
     @objc func myProfileSegmentedControlSelected(_: CustomSegmentedControl) {
         loadMyPosts { [weak self] in
             self?.myProfileTableView.reloadData()
-            self?.myProfileTableView.setNeedsLayout()
         }
     }
 
@@ -207,7 +206,6 @@ final class MyProfileViewController: UIViewController {
             if section == .myLikedPosts {
                 loadMyPosts { [weak self] in
                     self?.myProfileTableView.reloadData()
-                    self?.myProfileTableView.setNeedsLayout()
                 }
             }
         }
@@ -261,10 +259,9 @@ extension MyProfileViewController: UITableViewDataSource {
             cell.customCommunityTILView.postTapped = { [weak self] in
                 guard let self else { return }
                 let likeButton = LikeButton(liked: post.liked)
-                likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
-                    APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
-                        guard case .success = result else { return }
-                        completion()
+                likeButton.buttonTapped = { liked, completion in
+                    CommunityViewModel.shared.togglePostLikeState(liked, of: post.id) { state in
+                        completion(state)
                     }
                 }
                 let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {

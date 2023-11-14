@@ -54,4 +54,8 @@ class CustomBlockedUserView: UIView {
         nicknameLabel.text = username
         profileImageView.url = avatarUrl
     }
+
+    func clear() {
+        profileImageView.cancel()
+    }
 }

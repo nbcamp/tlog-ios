@@ -3,14 +3,13 @@ import UIKit
 final class UserProfileViewController: UIViewController {
     var user: User? {
         didSet {
-            if let user = user {
-                nicknameLabel.text = user.username
-                profileImageView.url = user.avatarUrl
-                doingFollowButton.variant = user.isMyFollowing ? .unfollow : .follow
-                postButton.setTitle("\(user.posts)\n포스트", for: .normal)
-                followersButton.setTitle("\(user.followers)\n팔로워", for: .normal)
-                followingButton.setTitle("\(user.followings)\n팔로잉", for: .normal)
-            }
+            guard let user else { return }
+            nicknameLabel.text = user.username
+            profileImageView.url = user.avatarUrl
+            doingFollowButton.variant = user.isMyFollowing ? .unfollow : .follow
+            postButton.setTitle("\(user.posts)\n포스트", for: .normal)
+            followersButton.setTitle("\(user.followers)\n팔로워", for: .normal)
+            followingButton.setTitle("\(user.followings)\n팔로잉", for: .normal)
         }
     }
 
@@ -136,7 +135,6 @@ final class UserProfileViewController: UIViewController {
 
         loadPosts { [weak self] in
             self?.userProfileTableView.reloadData()
-            self?.userProfileTableView.layoutIfNeeded()
         }
 
         screenView.flex.direction(.column).define { flex in
@@ -165,20 +163,24 @@ final class UserProfileViewController: UIViewController {
             case .follow:
                 UserViewModel.shared.follow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case let .success(success) = result else {
-                        // TODO: 에러 처리
-                        return
+                    switch result {
+                    case .success(let user):
+                        self.user = user
+                    case .failure(let error):
+                        // Error 처리
+                        debugPrint(error)
                     }
-                    updateUserFollowers(user: user)
                 }
             case .unfollow:
                 UserViewModel.shared.unfollow(user: user) { [weak self] result in
                     guard let self else { return }
-                    guard case let .success(success) = result else {
-                        // TODO: 에러 처리
-                        return
+                    switch result {
+                    case .success(let user):
+                        self.user = user
+                    case .failure(let error):
+                        // Error 처리
+                        debugPrint(error)
                     }
-                    updateUserFollowers(user: user)
                 }
             default:
                 break
@@ -189,9 +191,7 @@ final class UserProfileViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let user = user {
-            updateUserFollowers(user: user)
-        }
+        syncUser()
 
         navigationController?.setNavigationBarHidden(false, animated: true)
         WKWebViewWarmer.shared.prepare(3)
@@ -269,7 +269,6 @@ final class UserProfileViewController: UIViewController {
     @objc private func userSegmentedControlSelected(_: CustomSegmentedControl) {
         loadPosts { [weak self] in
             self?.userProfileTableView.reloadData()
-            self?.userProfileTableView.layoutIfNeeded()
         }
     }
 
@@ -291,20 +290,11 @@ final class UserProfileViewController: UIViewController {
         }
     }
 
-    func updateUserFollowers(user: User) {
+    private func syncUser() {
+        guard let user else { return }
         UserViewModel.shared.withProfile(user: user) { [weak self] result in
-            guard let self else { return }
-            guard case let .success(userProfile) = result else {
-                // TODO: 에러 처리
-                return
-            }
-            self.user = userProfile
-            if section == .likedPosts {
-                loadPosts { [weak self] in
-                    self?.userProfileTableView.reloadData()
-                    self?.userProfileTableView.layoutIfNeeded()
-                }
-            }
+            guard let self, case let .success(user) = result else { return }
+            self.user = user
         }
     }
 }
@@ -322,9 +312,11 @@ extension UserProfileViewController: UITableViewDataSource {
             tableView.backgroundView = likedPosts.count == 0 ? placeholderView : nil
             count = likedPosts.count
         }
-        placeholderLabel.sizeToFit()
-        placeholderLabel.flex.markDirty()
-        placeholderView.flex.layout()
+        if tableView.backgroundView != nil {
+            placeholderLabel.sizeToFit()
+            placeholderLabel.flex.markDirty()
+            placeholderView.flex.layout()
+        }
         return count
     }
 
@@ -358,10 +350,23 @@ extension UserProfileViewController: UITableViewDataSource {
                 let webViewController = WebViewController()
                 webViewController.url = post.url
                 let likeButton = LikeButton(liked: post.liked)
-                likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
-                    APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
-                        guard case .success = result else { return }
-                        completion()
+                likeButton.buttonTapped = { liked, completion in
+                    CommunityViewModel.shared.togglePostLikeState(liked, of: post.id) { [weak self] state in
+                        guard let self else { return }
+                        // TODO: ViewModel class로 변경
+                        let post = likedPosts[indexPath.row]
+                        likedPosts[indexPath.row] = .init(
+                            id: post.id,
+                            title: post.title,
+                            content: post.content,
+                            url: post.url,
+                            tags: post.tags,
+                            user: post.user,
+                            liked: state,
+                            publishedAt: post.publishedAt
+                        )
+                        userProfileTableView.reloadRows(at: [indexPath], with: .none)
+                        completion(state)
                     }
                 }
                 webViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)

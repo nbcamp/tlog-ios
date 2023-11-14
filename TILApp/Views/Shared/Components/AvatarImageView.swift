@@ -4,40 +4,26 @@ import UIKit
 final class AvatarImageView: UIImageView {
     var url: String? {
         didSet {
-            guard let url, let url = URL(string: url) else {
-                setNeedsLayout()
-                return
-            }
-            initialized = true
-            removeDefault()
-            kf.indicatorType = .activity
-            kf.setImage(
-                with: url,
-                placeholder: UIColor.systemGray6.image(.init(width: 100, height: 100)),
-                options: [.cacheOriginalImage]
-            ) { [weak self] result in
-                guard let self else { return }
-                switch result {
-                case .success:
-                    removeDefault()
-                case .failure(let error):
-                    setDefault()
-                    debugPrint(#function, error)
-                }
-            }
+            guard let url else { return }
+            guard url != prevUrl else { return }
+            prevUrl = url
+
+            load(
+                url: url,
+                loading: UIColor.systemGray5.image(.init(width: 100, height: 100)),
+                onSuccess: removeDefault,
+                onFailed: setDefault
+            )
         }
     }
 
+    private var prevUrl: String?
+
     private var initialized = false
 
-    convenience init() {
-        self.init(frame: .zero)
-        setupUI()
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
+    init() {
+        super.init(frame: .zero)
+        clipsToBounds = true
     }
 
     @available(*, unavailable)
@@ -47,16 +33,18 @@ final class AvatarImageView: UIImageView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        setupUI()
+        layer.cornerRadius = min(frame.width, frame.height) / 2
 
         if !initialized, image == nil {
             setDefault()
         }
     }
 
-    private func setupUI() {
-        layer.cornerRadius = min(frame.width, frame.height) / 2
-        clipsToBounds = true
+    func cancel() {
+        url = nil
+        prevUrl = nil
+        image = nil
+        initialized = false
     }
 
     func removeDefault() {
@@ -65,10 +53,7 @@ final class AvatarImageView: UIImageView {
     }
 
     func setDefault() {
-        image = .init(systemName: "person.fill")?
-            .withTintColor(.systemGray4)
-            .resized(to: bounds.size)
         layer.borderWidth = bounds.width / 15
-        layer.borderColor = UIColor.systemGray4.cgColor
+        layer.borderColor = UIColor.accent.cgColor
     }
 }

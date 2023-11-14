@@ -91,4 +91,8 @@ class CustomCommunityTILView: UIView {
         dateLabel.sizeToFit()
         heartButton.isSelected = post.liked
     }
+
+    func clear() {
+        userView.clear()
+    }
 }

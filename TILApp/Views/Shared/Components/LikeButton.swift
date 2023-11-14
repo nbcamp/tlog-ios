@@ -1,18 +1,26 @@
 import UIKit
 
 final class LikeButton: UIButton {
-    var buttonTapped: ((_ liked: Bool, _ completion: @escaping () -> Void) -> Void)?
+    var buttonTapped: ((_ liked: Bool, _ completion: @escaping (Bool) -> Void) -> Void)?
 
     init(liked: Bool) {
         super.init(frame: .zero)
         isSelected = liked
         setImage(UIImage(systemName: "heart")?
             .withTintColor(.systemGray2, renderingMode: .alwaysOriginal), for: .normal)
-        setImage(UIImage(systemName: "heart.fill")?
+        setImage(UIImage(systemName: "heart")?
             .withTintColor(.red, renderingMode: .alwaysOriginal), for: .selected)
         tintColor = .clear
-        adjustsImageWhenHighlighted = false
-        addTarget(self, action: #selector(_buttonTapped), for: .touchDown)
+
+        configuration = .plain()
+        configurationUpdateHandler = {
+            switch $0.state {
+            case .disabled: $0.imageView?.tintAdjustmentMode = .dimmed
+            default: $0.imageView?.tintAdjustmentMode = .normal
+            }
+        }
+
+        addTarget(self, action: #selector(_buttonTapped), for: .touchUpInside)
     }
 
     @available(*, unavailable)
@@ -21,8 +29,11 @@ final class LikeButton: UIButton {
     }
 
     @objc func _buttonTapped() {
-        buttonTapped?(isSelected, { [weak self] in
-            self?.isSelected.toggle()
-        })
+        guard let buttonTapped else { return }
+        let liked = isSelected
+        isSelected.toggle()
+        buttonTapped(liked) { [weak self] state in
+            self?.isSelected = state
+        }
     }
 }

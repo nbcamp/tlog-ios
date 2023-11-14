@@ -18,7 +18,7 @@ final class CommunityTableViewCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        customCommunityTILView = CustomCommunityTILView()
+        customCommunityTILView.clear()
     }
 
     override func layoutSubviews() {

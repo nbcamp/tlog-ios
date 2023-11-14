@@ -66,4 +66,8 @@ class CustomUserView: UIView {
         contentText = content
         self.variant = variant
     }
+
+    func clear() {
+        profileImageView.cancel()
+    }
 }
