@@ -186,7 +186,6 @@ final class MyProfileViewController: UIViewController {
     @objc func myProfileSegmentedControlSelected(_: CustomSegmentedControl) {
         loadMyPosts { [weak self] in
             self?.myProfileTableView.reloadData()
-            self?.myProfileTableView.setNeedsLayout()
         }
     }
 
@@ -207,7 +206,6 @@ final class MyProfileViewController: UIViewController {
             if section == .myLikedPosts {
                 loadMyPosts { [weak self] in
                     self?.myProfileTableView.reloadData()
-                    self?.myProfileTableView.setNeedsLayout()
                 }
             }
         }

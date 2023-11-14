@@ -51,7 +51,6 @@
 		33E1D1D42B00F916007DEEE8 /* UIImageView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D32B00F916007DEEE8 /* UIImageView+Ext.swift */; };
 		33E1D1D62B00FF58007DEEE8 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D52B00FF58007DEEE8 /* File.swift */; };
 		33E1D1D82B011C7C007DEEE8 /* UIColor+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1D72B011C7C007DEEE8 /* UIColor+Ext.swift */; };
-		33E1D1DB2B0124CF007DEEE8 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 33E1D1DA2B0124CF007DEEE8 /* Kingfisher */; };
 		33E1D1DD2B012524007DEEE8 /* AvatarImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1DC2B012524007DEEE8 /* AvatarImageView.swift */; };
 		33E1D1DF2B0133D0007DEEE8 /* WebViewWarmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1DE2B0133D0007DEEE8 /* WebViewWarmer.swift */; };
 		33E1D1E12B016545007DEEE8 /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E1D1E02B016545007DEEE8 /* UIImage+Ext.swift */; };
@@ -203,7 +202,6 @@
 				3373D55F2AF4ECC30057A23B /* MoyaSugar in Frameworks */,
 				3334E1F82AD91DCB00D853D7 /* FlexLayoutYogaKit in Frameworks */,
 				AB8F2A1A2AEF9B260022D3E4 /* FSCalendar in Frameworks */,
-				33E1D1DB2B0124CF007DEEE8 /* Kingfisher in Frameworks */,
 				33DC8E052ADFC9CC00580FA0 /* Moya in Frameworks */,
 				3334E1F62AD91DCB00D853D7 /* FlexLayoutYoga in Frameworks */,
 			);
@@ -467,7 +465,6 @@
 				AB8F2A192AEF9B260022D3E4 /* FSCalendar */,
 				AB75EDE72AEF9CBB00BC1BC9 /* XMLCoder */,
 				3373D55E2AF4ECC30057A23B /* MoyaSugar */,
-				33E1D1DA2B0124CF007DEEE8 /* Kingfisher */,
 			);
 			productName = TILApp;
 			productReference = 3334E1A42AD6BC1800D853D7 /* TILApp.app */;
@@ -505,7 +502,6 @@
 				AB8F2A182AEF9B260022D3E4 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				AB75EDE62AEF9CBB00BC1BC9 /* XCRemoteSwiftPackageReference "XMLCoder" */,
 				3373D55D2AF4ECC30057A23B /* XCRemoteSwiftPackageReference "MoyaSugar" */,
-				33E1D1D92B0124CE007DEEE8 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 3334E1A52AD6BC1800D853D7 /* Products */;
 			projectDirPath = "";
@@ -907,14 +903,6 @@
 				minimumVersion = 15.0.3;
 			};
 		};
-		33E1D1D92B0124CE007DEEE8 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 7.10.0;
-			};
-		};
 		AB75EDE62AEF9CBB00BC1BC9 /* XCRemoteSwiftPackageReference "XMLCoder" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CoreOffice/XMLCoder";
@@ -973,11 +961,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 33DC8E012ADFC9CC00580FA0 /* XCRemoteSwiftPackageReference "Moya" */;
 			productName = Moya;
-		};
-		33E1D1DA2B0124CF007DEEE8 /* Kingfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 33E1D1D92B0124CE007DEEE8 /* XCRemoteSwiftPackageReference "Kingfisher" */;
-			productName = Kingfisher;
 		};
 		AB75EDE72AEF9CBB00BC1BC9 /* XMLCoder */ = {
 			isa = XCSwiftPackageProductDependency;
