@@ -107,7 +107,7 @@ final class CommunityViewModel {
                 q: query,
                 limit: limit,
                 cursor: next ? nextCursor : nil,
-                desc: desc
+                sort: desc == true ? .desc : .asc
             )), to: [CommunityPost].self)
 
             DispatchQueue.main.async { [unowned self] in
