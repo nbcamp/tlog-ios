@@ -358,10 +358,12 @@ extension UserProfileViewController: UITableViewDataSource {
                 let webViewController = WebViewController()
                 webViewController.url = post.url
                 let likeButton = LikeButton(liked: post.liked)
-                likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
+                likeButton.buttonTapped = { liked, completion in
                     APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
-                        guard case .success = result else { return }
-                        completion()
+                        switch result {
+                        case .success: completion(true)
+                        case .failure: completion(false)
+                        }
                     }
                 }
                 webViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)

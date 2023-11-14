@@ -97,10 +97,12 @@ extension CommunityViewController: UITableViewDataSource {
         cell.customCommunityTILView.postTapped = { [weak self] in
             guard let self else { return }
             let likeButton = LikeButton(liked: post.liked)
-            likeButton.buttonTapped = { (liked: Bool, completion: @escaping () -> Void) in
+            likeButton.buttonTapped = { liked, completion in
                 APIService.shared.request(liked ? .unlikePost(post.id) : .likePost(post.id)) { result in
-                    guard case .success = result else { return }
-                    completion()
+                    switch result {
+                    case .success: completion(true)
+                    case .failure: completion(false)
+                    }
                 }
             }
 
