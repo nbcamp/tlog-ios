@@ -1,5 +1,9 @@
 import UIKit
 
+protocol UserProfileViewControllerDelegate: AnyObject {
+    func userBlocked(_ viewController: UserProfileViewController)
+}
+
 final class UserProfileViewController: UIViewController {
     var user: User? {
         didSet {
@@ -12,6 +16,8 @@ final class UserProfileViewController: UIViewController {
             followingButton.setTitle("\(user.followings)\n팔로잉", for: .normal)
         }
     }
+
+    weak var delegate: UserProfileViewControllerDelegate?
 
     private enum Section {
         case posts, likedPosts
@@ -164,10 +170,10 @@ final class UserProfileViewController: UIViewController {
                 UserViewModel.shared.follow(user: user) { [weak self] result in
                     guard let self else { return }
                     switch result {
-                    case .success(let user):
+                    case let .success(user):
                         CommunityViewModel.shared.updatePosts(forUser: user)
                         self.user = user
-                    case .failure(let error):
+                    case let .failure(error):
                         // Error 처리
                         debugPrint(error)
                     }
@@ -176,10 +182,10 @@ final class UserProfileViewController: UIViewController {
                 UserViewModel.shared.unfollow(user: user) { [weak self] result in
                     guard let self else { return }
                     switch result {
-                    case .success(let user):
+                    case let .success(user):
                         CommunityViewModel.shared.updatePosts(forUser: user)
                         self.user = user
-                    case .failure(let error):
+                    case let .failure(error):
                         // Error 처리
                         debugPrint(error)
                     }
@@ -217,8 +223,10 @@ final class UserProfileViewController: UIViewController {
             UserViewModel.shared.blockUser(user: user) { [weak self] _ in
                 let alertController = UIAlertController(title: "차단 완료", message: "차단되었습니다.", preferredStyle: .alert)
                 alertController.addAction(UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-                    DispatchQueue.main.async {
-                        self?.navigationController?.popViewController(animated: true)
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self else { return }
+                        delegate?.userBlocked(self)
+                        self.navigationController?.popViewController(animated: true)
                     }
                 })
                 self?.present(alertController, animated: true)

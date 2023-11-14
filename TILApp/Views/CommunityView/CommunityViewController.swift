@@ -48,7 +48,7 @@ final class CommunityViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
-        
+
         WKWebViewWarmer.shared.prepare(10)
     }
 
@@ -91,6 +91,7 @@ extension CommunityViewController: UITableViewDataSource {
             guard let self, let authUser = AuthViewModel.shared.user, post.user.id != authUser.id else { return }
             let userProfileViewController = UserProfileViewController().then {
                 $0.hidesBottomBarWhenPushed = true
+                $0.delegate = self
                 $0.user = post.user
             }
             navigationController?.pushViewController(userProfileViewController, animated: true)
@@ -160,10 +161,10 @@ extension CommunityViewController: UITextFieldDelegate {
 }
 
 extension CommunityViewController: CommunityViewModelDelegate {
-    func itemsUpdated(_ viewModel: CommunityViewModel, atIndexPath: IndexPath) {
+    func itemsUpdated(_: CommunityViewModel, atIndexPath: IndexPath) {
         tableView.reloadRows(at: [atIndexPath], with: .none)
     }
-    
+
     func itemsUpdated(_: CommunityViewModel, updatedIndexPaths: [IndexPath]) {
         tableView.reloadRows(at: updatedIndexPaths, with: .none)
     }
@@ -180,5 +181,13 @@ extension CommunityViewController: CommunityViewModelDelegate {
     func errorOccurred(_: CommunityViewModel, error: String) {
         // TODO: 에러처리
         debugPrint(#function, error)
+    }
+}
+
+extension CommunityViewController: UserProfileViewControllerDelegate {
+    func userBlocked(_: UserProfileViewController) {
+        communityViewModel.refresh { [weak self] _ in
+            self?.tableView.refreshControl?.endRefreshing()
+        }
     }
 }
