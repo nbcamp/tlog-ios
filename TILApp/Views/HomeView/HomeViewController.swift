@@ -1,6 +1,6 @@
-import UIKit
-
-final class HomeViewController: UIViewController {
+//import UIKit
+//
+//final class HomeViewController: UIViewController {
 //    private var user: AuthUser? { AuthViewModel.shared.user }
 //    
 //    private lazy var flexContainer = UIView()
@@ -47,4 +47,4 @@ final class HomeViewController: UIViewController {
 //        blogRegisterVC.hidesBottomBarWhenPushed = true
 //        navigationController?.pushViewController(blogRegisterVC, animated: true)
 //    }
-}
+//}

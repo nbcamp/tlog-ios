@@ -1,4 +1,3 @@
-import Kingfisher
 import UIKit
 
 final class AvatarImageView: UIImageView {
