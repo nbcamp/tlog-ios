@@ -2,6 +2,8 @@ import Dispatch
 import Foundation
 
 protocol CommunityViewModelDelegate: AnyObject {
+    func itemsUpdated(_ viewModel: CommunityViewModel, updatedIndexPaths: [IndexPath])
+    func itemsUpdated(_ viewModel: CommunityViewModel, atIndexPath: IndexPath)
     func itemsUpdated(_ viewModel: CommunityViewModel, items: [CommunityPost], range: Range<Int>)
     func errorOccurred(_ viewModel: CommunityViewModel, error: String)
 }
@@ -160,6 +162,29 @@ final class CommunityViewModel {
                 }
                 handler(post.liked)
             }
+        }
+    }
+
+    func updatePosts(forUser updatedUser: User) {
+        var updatedIndexPaths: [IndexPath] = []
+
+        for (index, post) in posts.enumerated() where post.user.id == updatedUser.id {
+            let updatedPost = CommunityPost(
+                id: post.id, title: post.title, content: post.content,
+                url: post.url, tags: post.tags, user: updatedUser,
+                liked: post.liked, publishedAt: post.publishedAt
+            )
+            posts[index] = updatedPost
+            updatedIndexPaths.append(IndexPath(row: index, section: 0))
+        }
+
+        delegate?.itemsUpdated(self, updatedIndexPaths: updatedIndexPaths)
+    }
+    
+    func updatePosts(forPost postId: Int) {
+        if let index = posts.firstIndex(where: { $0.id == postId }) {
+            let indexPath = IndexPath(row: index, section: 0)
+            delegate?.itemsUpdated(self, atIndexPath: indexPath)
         }
     }
 }
