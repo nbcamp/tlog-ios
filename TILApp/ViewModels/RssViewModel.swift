@@ -78,7 +78,9 @@ final class RssViewModel {
             do {
                 let posts = try await rss.loadDocument(url: blog.rss)
                 for post in posts {
-                    guard let keywordMap = (blog.keywords.first { post.title.contains($0.keyword) }) else { continue }
+                    guard let keywordMap = (blog.keywords.first {
+                        post.title.localizedStandardContains($0.keyword)
+                    }) else { continue }
                     allPosts.append(.init(
                         blog: blog,
                         title: post.title,
