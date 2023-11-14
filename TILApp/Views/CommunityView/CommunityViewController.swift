@@ -48,6 +48,7 @@ final class CommunityViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
+        
         WKWebViewWarmer.shared.prepare(10)
     }
 
@@ -158,6 +159,14 @@ extension CommunityViewController: UITextFieldDelegate {
 }
 
 extension CommunityViewController: CommunityViewModelDelegate {
+    func itemsUpdated(_ viewModel: CommunityViewModel, atIndexPath: IndexPath) {
+        tableView.reloadRows(at: [atIndexPath], with: .none)
+    }
+    
+    func itemsUpdated(_: CommunityViewModel, updatedIndexPaths: [IndexPath]) {
+        tableView.reloadRows(at: updatedIndexPaths, with: .none)
+    }
+
     func itemsUpdated(_: CommunityViewModel, items _: [CommunityPost], range: Range<Int>) {
         if range.lowerBound > 0 {
             let indexPaths = range.map { IndexPath(row: $0, section: 0) }

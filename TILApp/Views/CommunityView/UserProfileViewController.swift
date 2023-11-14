@@ -165,6 +165,7 @@ final class UserProfileViewController: UIViewController {
                     guard let self else { return }
                     switch result {
                     case .success(let user):
+                        CommunityViewModel.shared.updatePosts(forUser: user)
                         self.user = user
                     case .failure(let error):
                         // Error 처리
@@ -176,6 +177,7 @@ final class UserProfileViewController: UIViewController {
                     guard let self else { return }
                     switch result {
                     case .success(let user):
+                        CommunityViewModel.shared.updatePosts(forUser: user)
                         self.user = user
                     case .failure(let error):
                         // Error 처리
@@ -366,6 +368,7 @@ extension UserProfileViewController: UITableViewDataSource {
                             publishedAt: post.publishedAt
                         )
                         userProfileTableView.reloadRows(at: [indexPath], with: .none)
+                        CommunityViewModel.shared.updatePosts(forPost: post.id)
                         completion(state)
                     }
                 }

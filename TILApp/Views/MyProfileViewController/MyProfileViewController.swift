@@ -261,6 +261,7 @@ extension MyProfileViewController: UITableViewDataSource {
                 let likeButton = LikeButton(liked: post.liked)
                 likeButton.buttonTapped = { liked, completion in
                     CommunityViewModel.shared.togglePostLikeState(liked, of: post.id) { state in
+                        CommunityViewModel.shared.updatePosts(forPost: post.id)
                         completion(state)
                     }
                 }
