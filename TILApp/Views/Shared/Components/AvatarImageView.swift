@@ -45,6 +45,7 @@ final class AvatarImageView: UIImageView {
         prevUrl = nil
         image = nil
         initialized = false
+        setNeedsLayout()
     }
 
     func removeDefault() {
