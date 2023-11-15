@@ -320,9 +320,6 @@ extension BlogRegisterViewController: UITextFieldDelegate {
                     updateDoneButtonState()
                 }
                 beforeChar = string
-                if string != "" {
-                    urlEffectiveness(urlString: currentText + string)
-                }
             default:
                 break
             }
