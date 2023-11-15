@@ -25,9 +25,7 @@ final class RootViewController: UINavigationController {
                     title: tab.title,
                     image: .init(systemName: tab.icon),
                     tag: index
-                ).then {
-                    $0.imageInsets = .init(top: 5, left: 0, bottom: 5, right: 0)
-                }
+                )
                 return tab.controller
             }, animated: false)
         }

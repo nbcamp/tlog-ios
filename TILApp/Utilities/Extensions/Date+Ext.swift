@@ -17,8 +17,8 @@ extension Date {
         let components = calendar.dateComponents([.year, .month, .day], from: self)
         return calendar.date(from: components)!
     }
-    
-    var startOfMonth:  Date {
+
+    var startOfMonth: Date {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.year, .month], from: self)
         return calendar.date(from: components)!
