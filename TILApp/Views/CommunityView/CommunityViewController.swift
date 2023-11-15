@@ -116,7 +116,6 @@ extension CommunityViewController: UITableViewDataSource {
             let reportAction = UIAction(title: "차단하기", image: UIImage(systemName: "eye.slash")) { [weak self] _ in
                 guard let self else {return}
                 UserViewModel.shared.blockUser(user: post.user) { [weak self] _ in
-                    print("유저 차단 완료")
                     let alertController = UIAlertController(title: "차단 완료", message: "차단되었습니다.", preferredStyle: .alert)
                     alertController.addAction(UIAlertAction(title: "확인", style: .default) { [weak self] _ in
                         DispatchQueue.main.async { [weak self] in

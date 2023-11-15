@@ -40,6 +40,7 @@ class CustomCommunityTILView: UIView {
         $0.tintColor = .accent
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.isHidden = true
+        $0.transform = .init(rotationAngle: 90.0 * 3.14/180.0)
         $0.imageView?.contentMode = .scaleAspectFit
         $0.imageEdgeInsets = UIEdgeInsets(top: 25, left: 25, bottom: 25, right: 25)
         $0.showsMenuAsPrimaryAction = true
@@ -77,7 +78,7 @@ class CustomCommunityTILView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        moreButton.pin.top().right(5)
+        moreButton.pin.top().right(-5)
         userView.pin.horizontally(10).top(10)
         tilView.pin.below(of: userView).horizontally().marginTop(-15)
         dateLabel.pin.left(20).bottom(10)
