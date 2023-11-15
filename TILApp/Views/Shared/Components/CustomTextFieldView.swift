@@ -20,7 +20,7 @@ class CustomTextFieldView: UIView {
         get { textField.delegate }
         set { textField.delegate = newValue }
     }
-    
+
     var keyboardType: UIKeyboardType {
         get { textField.keyboardType }
         set { textField.keyboardType = newValue }
@@ -59,7 +59,7 @@ class CustomTextFieldView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-
+        textField.autocapitalizationType = .none
         pin.width(100%)
         flex.layout()
     }

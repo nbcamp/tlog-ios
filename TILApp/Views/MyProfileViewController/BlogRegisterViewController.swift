@@ -1,8 +1,10 @@
 import UIKit
+import XMLCoder
 
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
     var onRegistered: (() -> Void)?
-
+    private var validated = false
+    private var selectTextTag = 0
     private let blogViewModel = BlogViewModel.shared
     private let keywordInputViewModel = KeywordInputViewModel.shared
 
@@ -174,54 +176,129 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
 
     private func updateDoneButtonState() {
         navigationItem.rightBarButtonItem?.isEnabled
-            = keywordInputViewModel.keywords.count > 0 && blogNameTextField.isValid
-            && blogURLTextField.isValid && blogRSSTextField.isValid
+            = blogRSSTextField.isValid
+            && blogURLTextField.isValid && blogNameTextField.isValid && keywordInputViewModel.keywords.count > 0
+    }
+
+    private func urlEffectiveness(urlString: String) {
+        guard let url = URL(string: urlString) else { return }
+        blogRSSTextField.isValid = false
+        blogRSSTextField.validationText = "유효성 검사중...최대 10초 소요"
+        let task = URLSession.shared.dataTask(with: url) { _, response, _ in
+            if let response = response as? HTTPURLResponse, response.statusCode == 200 {
+                do {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self else { return }
+                        if validateBlogName(from: blogURLTextField.mainText, to: urlString) {
+                            validated = true
+                            updateBlogRSSField(with: urlString)
+                        } else {
+                            validated = false
+                            updateBlogRSSField(with: urlString)
+                        }
+                    }
+                }
+            } else {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    validated = false
+                    updateBlogRSSField(with: urlString)
+                }
+            }
+        }
+        task.resume()
+        updateBlogRSSField(with: urlString)
     }
 }
 
 // TODO: 키보드 url로 변경해주기
 extension BlogRegisterViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let text = textField.text, !text.isEmpty {
-            if textField.tag == 0 {
+        let rssTextField = contentView.viewWithTag(2) as? UITextField
+        let urlTextField = contentView.viewWithTag(1) as? UITextField
+        guard let rssText = rssTextField!.text else { return false }
+        guard let urlText = urlTextField!.text else { return false }
+
+        if let currentText = textField.text {
+            switch textField.tag {
+            case 0:
                 textField.resignFirstResponder()
                 (contentView.viewWithTag(textField.tag + 1) as? UITextField)?.becomeFirstResponder()
-            } else if textField.tag == 1 {
+            case 1:
                 textField.resignFirstResponder()
                 (contentView.viewWithTag(textField.tag + 1) as? UITextField)?.becomeFirstResponder()
-                if let rssUrl = convertToRssUrl(from: text) {
-                    let rssTextField = contentView.viewWithTag(2) as? UITextField
-                    rssTextField?.text = rssUrl
-                    blogRSSTextField.isValid = true
-                    updateDoneButtonState()
-                }
-            } else if textField.tag == 2 {
+
+                rssTextField?.text = convertToRssUrl(from: urlText)
+                urlTextField?.text = convertToBlogUrl(from: urlText)
+
+            case 2:
                 textField.resignFirstResponder()
+                urlEffectiveness(urlString: rssText)
+            default:
+                break
             }
         }
+
         return true
+    }
+
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        let rssTextField = contentView.viewWithTag(2) as? UITextField
+        if let currentText = rssTextField?.text, textField.tag == 0, selectTextTag == 2 {
+            selectTextTag = textField.tag
+            textField.resignFirstResponder()
+            urlEffectiveness(urlString: currentText)
+        }
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if let currentText = textField.text {
+            let rssTextField = contentView.viewWithTag(2) as? UITextField
+            let urlTextField = contentView.viewWithTag(1) as? UITextField
+            guard let rssText = rssTextField!.text else { return }
+            guard let urlText = urlTextField!.text else { return }
+
+            switch textField.tag {
+            case 1:
+                (contentView.viewWithTag(textField.tag + 1) as? UITextField)?.becomeFirstResponder()
+
+                rssTextField?.text = convertToRssUrl(from: urlText)
+                urlTextField?.text = convertToBlogUrl(from: urlText)
+
+                selectTextTag = textField.tag + 1
+                updateBlogURLField(with: urlText)
+            case 2:
+                urlEffectiveness(urlString: rssText)
+                textField.resignFirstResponder()
+            default:
+                break
+            }
+        }
+        updateDoneButtonState()
     }
 
     func textField(
         _ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String
     ) -> Bool {
-        if let currentText = textField.text, let textRange = Range(range, in: currentText) {
-            let updatedText = currentText.replacingCharacters(in: textRange, with: string)
+        let rssTextField = contentView.viewWithTag(2) as? UITextField
 
+        if let currentText = textField.text {
             switch textField.tag {
             case 0:
-                updateBlogNameField(with: updatedText)
+                updateBlogNameField(with: currentText)
             case 1:
-                updateBlogURLField(with: updatedText)
+                if let rssUrl = convertToRssUrl(from: currentText + string) {
+                    rssTextField?.text = rssUrl
+                }
+                updateBlogURLField(with: currentText + string)
             case 2:
-                updateBlogRSSField(with: updatedText)
+                if string != "" {
+                    urlEffectiveness(urlString: currentText + string)
+                }
             default:
                 break
             }
-
-            updateDoneButtonState()
         }
-
         return true
     }
 
@@ -242,10 +319,11 @@ extension BlogRegisterViewController: UITextFieldDelegate {
             blogURLTextField.validationText = ""
         } else {
             // TODO: URL 유효성 검사
-            if isValidURL(text) {
+            if !blogRSSTextField.mainText.isEmpty || isValidURL(text) {
                 let isDuplicate = blogViewModel.hasBlogURL(text)
                 blogURLTextField.isValid = !isDuplicate
                 blogURLTextField.validationText = isDuplicate ? "이미 등록된 블로그 URL입니다." : "유효한 블로그 URL입니다."
+                updateDoneButtonState()
             } else {
                 blogURLTextField.isValid = false
                 blogURLTextField.validationText = "유효하지 않은 URL입니다."
@@ -259,9 +337,10 @@ extension BlogRegisterViewController: UITextFieldDelegate {
             blogRSSTextField.validationText = ""
         } else {
             // TODO: RSS 유효성 검사?
-            if isValidURL(text) {
+            if validated {
                 blogRSSTextField.isValid = true
-                blogRSSTextField.validationText = "유효한 블로그 RSS 주소입니다."
+                blogRSSTextField.validationText = "유효한 RSS URL입니다."
+                updateDoneButtonState()
             } else {
                 blogRSSTextField.isValid = false
                 blogRSSTextField.validationText = "유효하지 않은 URL입니다."
