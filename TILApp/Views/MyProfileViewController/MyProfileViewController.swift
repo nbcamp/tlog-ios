@@ -20,8 +20,8 @@ final class MyProfileViewController: UIViewController {
         myProfileSegmentedControl.selectedSegmentIndex == 0 ? .myPosts : .myLikedPosts
     }
 
-    private var myPosts: [Post] { PostViewModel.shared.myPosts }
-    private var myLikedPosts: [CommunityPost] { PostViewModel.shared.myLikedPosts }
+    private var posts: [Post] = []
+    private var likedPosts: [CommunityPost] = []
 
     private lazy var screenView = UIView().then {
         view.addSubview($0)
@@ -193,9 +193,17 @@ final class MyProfileViewController: UIViewController {
     private func loadMyPosts(_ completion: @escaping () -> Void) {
         switch section {
         case .myPosts:
-            PostViewModel.shared.withMyPosts { _ in completion() }
+            PostViewModel.shared.withMyPosts { [weak self] result in
+                guard let self, case let .success(posts) = result else { return }
+                self.posts = posts
+                completion()
+            }
         case .myLikedPosts:
-            PostViewModel.shared.withMyLikedPosts { _ in completion() }
+            PostViewModel.shared.withMyLikedPosts { [weak self] result in
+                guard let self, case let .success(posts) = result else { return }
+                self.likedPosts = posts
+                completion()
+            }
         }
     }
 
@@ -219,12 +227,12 @@ extension MyProfileViewController: UITableViewDataSource {
         switch section {
         case .myPosts:
             placeholderLabel.text = "등록한 게시글이 없어요."
-            tableView.backgroundView = myPosts.count == 0 ? placeholderView : nil
-            count = myPosts.count
+            tableView.backgroundView = posts.count == 0 ? placeholderView : nil
+            count = posts.count
         case .myLikedPosts:
             placeholderLabel.text = "좋아요한 게시글이 없어요."
-            tableView.backgroundView = myLikedPosts.count == 0 ? placeholderView : nil
-            count = myLikedPosts.count
+            tableView.backgroundView = likedPosts.count == 0 ? placeholderView : nil
+            count = likedPosts.count
         }
         placeholderLabel.sizeToFit()
         placeholderLabel.flex.markDirty()
@@ -235,7 +243,7 @@ extension MyProfileViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch section {
         case .myPosts:
-            let post = myPosts[indexPath.row]
+            let post = posts[indexPath.row]
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: MyProfileTableViewCell.identifier
             ) as? MyProfileTableViewCell else { return UITableViewCell() }
@@ -246,7 +254,7 @@ extension MyProfileViewController: UITableViewDataSource {
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: CommunityTableViewCell.identifier
             ) as? CommunityTableViewCell else { return UITableViewCell() }
-            let post = myLikedPosts[indexPath.row]
+            let post = likedPosts[indexPath.row]
             cell.customCommunityTILView.setup(post: post)
 
             cell.customCommunityTILView.userProfileTapped = { [weak self] in
@@ -261,7 +269,20 @@ extension MyProfileViewController: UITableViewDataSource {
                 guard let self else { return }
                 let likeButton = LikeButton(liked: post.liked)
                 likeButton.buttonTapped = { liked, completion in
-                    CommunityViewModel.shared.togglePostLikeState(liked, of: post.id) { state in
+                    CommunityViewModel.shared.togglePostLikeState(liked, of: post.id) { [weak self] state in
+                        guard let self else { return }
+                        // TODO: ViewModel class로 변경
+                        let post = likedPosts[indexPath.row]
+                        likedPosts[indexPath.row] = .init(
+                            id: post.id,
+                            title: post.title,
+                            content: post.content,
+                            url: post.url,
+                            tags: post.tags,
+                            user: post.user,
+                            liked: state,
+                            publishedAt: post.publishedAt
+                        )
                         CommunityViewModel.shared.updatePosts(forPost: post.id)
                         completion(state)
                     }
@@ -288,11 +309,32 @@ extension MyProfileViewController: UITableViewDataSource {
 
 extension MyProfileViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
-            switch section {
-            case .myPosts: $0.url = myPosts[indexPath.row].url
-            case .myLikedPosts: $0.url = myLikedPosts[indexPath.row].url
+        guard section == .myPosts else { return }
+        let post = posts[indexPath.row]
+        let likeButton = LikeButton(liked: post.liked).then {
+            $0.buttonTapped = { liked, completion in
+                CommunityViewModel.shared.togglePostLikeState(liked, of: post.id) { [weak self] state in
+                    guard let self else { return }
+                    // TODO: ViewModel class로 변경
+                    let post = posts[indexPath.row]
+                    posts[indexPath.row] = .init(
+                        id: post.id,
+                        userId: post.userId,
+                        title: post.title,
+                        content: post.content,
+                        url: post.url,
+                        tags: post.tags,
+                        liked: state,
+                        publishedAt: post.publishedAt
+                    )
+                    CommunityViewModel.shared.updatePosts(forPost: post.id)
+                    completion(state)
+                }
             }
+        }
+        let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+            $0.navigationItem.rightBarButtonItem = .init(customView: likeButton)
+            $0.url = posts[indexPath.row].url
             $0.hidesBottomBarWhenPushed = true
         }
         navigationController?.pushViewController(webViewController, animated: true)
