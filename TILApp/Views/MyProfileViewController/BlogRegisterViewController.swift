@@ -3,7 +3,7 @@ import XMLCoder
 
 final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDelegate {
     var onRegistered: (() -> Void)?
-    var result = false
+    private var validated = false
     private var selectTextTag = 0
     private let blogViewModel = BlogViewModel.shared
     private let keywordInputViewModel = KeywordInputViewModel.shared
@@ -189,11 +189,11 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
                 do {
                     DispatchQueue.main.async { [weak self] in
                         guard let self else { return }
-                        if convertFromBlogToRss(from: blogURLTextField.mainText, to: urlString) {
-                            result = true
+                        if blogNameValidation(from: blogURLTextField.mainText, to: urlString) {
+                            validated = true
                             updateBlogRSSField(with: urlString)
                         } else {
-                            result = false
+                            validated = false
                             updateBlogRSSField(with: urlString)
                         }
                     }
@@ -201,7 +201,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
             } else {
                 DispatchQueue.main.async { [weak self] in
                     guard let self else { return }
-                    result = false
+                    validated = false
                     updateBlogRSSField(with: urlString)
                 }
             }
@@ -268,7 +268,6 @@ extension BlogRegisterViewController: UITextFieldDelegate {
                 selectTextTag = textField.tag + 1
                 updateBlogURLField(with: urlText)
             case 2:
-                print(rssText)
                 urlEffectiveness(urlString: rssText)
                 textField.resignFirstResponder()
             default:
@@ -338,7 +337,7 @@ extension BlogRegisterViewController: UITextFieldDelegate {
             blogRSSTextField.validationText = ""
         } else {
             // TODO: RSS 유효성 검사?
-            if result {
+            if validated {
                 blogRSSTextField.isValid = true
                 blogRSSTextField.validationText = "유효한 RSS URL입니다."
                 updateDoneButtonState()

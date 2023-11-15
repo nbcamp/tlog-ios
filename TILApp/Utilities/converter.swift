@@ -8,7 +8,7 @@ func toDictionary<T: Encodable>(from object: T, with encoder: JSONEncoder = JSON
     return json
 }
 
-func splitStrConverter(str: String) -> [Substring] {
+func converterToUrlSplit(str: String) -> [Substring] {
     var separateUrl = str.components(separatedBy: "https://").joined()
     separateUrl = separateUrl.components(separatedBy: "https:").joined()
     separateUrl = separateUrl.components(separatedBy: "http:").joined()
@@ -20,7 +20,7 @@ func splitStrConverter(str: String) -> [Substring] {
 }
 
 func convertToRssUrl(from blogUrl: String) -> String? {
-    let splitRssUrl = splitStrConverter(str: blogUrl)
+    let splitRssUrl = converterToUrlSplit(str: blogUrl)
     if splitRssUrl.count > 0 {
         if splitRssUrl[0].contains("tistory.com") {
             return "https://" + splitRssUrl[0] + "/rss"
@@ -36,7 +36,7 @@ func convertToRssUrl(from blogUrl: String) -> String? {
 }
 
 func convertToBlogUrl(from blogUrl: String) -> String? {
-    let splitUrl = splitStrConverter(str: blogUrl)
+    let splitUrl = converterToUrlSplit(str: blogUrl)
     if splitUrl.count > 0 {
         if splitUrl[0].contains("tistory.com") {
             return "https://" + splitUrl[0]
@@ -51,9 +51,9 @@ func convertToBlogUrl(from blogUrl: String) -> String? {
     return blogUrl
 }
 
-func convertFromBlogToRss(from blogUrl: String, to rssUrl: String) -> Bool {
-    let splitRssUrl = splitStrConverter(str: rssUrl)
-    let splitBlogUrl = splitStrConverter(str: blogUrl)
+func validateBlogName(from blogUrl: String, to rssUrl: String) -> Bool {
+    let splitRssUrl = converterToUrlSplit(str: rssUrl)
+    let splitBlogUrl = converterToUrlSplit(str: blogUrl)
     if splitRssUrl.count > 0, splitRssUrl.count > 0 {
         if splitRssUrl[0].contains("tistory.com") {
             return splitRssUrl[0] == splitBlogUrl[0]
