@@ -403,6 +403,7 @@ extension UserProfileViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
 
     func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {
+        guard let refreshControl = userProfileTableView.refreshControl, refreshControl.isRefreshing else { return }
         loadPosts { [weak self] in
             self?.userProfileTableView.reloadData()
             self?.userProfileTableView.refreshControl?.endRefreshing()

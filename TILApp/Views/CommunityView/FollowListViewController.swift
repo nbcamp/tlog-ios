@@ -185,6 +185,7 @@ extension FollowListViewController: UITableViewDelegate {
     }
 
     func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {
+        guard let refreshControl = tableView.refreshControl, refreshControl.isRefreshing else { return }
         Task {
             _ = await loadFollowList()
             tableView.reloadData()
