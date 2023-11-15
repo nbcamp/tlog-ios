@@ -143,12 +143,6 @@ final class MyProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         updateAuthUser()
         navigationController?.setNavigationBarHidden(true, animated: true)
-        WKWebViewWarmer.shared.prepare(3)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        WKWebViewWarmer.shared.clear()
     }
 
     override func viewDidLayoutSubviews() {
@@ -288,7 +282,7 @@ extension MyProfileViewController: UITableViewDataSource {
                         completion(state)
                     }
                 }
-                let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+                let webViewController = WebViewController().then {
                     $0.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
                     $0.hidesBottomBarWhenPushed = true
                     $0.url = post.url
@@ -380,7 +374,7 @@ extension MyProfileViewController: UITableViewDelegate {
                 }
             }
         }
-        let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+        let webViewController = WebViewController().then {
             $0.navigationItem.rightBarButtonItem = .init(customView: likeButton)
             $0.url = posts[indexPath.row].url
             $0.hidesBottomBarWhenPushed = true
@@ -408,21 +402,21 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
                 self?.navigationController?.pushViewController(profileEditViewController, animated: true)
             }
         } else if title == "자주 묻는 질문" {
-            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+            let webViewController = WebViewController().then {
                 $0.url = "https://plucky-fang-eae.notion.site/60fa16788e784e69a2a9cc609bd1d781"
                 $0.hidesBottomBarWhenPushed = true
             }
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true)
         } else if title == "이용 약관" {
-            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+            let webViewController = WebViewController().then {
                 $0.url = "https://plucky-fang-eae.notion.site/e951a2d004ac4bbdbee73ee6b8ea4d08"
                 $0.hidesBottomBarWhenPushed = true
             }
             navigationController?.pushViewController(webViewController, animated: true)
             dismiss(animated: true)
         } else if title == "개인 정보 처리 방침" {
-            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+            let webViewController = WebViewController().then {
                 $0.url = "https:plip.kr/pcc/96e3cd8c-700d-46a1-b007-37443c721874/privacy-policy"
                 $0.hidesBottomBarWhenPushed = true
             }

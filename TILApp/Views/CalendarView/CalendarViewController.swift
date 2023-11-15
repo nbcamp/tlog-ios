@@ -170,13 +170,6 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
         if rssViewModel.loading {
             view.addSubview(loadingView)
         }
-
-        WKWebViewWarmer.shared.prepare()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        WKWebViewWarmer.shared.prepare()
     }
 
     override func viewDidLayoutSubviews() {
@@ -338,7 +331,7 @@ extension CalendarViewController: UITableViewDataSource {
 
 extension CalendarViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+        let webViewController = WebViewController().then {
             $0.url = posts[indexPath.row].url
             $0.hidesBottomBarWhenPushed = true
         }
