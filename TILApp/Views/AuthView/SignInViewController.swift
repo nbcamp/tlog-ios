@@ -57,10 +57,20 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
                 provider: "APPLE",
                 providerId: userIdentifier
             )) { [weak self] result in
-                guard let self, case .failure = result else { return }
-                let alert = UIAlertController(title: "로그인 실패", message: "\n다시 시도해 주세요.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-                self.present(alert, animated: true, completion: nil)
+                guard let self else { return }
+                switch result {
+                case .success:
+                    if !AuthViewModel.shared.isAgreed {
+                        let agreeTermsVC = AgreeTermsViewController()
+                        agreeTermsVC.modalPresentationStyle = .fullScreen
+                        present(agreeTermsVC, animated: false)
+                    }
+                case .failure(let error):
+                    debugPrint(#function, error)
+                    let alert = UIAlertController(title: "로그인 실패", message: "\n다시 시도해 주세요.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                }
             }
         default:
             break

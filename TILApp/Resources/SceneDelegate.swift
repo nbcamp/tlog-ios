@@ -6,7 +6,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private var cancellables: Set<AnyCancellable> = []
     private var initialized = false
     private var needToReset = false
-    private var isAgreed: Bool { AuthViewModel.shared.user?.isAgreed == true }
 
     func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -15,6 +14,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.makeKeyAndVisible()
 
         window.rootViewController = LoadingViewController()
+
+        AuthViewModel.shared.checkAuthorization { [unowned self] result in
+            switch result {
+            case .success:
+                window.rootViewController = RootViewController()
+                if !AuthViewModel.shared.isAgreed {
+                    presentAgreeTermsViewController()
+                }
+            case .failure:
+                let signInVC = SignInViewController()
+                signInVC.modalPresentationStyle = .fullScreen
+                window.rootViewController?.present(signInVC, animated: false)
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [unowned self] in
+                initialized = true
+            }
+        }
 
         AuthViewModel.shared.$isAuthenticated.dropFirst().sink { [unowned self] isAuthenticated in
             guard initialized else { return }
@@ -27,7 +44,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     needToReset = false
                     rootVC._tabBarController?.selectedIndex = 0
                 }
-                if !isAgreed {
+                if !AuthViewModel.shared.isAgreed {
                     presentAgreeTermsViewController()
                 } else {
                     rootVC.dismiss(animated: true)
@@ -44,22 +61,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 window.rootViewController?.present(signInVC, animated: true)
             }
         }.store(in: &cancellables)
-
-        AuthViewModel.shared.checkAuthorization { [unowned self] result in
-            switch result {
-            case .success:
-                window.rootViewController = RootViewController()
-                if !isAgreed {
-                    presentAgreeTermsViewController()
-                }
-            case .failure:
-                let signInVC = SignInViewController()
-                signInVC.modalPresentationStyle = .fullScreen
-                window.rootViewController?.present(signInVC, animated: false)
-            }
-
-            initialized = true
-        }
 
         self.window = window
     }

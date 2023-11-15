@@ -15,6 +15,7 @@ final class AuthViewModel: ViewModel {
 
     var accessToken: String? { UserDefaults.standard.string(forKey: Token.accessToken) }
     var authenticated: Bool { accessToken != nil }
+    var isAgreed: Bool { AuthViewModel.shared.user?.isAgreed == true }
     @Published var isAuthenticated: Bool = false
 
     func checkAuthorization(_ handler: APIHandler<AuthUser>? = nil) {
