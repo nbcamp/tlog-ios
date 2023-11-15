@@ -9,7 +9,6 @@ class CustomCommunityTILView: UIView {
             moreButton.isHidden = makeMenuItems == nil
         }
     }
-
     var contentText: String {
         get { userView.contentText }
         set { userView.contentText = newValue }
@@ -40,7 +39,7 @@ class CustomCommunityTILView: UIView {
         $0.tintColor = .accent
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.isHidden = true
-        $0.transform = .init(rotationAngle: 90.0 * 3.14 / 180.0)
+        $0.transform = .init(rotationAngle: .pi/2)
         $0.imageView?.contentMode = .scaleAspectFit
         $0.imageEdgeInsets = UIEdgeInsets(top: 25, left: 25, bottom: 25, right: 25)
         $0.showsMenuAsPrimaryAction = true

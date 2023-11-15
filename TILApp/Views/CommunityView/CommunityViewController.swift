@@ -120,9 +120,7 @@ extension CommunityViewController: UITableViewDataSource {
                     alertController.addAction(UIAlertAction(title: "확인", style: .default) { [weak self] _ in
                         DispatchQueue.main.async { [weak self] in
                             guard let self else { return }
-                            communityViewModel.refresh { [weak self] _ in
-                                self?.tableView.refreshControl?.endRefreshing()
-                            }
+                            communityViewModel.refresh()
                             self.navigationController?.popViewController(animated: true)
                         }
                     })
@@ -130,12 +128,13 @@ extension CommunityViewController: UITableViewDataSource {
                 }
             }
             let reportSpamAction = UIAction(title: "신고하기", image: UIImage(systemName: "flag.fill"), attributes: .destructive) { [weak self] _ in
+                guard let self else { return }
+
                 let alertController = UIAlertController(title: "신고하기", message: "신고 사유를 입력해주세요", preferredStyle: .alert)
 
                 alertController.addTextField { textField in
                     textField.placeholder = "ex) 부적절한 게시물을 올려요."
                 }
-
                 let submitAction = UIAlertAction(title: "제출", style: .default) { [weak self] _ in
                     guard let self, let reason = alertController.textFields?.first?.text else { return }
                     UserViewModel.shared.reportUser(user: post.user, reason: reason) { [weak self] _ in
@@ -151,8 +150,7 @@ extension CommunityViewController: UITableViewDataSource {
                 alertController.addAction(submitAction)
                 alertController.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
 
-                guard let self else { return }
-                self.present(alertController, animated: true, completion: nil)
+                present(alertController, animated: true, completion: nil)
             }
             return UIMenu(children: [reportAction, reportSpamAction])
         } : nil
