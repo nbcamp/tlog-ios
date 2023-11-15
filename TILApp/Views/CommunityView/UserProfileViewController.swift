@@ -203,12 +203,6 @@ final class UserProfileViewController: UIViewController {
         syncUser()
 
         navigationController?.setNavigationBarHidden(false, animated: true)
-        WKWebViewWarmer.shared.prepare(3)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        WKWebViewWarmer.shared.clear()
     }
 
     override func viewDidLayoutSubviews() {
@@ -269,7 +263,7 @@ final class UserProfileViewController: UIViewController {
 
     @objc private func blogURLTapped() {
         if let blogURL = userBlogURL.title(for: .normal) {
-            let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+            let webViewController = WebViewController().then {
                 $0.hidesBottomBarWhenPushed = true
                 $0.url = blogURL
             }
@@ -424,7 +418,7 @@ extension UserProfileViewController: UITableViewDelegate {
                 }
             }
         }
-        let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+        let webViewController = WebViewController().then {
             $0.navigationItem.rightBarButtonItem = .init(customView: likeButton)
             $0.url = posts[indexPath.row].url
             $0.hidesBottomBarWhenPushed = true
