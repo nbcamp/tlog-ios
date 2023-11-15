@@ -1,5 +1,6 @@
-final class BlogViewModel {
-    static let shared: BlogViewModel = .init()
+final class BlogViewModel: ViewModel {
+    static var shared: BlogViewModel = .init()
+    static func reset() { shared = .init() }
     private init() {}
 
     private(set) var blogs: [Blog] = []

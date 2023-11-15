@@ -81,7 +81,7 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
             username = username.trimmingCharacters(in: .whitespacesAndNewlines)
 
             AuthViewModel.shared.signIn(.init(
-                username: username.isEmpty ? "이름없음" : username,
+                username: username.isEmpty ? nil : username,
                 avatarUrl: nil,
                 provider: "APPLE",
                 providerId: userIdentifier

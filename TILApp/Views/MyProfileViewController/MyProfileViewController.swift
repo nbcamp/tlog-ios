@@ -118,7 +118,6 @@ final class MyProfileViewController: UIViewController {
 
         loadMyPosts { [weak self] in
             self?.myProfileTableView.reloadData()
-            self?.myProfileTableView.setNeedsLayout()
         }
 
         screenView.flex.direction(.column).define { flex in
@@ -153,8 +152,9 @@ final class MyProfileViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        screenView.pin.all(view.pin.safeArea)
-        moreButton.pin.top(view.pin.safeArea).right(25).marginTop(5)
+        let safeArea = view.pin.safeArea
+        screenView.pin.all(safeArea)
+        moreButton.pin.top(safeArea).right(safeArea.right + 25).marginTop(5)
         screenView.flex.layout()
     }
 
@@ -299,6 +299,7 @@ extension MyProfileViewController: UITableViewDelegate {
     }
 
     func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {
+        guard let refreshControl = myProfileTableView.refreshControl, refreshControl.isRefreshing else { return }
         loadMyPosts { [weak self] in
             self?.myProfileTableView.reloadData()
             self?.myProfileTableView.refreshControl?.endRefreshing()
@@ -345,7 +346,8 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             }
         } else if title == "로그아웃" {
             let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)
-            alertController.addAction(.init(title: "계속", style: .destructive, handler: { _ in
+            alertController.addAction(.init(title: "계속", style: .destructive, handler: { [weak self] _ in
+                self?.dismiss(animated: true)
                 AuthViewModel.shared.signOut()
             }))
             alertController.addAction(.init(title: "취소", style: .cancel))

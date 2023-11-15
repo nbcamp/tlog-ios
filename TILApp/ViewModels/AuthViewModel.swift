@@ -1,7 +1,8 @@
 import Foundation
 
-final class AuthViewModel {
-    static let shared: AuthViewModel = .init()
+final class AuthViewModel: ViewModel {
+    static var shared: AuthViewModel = .init()
+    static func reset() { shared = .init() }
     private init() {}
 
     private let api = APIService.shared
