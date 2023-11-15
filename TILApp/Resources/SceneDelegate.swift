@@ -73,7 +73,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidEnterBackground(_: UIScene) {}
 
     func presentAgreeTermsIfNeeded() {
-        if let user = AuthViewModel.shared.user, user.isAgreed == nil {
+        if let user = AuthViewModel.shared.user, !user.isAgreed {
             let currentViewController = window?.rootViewController
 
             if !(currentViewController is AgreeTermsViewController) {

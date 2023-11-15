@@ -102,7 +102,7 @@ final class ProfileEditViewController: UIViewController {
                 let file = try? await APIService.shared.request(.uploadImage(avatarImage), to: File.self)
                 avatarUrl = file?.url
             }
-            AuthViewModel.shared.update(.init(username: username, avatarUrl: avatarUrl)) { [weak self] result in
+            AuthViewModel.shared.update(.init(username: username, avatarUrl: avatarUrl, isAgreed: nil)) { [weak self] result in
                 guard let self else { return }
                 if case let .failure(error) = result {
                     // TODO: 에러처리

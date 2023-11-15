@@ -68,8 +68,16 @@ class AgreeTermsViewController: UIViewController {
     }
 
     @objc private func agreeButtonTapped() {
-        // TODO: authUser 동의 여부 갱신
-        dismiss(animated: false)
+        guard let authUser = AuthViewModel.shared.user else { return }
+        AuthViewModel.shared.update(.init(username: authUser.username, avatarUrl: authUser.avatarUrl, isAgreed: true)) { [weak self] result in
+            guard let self else { return }
+            if case let .failure(error) = result {
+                // TODO: 에러처리
+                debugPrint(#function, error)
+                return
+            }
+            dismiss(animated: false)
+        }
     }
 
     @objc func checkboxTapped() {

@@ -9,7 +9,7 @@ struct AuthUser: Codable {
     let followings: Int
     let hasBlog: Bool
     let lastPublishedAt: Date?
-    let isAgreed: Bool?
+    let isAgreed: Bool
 }
 
 struct SignInInput: Codable {
