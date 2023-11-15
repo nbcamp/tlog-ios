@@ -26,7 +26,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     needToReset = false
                     rootVC._tabBarController?.selectedIndex = 0
                 }
-                rootVC.dismiss(animated: true)
+                rootVC.dismiss(animated: false)
+                presentAgreeTermsIfNeeded()
             } else if !isAuthenticated {
                 UserViewModel.reset()
                 BlogViewModel.reset()
@@ -36,7 +37,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 needToReset = true
                 let signInVC = SignInViewController()
                 signInVC.modalPresentationStyle = .fullScreen
-                window.rootViewController?.present(signInVC, animated: true)
+                window.rootViewController?.present(signInVC, animated: false)
             }
         }.store(in: &cancellables)
 
@@ -44,6 +45,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             switch result {
             case .success:
                 window.rootViewController = RootViewController()
+                presentAgreeTermsIfNeeded()
             case .failure:
                 let signInVC = SignInViewController()
                 signInVC.modalPresentationStyle = .fullScreen
@@ -69,4 +71,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_: UIScene) {}
 
     func sceneDidEnterBackground(_: UIScene) {}
+
+    func presentAgreeTermsIfNeeded() {
+        if let user = AuthViewModel.shared.user, user.isAgreed == nil {
+            let currentViewController = window?.rootViewController
+
+            if !(currentViewController is AgreeTermsViewController) {
+                let agreeTermsVC = AgreeTermsViewController()
+                agreeTermsVC.modalPresentationStyle = .fullScreen
+                currentViewController?.present(agreeTermsVC, animated: false)
+            }
+        }
+    }
 }
