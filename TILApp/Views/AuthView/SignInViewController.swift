@@ -5,13 +5,6 @@ final class SignInViewController: UIViewController {
     private let logoImage = UIImageView(image: UIImage(named: "SignInPageLogo"))
     private let authorizationButton = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
 
-    private let label = UILabel().then {
-        $0.text = "오늘을 기록하는 습관, 티로깅 여정을 시작하세요!"
-        $0.font = .systemFont(ofSize: 15.5, weight: .bold)
-        $0.textColor = .white
-        $0.sizeToFit()
-    }
-
     private let checkbox = UIButton().then {
         $0.setImage(UIImage(named: "checkbox.unchecked"), for: .normal)
         $0.setImage(UIImage(named: "checkbox.checked"), for: .selected)
@@ -35,7 +28,6 @@ final class SignInViewController: UIViewController {
             .addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
         authorizationButton.isEnabled = false
         view.addSubview(authorizationButton)
-        view.addSubview(label)
 
         view.addSubview(checkboxContainerView)
         checkboxContainerView.flex.direction(.row).alignItems(.center).justifyContent(.center).define { flex in
@@ -62,7 +54,6 @@ final class SignInViewController: UIViewController {
         view.pin.all()
         logoImage.pin.all()
         authorizationButton.pin.hCenter().bottom(17%).width(85%).height(48)
-        label.pin.hCenter().top(53.5%).marginBottom(50)
         checkboxContainerView.pin.horizontally().bottom(to: authorizationButton.edge.top).marginBottom(10)
 
         checkboxContainerView.flex.layout()
