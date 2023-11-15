@@ -5,7 +5,6 @@ final class CommunityViewController: UIViewController {
     private let userViewModel = UserViewModel.shared
     private var posts: [CommunityPost] { communityViewModel.posts }
     private var cancellables: Set<AnyCancellable> = []
-
     private lazy var tableView = UITableView().then {
         $0.dataSource = self
         $0.delegate = self
@@ -106,7 +105,6 @@ extension CommunityViewController: UITableViewDataSource {
                     completion(state)
                 }
             }
-
             let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
                 $0.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
                 $0.hidesBottomBarWhenPushed = true
@@ -114,7 +112,51 @@ extension CommunityViewController: UITableViewDataSource {
             }
             navigationController?.pushViewController(webViewController, animated: true)
         }
+        cell.customCommunityTILView.makeMenuItems = post.user.id != AuthViewModel.shared.user?.id ? { [weak self] in
+            let reportAction = UIAction(title: "차단하기", image: UIImage(systemName: "eye.slash")) { [weak self] _ in
+                guard let self else {return}
+                UserViewModel.shared.blockUser(user: post.user) { [weak self] _ in
+                    print("유저 차단 완료")
+                    let alertController = UIAlertController(title: "차단 완료", message: "차단되었습니다.", preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self else { return }
+                            communityViewModel.refresh { [weak self] _ in
+                                self?.tableView.refreshControl?.endRefreshing()
+                            }
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                    })
+                    self?.present(alertController, animated: true)
+                }
+            }
+            let reportSpamAction = UIAction(title: "신고하기", image: UIImage(systemName: "flag.fill"), attributes: .destructive) { [weak self] _ in
+                let alertController = UIAlertController(title: "신고하기", message: "신고 사유를 입력해주세요", preferredStyle: .alert)
 
+                alertController.addTextField { textField in
+                    textField.placeholder = "ex) 부적절한 게시물을 올려요."
+                }
+
+                let submitAction = UIAlertAction(title: "제출", style: .default) { [weak self] _ in
+                    guard let self, let reason = alertController.textFields?.first?.text else { return }
+                    UserViewModel.shared.reportUser(user: post.user, reason: reason) { [weak self] _ in
+                        let alertController = UIAlertController(
+                            title: "신고 완료",
+                            message: "신고 처리되었습니다.",
+                            preferredStyle: .alert
+                        )
+                        alertController.addAction(UIAlertAction(title: "확인", style: .default))
+                        self?.present(alertController, animated: true)
+                    }
+                }
+                alertController.addAction(submitAction)
+                alertController.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+
+                guard let self else { return }
+                self.present(alertController, animated: true, completion: nil)
+            }
+            return UIMenu(children: [reportAction, reportSpamAction])
+        } : nil
         return cell
     }
 

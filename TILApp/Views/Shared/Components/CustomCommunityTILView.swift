@@ -3,7 +3,13 @@ import UIKit
 class CustomCommunityTILView: UIView {
     var userProfileTapped: (() -> Void)?
     var postTapped: (() -> Void)?
-
+    var makeMenuItems: (() -> UIMenu)? {
+        didSet {
+            moreButton.menu = makeMenuItems?()
+            moreButton.isHidden = makeMenuItems == nil
+        }
+    }
+    
     var contentText: String {
         get { userView.contentText }
         set { userView.contentText = newValue }
@@ -29,6 +35,16 @@ class CustomCommunityTILView: UIView {
         $0.pin.height(20)
     }
 
+    var moreButton = UIButton().then {
+        $0.sizeToFit()
+        $0.tintColor = .accent
+        $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        $0.isHidden = true
+        $0.imageView?.contentMode = .scaleAspectFit
+        $0.imageEdgeInsets = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 25)
+        $0.showsMenuAsPrimaryAction = true
+    }
+    
     private lazy var heartButton = LikeButton(liked: false).then {
         $0.contentMode = .scaleAspectFit
         $0.pin.width(20).height(20)
@@ -45,6 +61,7 @@ class CustomCommunityTILView: UIView {
 
         pin.height(180)
 
+        userView.addSubview(moreButton)
         addSubview(tilView)
         addSubview(userView)
         addSubview(dateLabel)
@@ -59,13 +76,13 @@ class CustomCommunityTILView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-
+        
+        moreButton.pin.top().right(10)
         userView.pin.horizontally(10).top(10)
         tilView.pin.below(of: userView).horizontally().marginTop(-15)
         dateLabel.pin.left(20).bottom(10)
         heartButton.pin.top(to: dateLabel.edge.top).right(20).bottom(10)
         tagsCollectionView.pin.after(of: dateLabel, aligned: .center).width(60%).marginLeft(10)
-
         tilView.resizeText()
     }
 
@@ -77,6 +94,8 @@ class CustomCommunityTILView: UIView {
         postTapped?()
     }
 
+
+    
     // TODO: 팔로워 옆에 연속 작성 일수 추가해야 함
     func setup(post: CommunityPost) {
         userView.setup(

@@ -7,6 +7,7 @@ final class CommunityTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        customCommunityTILView.moreButton.showsMenuAsPrimaryAction = true
 
         contentView.addSubview(customCommunityTILView)
     }
