@@ -4,6 +4,7 @@ import WebKit
 final class WebViewController: UIViewController {
     var url: String? {
         didSet {
+            guard let webView else { return }
             loadingView.isHidden = false
             if let url, let url = URL(string: url) {
                 let request = URLRequest(
@@ -16,7 +17,7 @@ final class WebViewController: UIViewController {
         }
     }
 
-    private let webView: WKWebView
+    private weak var webView: WKWebView?
 
     private lazy var loadingView = UIActivityIndicatorView().then {
         $0.startAnimating()
@@ -89,7 +90,7 @@ final class WebViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        webView.pin.all(view.pin.safeArea)
+        webView?.pin.all(view.pin.safeArea)
         loadingView.pin.all(view.pin.safeArea)
         view.bringSubviewToFront(loadingView)
     }
@@ -99,15 +100,15 @@ final class WebViewController: UIViewController {
     }
 
     @objc private func backButtonTapped() {
-        webView.goBack()
+        webView?.goBack()
     }
 
     @objc private func forwardButtonTapped() {
-        webView.goForward()
+        webView?.goForward()
     }
 
     @objc private func reloadButtonTapped() {
-        webView.reload()
+        webView?.reload()
     }
 }
 
