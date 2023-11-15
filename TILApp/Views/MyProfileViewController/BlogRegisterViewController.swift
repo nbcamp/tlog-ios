@@ -189,7 +189,7 @@ final class BlogRegisterViewController: UIViewController, UIGestureRecognizerDel
                 do {
                     DispatchQueue.main.async { [weak self] in
                         guard let self else { return }
-                        if blogNameValidation(from: blogURLTextField.mainText, to: urlString) {
+                        if validateBlogName(from: blogURLTextField.mainText, to: urlString) {
                             validated = true
                             updateBlogRSSField(with: urlString)
                         } else {
