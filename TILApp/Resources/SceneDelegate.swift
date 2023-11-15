@@ -6,6 +6,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private var cancellables: Set<AnyCancellable> = []
     private var initialized = false
     private var needToReset = false
+    private var isAgreed: Bool { AuthViewModel.shared.user?.isAgreed == true }
 
     func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -26,8 +27,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     needToReset = false
                     rootVC._tabBarController?.selectedIndex = 0
                 }
-                rootVC.dismiss(animated: false)
-                presentAgreeTermsIfNeeded()
+                if !isAgreed {
+                    presentAgreeTermsViewController()
+                } else {
+                    rootVC.dismiss(animated: true)
+                }
             } else if !isAuthenticated {
                 UserViewModel.reset()
                 BlogViewModel.reset()
@@ -37,7 +41,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 needToReset = true
                 let signInVC = SignInViewController()
                 signInVC.modalPresentationStyle = .fullScreen
-                window.rootViewController?.present(signInVC, animated: false)
+                window.rootViewController?.present(signInVC, animated: true)
             }
         }.store(in: &cancellables)
 
@@ -45,7 +49,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             switch result {
             case .success:
                 window.rootViewController = RootViewController()
-                presentAgreeTermsIfNeeded()
+                if !isAgreed {
+                    presentAgreeTermsViewController()
+                }
             case .failure:
                 let signInVC = SignInViewController()
                 signInVC.modalPresentationStyle = .fullScreen
@@ -72,15 +78,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidEnterBackground(_: UIScene) {}
 
-    func presentAgreeTermsIfNeeded() {
-        if let user = AuthViewModel.shared.user, !user.isAgreed {
-            let currentViewController = window?.rootViewController
-
-            if !(currentViewController is AgreeTermsViewController) {
-                let agreeTermsVC = AgreeTermsViewController()
-                agreeTermsVC.modalPresentationStyle = .fullScreen
-                currentViewController?.present(agreeTermsVC, animated: false)
-            }
+    func presentAgreeTermsViewController() {
+        let currentViewController = window?.rootViewController
+        if !(currentViewController is AgreeTermsViewController) {
+            let agreeTermsVC = AgreeTermsViewController()
+            agreeTermsVC.modalPresentationStyle = .fullScreen
+            currentViewController?.present(agreeTermsVC, animated: false)
         }
     }
 }

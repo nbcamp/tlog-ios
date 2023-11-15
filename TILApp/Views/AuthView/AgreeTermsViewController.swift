@@ -17,6 +17,13 @@ class AgreeTermsViewController: UIViewController {
         $0.setImage(UIImage(named: "checkbox.unchecked"), for: .normal)
         $0.setImage(UIImage(named: "checkbox.checked"), for: .selected)
         $0.pin.width(16).height(16)
+        $0.configuration = .plain()
+        $0.configurationUpdateHandler = {
+            switch $0.state {
+            case .disabled: $0.imageView?.tintAdjustmentMode = .dimmed
+            default: $0.imageView?.tintAdjustmentMode = .normal
+            }
+        }
     }
 
     private lazy var termsLabel = createCustomLabel(text: "이용 약관", isUnderlined: true)
@@ -69,14 +76,18 @@ class AgreeTermsViewController: UIViewController {
 
     @objc private func agreeButtonTapped() {
         guard let authUser = AuthViewModel.shared.user else { return }
-        AuthViewModel.shared.update(.init(username: authUser.username, avatarUrl: authUser.avatarUrl, isAgreed: true)) { [weak self] result in
+        AuthViewModel.shared.update(.init(
+            username: authUser.username,
+            avatarUrl: authUser.avatarUrl,
+            isAgreed: true
+        )) { [weak self] result in
             guard let self else { return }
             if case let .failure(error) = result {
                 // TODO: 에러처리
                 debugPrint(#function, error)
                 return
             }
-            dismiss(animated: false)
+            dismiss(animated: true)
         }
     }
 
@@ -103,7 +114,7 @@ class AgreeTermsViewController: UIViewController {
     private func createCustomLabel(text: String, isUnderlined: Bool = false) -> UILabel {
         return UILabel().then {
             if isUnderlined {
-                var attributes: [NSAttributedString.Key: Any] = [
+                let attributes: [NSAttributedString.Key: Any] = [
                     .font: UIFont.boldSystemFont(ofSize: 14),
                     .foregroundColor: UIColor.white,
                     .underlineStyle: NSUnderlineStyle.single.rawValue
