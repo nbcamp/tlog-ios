@@ -112,13 +112,15 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+
         rssViewModel.$loading
             .dropFirst()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] loading in
                 guard let self, !loading else { return }
                 loadingView.removeFromSuperview()
-                tableView.reloadData()
+                calendarView.reloadData()
+                lastSelectedDate = nil
             }.store(in: &cancellable)
 
         rootView.flex.direction(.column).define {
@@ -165,6 +167,10 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
             flexContainer.removeFromSuperview()
         }
 
+        if rssViewModel.loading {
+            view.addSubview(loadingView)
+        }
+
         WKWebViewWarmer.shared.prepare()
     }
 
@@ -176,11 +182,8 @@ final class CalendarViewController: UIViewController, UIGestureRecognizerDelegat
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         rootView.pin.all(view.pin.safeArea)
+        loadingView.pin.all(view.pin.safeArea)
         rootView.flex.layout()
-        if rssViewModel.loading {
-            view.addSubview(loadingView)
-            loadingView.pin.all(view.pin.safeArea)
-        }
 
         if !hasBlog {
             flexContainer.pin.all(view.pin.safeArea)
@@ -255,8 +258,8 @@ extension CalendarViewController: FSCalendarDelegate {
         cell.backgroundView = view
         view.backgroundColor = .accent
         view.layer.masksToBounds = true
-        view.transform = .init(translationX: 0, y: -6)
-            .concatenating(.init(scaleX: 1, y: 0.5))
+        view.transform = .init(translationX: 0, y: -5.2)
+            .concatenating(.init(scaleX: 1, y: 0.7))
         if cal.isDate(date, inSameDayAs: startOfStreakDays) {
             view.layer.cornerRadius = 4
             view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
