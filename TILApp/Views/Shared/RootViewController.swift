@@ -1,11 +1,13 @@
 import UIKit
 
-final class RootViewController: UITabBarController {
-    struct Tab {
+final class RootViewController: UINavigationController {
+    private struct Tab {
         let title: String
         let icon: String
         let controller: UIViewController
     }
+
+    private(set) var _tabBarController: UITabBarController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,29 +19,21 @@ final class RootViewController: UITabBarController {
             .init(title: "내 정보", icon: "person", controller: MyProfileViewController()),
         ]
 
-        setViewControllers(tabs.enumerated().map { index, tab in
-            let navigationController = UINavigationController(rootViewController: tab.controller)
-            let tabBarItem = UITabBarItem(
-                title: tab.title,
-                image: .init(systemName: tab.icon),
-                tag: index
-            )
-            navigationController.tabBarItem = tabBarItem
-            return navigationController
-        }, animated: false)
+        let tabBarController = UITabBarController().then {
+            $0.setViewControllers(tabs.enumerated().map { index, tab in
+                tab.controller.tabBarItem = .init(
+                    title: tab.title,
+                    image: .init(systemName: tab.icon),
+                    tag: index
+                ).then {
+                    $0.imageInsets = .init(top: 5, left: 0, bottom: 5, right: 0)
+                }
+                return tab.controller
+            }, animated: false)
+        }
 
+        setViewControllers([tabBarController], animated: true)
+        _tabBarController = tabBarController
         RssViewModel.shared.prepare()
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        let paddingTop: CGFloat = 10.0
-        tabBar.frame = .init(
-            x: tabBar.frame.origin.x,
-            y: tabBar.frame.origin.y - paddingTop,
-            width: tabBar.frame.width,
-            height: tabBar.frame.height + paddingTop
-        )
     }
 }

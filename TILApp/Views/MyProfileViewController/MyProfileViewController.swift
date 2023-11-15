@@ -118,7 +118,6 @@ final class MyProfileViewController: UIViewController {
 
         loadMyPosts { [weak self] in
             self?.myProfileTableView.reloadData()
-            self?.myProfileTableView.setNeedsLayout()
         }
 
         screenView.flex.direction(.column).define { flex in
@@ -347,7 +346,8 @@ extension MyProfileViewController: SeeMoreBottomSheetDelegate {
             }
         } else if title == "로그아웃" {
             let alertController = UIAlertController(title: "로그아웃", message: "정말 로그아웃하시겠어요?", preferredStyle: .alert)
-            alertController.addAction(.init(title: "계속", style: .destructive, handler: { _ in
+            alertController.addAction(.init(title: "계속", style: .destructive, handler: { [weak self] _ in
+                self?.dismiss(animated: true)
                 AuthViewModel.shared.signOut()
             }))
             alertController.addAction(.init(title: "취소", style: .cancel))

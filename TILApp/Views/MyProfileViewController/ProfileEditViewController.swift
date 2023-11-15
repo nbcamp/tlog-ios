@@ -120,7 +120,8 @@ final class ProfileEditViewController: UIViewController {
             message: "정말로 회원 탈퇴를 하시겠어요?\n회원 탈퇴 시 저장한 블로그와 게시글이 모두 삭제되어 복구할 수 없습니다.",
             preferredStyle: .alert
         )
-        alertController.addAction(.init(title: "탈퇴", style: .destructive) { _ in
+        alertController.addAction(.init(title: "탈퇴", style: .destructive) { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
             AuthViewModel.shared.withdraw()
         })
         alertController.addAction(.init(title: "취소", style: .cancel, handler: nil))
