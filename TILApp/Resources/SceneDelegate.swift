@@ -23,8 +23,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         AuthViewModel.shared.checkAuthorization { [unowned self] result in
             switch result {
-            case .success: window.rootViewController = RootViewController()
-            case .failure: window.rootViewController = SignInViewController()
+            case .success:
+                window.rootViewController = RootViewController()
+            case .failure:
+                AuthViewModel.reset()
+                UserViewModel.reset()
+                BlogViewModel.reset()
+                PostViewModel.reset()
+                CommunityViewModel.reset()
+                RssViewModel.reset()
+                window.rootViewController = SignInViewController()
             }
             initialized = true
         }

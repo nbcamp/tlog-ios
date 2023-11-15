@@ -8,8 +8,9 @@ protocol CommunityViewModelDelegate: AnyObject {
     func errorOccurred(_ viewModel: CommunityViewModel, error: String)
 }
 
-final class CommunityViewModel {
-    static let shared: CommunityViewModel = .init()
+final class CommunityViewModel: ViewModel {
+    static var shared: CommunityViewModel = .init()
+    static func reset() { shared = .init() }
     private init() {}
 
     weak var delegate: CommunityViewModelDelegate?
