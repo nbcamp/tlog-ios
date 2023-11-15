@@ -1,8 +1,9 @@
 import Dispatch
 import Foundation
 
-final class PostViewModel {
-    static let shared: PostViewModel = .init()
+final class PostViewModel: ViewModel {
+    static var shared: PostViewModel = .init()
+    static func reset() { shared = .init() }
     private init() {}
 
     private let api = APIService.shared

@@ -1,7 +1,8 @@
 import Moya
 
-final class UserViewModel {
-    static let shared: UserViewModel = .init()
+final class UserViewModel: ViewModel {
+    static var shared: UserViewModel = .init()
+    static func reset() { shared = .init() }
     private init() {}
 
     private let api = APIService.shared

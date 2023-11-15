@@ -2,8 +2,9 @@ import Combine
 import Foundation
 import XMLCoder
 
-final class RssViewModel {
-    static let shared: RssViewModel = .init()
+final class RssViewModel: ViewModel {
+    static var shared: RssViewModel = .init()
+    static func reset() { shared = .init() }
     private init() {}
 
     struct Post {
