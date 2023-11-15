@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "loginpage2.png",
+      "filename" : "State=Checked.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "loginpage2@2x.png",
+      "filename" : "State=Checked@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "loginpage2@3x.png",
+      "filename" : "State=Checked@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

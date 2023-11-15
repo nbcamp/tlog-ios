@@ -22,6 +22,7 @@ struct BlockedUser: Codable {
 struct UpdateUserInput: Codable {
     let username: String
     let avatarUrl: String?
+    let isAgreed: Bool?
 }
 
 struct ReportUserInput: Codable {
