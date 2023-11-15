@@ -20,19 +20,19 @@ func splitStrConverter(str: String) -> [Substring] {
 }
 
 func convertToRssUrl(from blogUrl: String) -> String? {
-    let splitUrl = splitStrConverter(str: blogUrl)
-    if splitUrl.count > 0 {
-        if splitUrl[0].contains("tistory.com") {
-            return "https://" + splitUrl[0] + "/rss"
-        } else if splitUrl[0].contains("naver.com"), splitUrl.count > 1 {
-            return "https://" + "rss." + "blog.naver.com/" + splitUrl[1]
-        } else if splitUrl[0].contains("velog.io"), splitUrl.count > 1 {
-            return "https://" + "v2." + "velog.io/rss/" + splitUrl[1]
-        } else if splitUrl[0].contains("medium.com"), splitUrl.count > 1 {
-            return "https://" + "medium.com/feed/" + splitUrl[1]
+    let splitRssUrl = splitStrConverter(str: blogUrl)
+    if splitRssUrl.count > 0 {
+        if splitRssUrl[0].contains("tistory.com") {
+            return "https://" + splitRssUrl[0] + "/rss"
+        } else if splitRssUrl[0].contains("naver.com"), splitRssUrl.count > 1 {
+            return "https://" + "rss." + "blog.naver.com/" + splitRssUrl[1]
+        } else if splitRssUrl[0].contains("velog.io"), splitRssUrl.count > 1 {
+            return "https://" + "v2." + "velog.io/rss/" + splitRssUrl[1]
+        } else if splitRssUrl[0].contains("medium.com"), splitRssUrl.count > 1 {
+            return "https://" + "medium.com/feed/" + splitRssUrl[1]
         }
     }
-    return nil
+    return blogUrl
 }
 
 func convertToBlogUrl(from blogUrl: String) -> String? {
@@ -54,14 +54,14 @@ func convertToBlogUrl(from blogUrl: String) -> String? {
 func convertFromBlogToRss(from blogUrl: String, to rssUrl: String) -> Bool {
     let splitRssUrl = splitStrConverter(str: rssUrl)
     let splitBlogUrl = splitStrConverter(str: blogUrl)
-    if splitRssUrl.count > 0 {
+    if splitRssUrl.count > 0, splitRssUrl.count > 0 {
         if splitRssUrl[0].contains("tistory.com") {
             return splitRssUrl[0] == splitBlogUrl[0]
-        } else if splitRssUrl[0].contains("naver.com"), splitRssUrl.count > 1 {
+        } else if splitRssUrl[0].contains("naver.com"), splitRssUrl.count > 1, splitRssUrl.count > 1 {
             return splitRssUrl[1] == splitBlogUrl[1]
-        } else if splitRssUrl[0].contains("velog.io"), splitRssUrl.count > 1 {
+        } else if splitRssUrl[0].contains("velog.io"), splitRssUrl.count > 1, splitRssUrl.count > 1 {
             return splitRssUrl[1] == splitBlogUrl[1]
-        } else if splitRssUrl[0].contains("medium.com"), splitRssUrl.count > 1 {
+        } else if splitRssUrl[0].contains("medium.com"), splitRssUrl.count > 1, splitRssUrl.count > 1 {
             return splitRssUrl[1] == splitBlogUrl[1]
         } else {
             return true
