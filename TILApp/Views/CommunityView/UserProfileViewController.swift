@@ -400,7 +400,37 @@ extension UserProfileViewController: UITableViewDataSource {
 }
 
 extension UserProfileViewController: UITableViewDelegate {
-    func tableView(_: UITableView, didSelectRowAt _: IndexPath) {}
+    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard section == .posts else { return }
+        let post = posts[indexPath.row]
+        let likeButton = LikeButton(liked: post.liked).then {
+            $0.buttonTapped = { liked, completion in
+                CommunityViewModel.shared.togglePostLikeState(liked, of: post.id) { [weak self] state in
+                    guard let self else { return }
+                    // TODO: ViewModel class로 변경
+                    let post = posts[indexPath.row]
+                    posts[indexPath.row] = .init(
+                        id: post.id,
+                        userId: post.userId,
+                        title: post.title,
+                        content: post.content,
+                        url: post.url,
+                        tags: post.tags,
+                        liked: state,
+                        publishedAt: post.publishedAt
+                    )
+                    CommunityViewModel.shared.updatePosts(forPost: post.id)
+                    completion(state)
+                }
+            }
+        }
+        let webViewController = WebViewController(webView: WKWebViewWarmer.shared.dequeue()).then {
+            $0.navigationItem.rightBarButtonItem = .init(customView: likeButton)
+            $0.url = posts[indexPath.row].url
+            $0.hidesBottomBarWhenPushed = true
+        }
+        navigationController?.pushViewController(webViewController, animated: true)
+    }
 
     func scrollViewDidEndDragging(_: UIScrollView, willDecelerate _: Bool) {
         guard let refreshControl = userProfileTableView.refreshControl, refreshControl.isRefreshing else { return }
