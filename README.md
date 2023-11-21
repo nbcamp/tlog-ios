@@ -295,50 +295,76 @@
 
 ## 기술 스택
 
-### UIKit (iOS 15.0)
+<details>
+  <summary><b>UIKit (iOS 15.0)</b></summary>
+  <ul>
+    <li><a target="_target" href="https://developer.apple.com/kr/support/app-store/">Apple App Store</a>에서 제공하는 전 세계 iOS 사용 현황을 참고해봤을 때, 현재 23년 5월 30일 기준으로 총 94%의 사용자가 iOS 15 버전 이상을 사용하고 있습니다. 다양한 사용자가 iOS 15 버전의 환경에서도 원활한 사용자 경험을 제공하기 위해 최소 버전을 15.0으로 결정하였습니다.
+    </li>
+  </ul>
+</details>
 
-- [Apple App Store](https://developer.apple.com/kr/support/app-store/)에서 제공하는 전 세계 iOS 사용 현황을 참고해봤을 때, 현재 23년 5월 30일 기준으로 총 94%의 사용자가 iOS 15 버전 이상을 사용하고 있습니다. 다양한 사용자가 iOS 15 버전의 환경에서도 원활한 사용자 경험을 제공하기 위해 최소 버전을 15.0으로 결정하였습니다.
+<details>
+  <summary><b><a target="_target" href="https://github.com/realm/SwiftLint">SwiftLint</a>, <a target="_target" href="https://github.com/nicklockwood/SwiftFormat">SwiftFormat</a></b></summary>
+  <ul>
+    <li>일관된 형식의 코드 작성을 강제하여 프로젝트 전반의 코드 품질을 높입니다.</li>
+    <li>읽기 쉬운 코드를 작성하도록 유도하며, 잠재적인 버그 발생을 최소화합니다.</li>
+    <li>SwiftLint의 경우, Build Phase에 스크립트를 추가하여 각자 컴퓨터에 설치된 <code>swiftlint</code>를 실행하여 linting이 가능하도록 했습니다.</li>
+    <li>SwiftFormat은 위와 같은 방식으로 함께 적용했을 때, SwiftFormat에 의한 변경사항이 Xcode에 잘 반영이 되지 않는 문제가 있어, <code>swiftformat-for-xcode</code>를 각자 설치하여 formatting을 진행하게끔 했습니다. (<a target="_target" href="https://jinyongp.dev/posts/xcode/1/">설치방법</a>)</li>
+  </ul>
+</details>
 
-### [SwiftFormat](https://github.com/nicklockwood/SwiftFormat), [SwiftLint](https://github.com/realm/SwiftLint)
+<details>
+  <summary><b><a target="_target" href="https://github.com/layoutBox/PinLayout">PinLayout</a>, <a target="_target" href="https://github.com/layoutBox/FlexLayout">FlexLayout</a></b></summary>
+  <ul>
+    <li><a target="_target" href="https://github.com/layoutBox/FlexLayout#performance">AutoLayout이 아닌 Frame 기반의 UI Layout 배치 방식을 채용하여 성능에 이점을 얻을 수 있습니다.</a></li>
+    <li>FlexBox 형식의 코드를 작성하여 직관적인 Stack UI를 작성합니다.</li>
+    <li>UI를 명령형 대신 선언형으로 작성하여 배치 순서대로 읽을 수 있는 코드를 작성할 수 있습니다.</li>
+  </ul>
+</details>
 
-- 일관된 형식의 코드 작성을 강제하여 프로젝트 전반의 코드 품질을 높입니다.
-- 읽기 쉬운 코드를 작성하도록 유도하며, 잠재적인 버그 발생을 최소화합니다.
-- SwiftLint의 경우, Build Phase에 스크립트를 추가하여 각자 컴퓨터에 설치된 `swiftlint`를 실행하여 linting이 가능하도록 했습니다.
-- SwiftFormat은 위와 같은 방식으로 함께 적용했을 때, SwiftFormat에 의한 변경사항이 Xcode에 잘 반영이 되지 않는 문제가 있어, `swiftformat-for-xcode`를 각자 설치하여 formatting을 진행하게끔 헀습니다. ([설치방법](https://jinyongp.dev/posts/xcode/1/) 작성)
+<details>
+  <summary><b><a target="_target" href="https://github.com/Moya/Moya">Moya</a> (+<a target="_target" href="https://github.com/devxoul/MoyaSugar">MoyaSugar</a>)</b></summary>
+  <ul>
+    <li>Enum을 활용하여 HTTP 요청과 함께 전달해야 할 Body 혹은 Query Param에 대해 타입 안전성을 높여 human error를 방지합니다.</li>
+    <li>높은 수준으로 추상화하여 URLSession 혹은 Alamofire에 비해 코드의 복잡도가 줄어듭니다.</li>
+    <li>MoyaSugar를 추가로 도입하여 HTTP method를 endpoint와 함께 작성할 수 있게 수정되면서 전처럼 일일이 따로 작성해줘야하는 불편함을 개선하였습니다. 또한, 사용자 정의 연산자 <code>=></code> 를 제공하여 보다 편리하게 Body 혹은 Param을 전달할 수 있게 되었습니다.</li>
+  </ul>
+</details>
 
-### [PinLayout](https://github.com/layoutBox/PinLayout) & [FlexLayout](https://github.com/layoutBox/FlexLayout)
+<details>
+  <summary><b><a target="_target" href="https://github.com/WenchaoD/FSCalendar">FSCalendar</a></b></summary>
+  <ul>
+    <li>달력 UI를 손쉽게 작성할 수 있도록 도와주고, 유연한 커스터마이징이 가능합니다.</li>
+    <li>iOS 16부터 사용 가능한 UICalendarView와 달리 다양한 버전의 iOS와 잘 호환됩니다. 최소 iOS 버전을 15.0으로 설정한 만큼 이를 채용하였습니다.</li>
+  </ul>
+</details>
 
-- [AutoLayout이 아닌 Frame 기반의 UI Layout 배치 방식을 채용하여 성능에 이점을 얻을 수 있습니다.](https://github.com/layoutBox/FlexLayout#performance)
-- FlexBox 형식의 코드를 작성하여 직관적인 Stack UI를 작성합니다.
-- UI를 명령형 대신 선언형으로 작성하여 배치 순서대로 읽을 수 있는 코드를 작성할 수 있습니다.
+<details>
+  <summary><b><a target="_target" href="https://github.com/CoreOffice/XMLCoder">XMLCoder</a></b></summary>
+  <ul>
+    <li>마치 JSON 문서를 JSONDecoder를 활용하여 쉽게 디코딩하는 것처럼 XML 문서를 파싱하여 Swift의 구조체로 변환할 수 있습니다.</li>
+    <li>RSS 데이터를 추출하기 위해 XML Parsing 용도로 활용하였습니다.</li>
+    <li>delegate 기반의 XMLParser은 재귀적으로 동작하는 방식이기 때문에 코드의 복잡도가 높아지는 문제가 있어, 이를 통해 해결할 수 있었습니다.</li>
+  </ul>
+</details>
 
-### [Moya](https://github.com/Moya/Moya) (+[MoyaSugar](https://github.com/devxoul/MoyaSugar))
+<details>
+  <summary><b><a target="_target" href="https://github.com/devxoul/Then">Then</a></b></summary>
+  <ul>
+    <li>객체를 생성하고, 속성을 설정하고, 메서드를 호출하는 과정을 체이닝 형식으로 작성할 수 있습니다.</li>
+    <li>즉시 실행 클로저 방식으로 작성하는 것에 비해 클로저 내에서 인스턴스를 생성 및 반환 과정을 생략할 수 있으며, 단축 매개변수 이름($0)을 활용할 수 있어 불필요한 코드라인을 줄이고 가독성을 높일 수 있습니다.</li>
+  </ul>
+</details>
 
-- Enum을 활용하여 HTTP 요청과 함께 전달해야 할 Body 혹은 Query Param에 대해 타입 안전성을 높여 human error를 방지합니다.
-- 높은 수준으로 추상화하여 URLSession 혹은 Alamofire에 비해 코드의 복잡도가 줄어듭니다.
-- MoyaSugar를 추가로 도입하여 HTTP method를 endpoint와 함께 작성할 수 있게 수정되면서 전처럼 일일이 따로 작성해줘야하는 불편함을 개선하였습니다. 또한, 사용자 정의 연산자 `=>` 를 제공하여 보다 편리하게 Body 혹은 Param을 전달할 수 있게 되었습니다.
+<details>
+  <summary><b>MVVM (Combine)</b></summary>
+  <ul>
+    <li>MVC의 고질적인 문제인 ViewController가 비대해지는 문제를 방지합니다.</li>
+    <li>각 로직의 역할을 정확히 분리하여 일관적이고 유지보수하기 쉬운 코드를 작성합니다. (관심사 분리)</li>
+    <li>Combine을 활용하여 MVVM 아키텍처에서 View와 ViewModel 사이의 Data Binding을 구성할 수 있습니다.</li>
+  </ul>
+</details>
 
-### [FSCalendar](https://github.com/WenchaoD/FSCalendar)
-
-- 달력 UI를 손쉽게 작성할 수 있도록 도와주고, 유연한 커스터마이징이 가능합니다.
-- iOS 16부터 사용 가능한 UICalendarView와 달리 다양한 버전의 iOS와 잘 호환됩니다. 최소 iOS 버전을 15.0으로 설정한 만큼 이를 채용하였습니다.
-
-### [XMLCoder](https://github.com/CoreOffice/XMLCoder)
-
-- 마치 JSON 문서를 JSONDecoder를 활용하여 쉽게 디코딩하는 것처럼 XML 문서를 파싱하여 Swift의 구조체로 변환할 수 있습니다.
-- RSS 데이터를 추출하기 위해 XML Parsing 용도로 활용하였습니다.
-- delegate 기반의 XMLParser은 재귀적으로 동작하는 방식이기 때문에 코드의 복잡도가 높아지는 문제가 있어, 이를 통해 해결할 수 있었습니다.
-
-### [Then](https://github.com/devxoul/Then)
-
-- 객체를 생성하고, 속성을 설정하고, 메서드를 호출하는 과정을 체이닝 형식으로 작성할 수 있습니다.
-- 즉시 실행 클로저 방식으로 작성하는 것에 비해 클로저 내에서 인스턴스를 생성 및 반환 과정을 생략할 수 있으며, 단축 매개변수 이름($0)을 활용할 수 있어 불필요한 코드라인을 줄이고 가독성을 높일 수 있습니다.
-
-### MVVM (Combine)
-
-- MVC의 고질적인 문제인 ViewController가 비대해지는 문제를 방지합니다.
-- 각 로직의 역할을 정확히 분리하여 일관적이고 유지보수하기 쉬운 코드를 작성합니다. (관심사 분리)
-- Combine을 활용하여 MVVM 아키텍처에서 View와 ViewModel 사이의 Data Binding을 구성할 수 있습니다.
 
 ## 아키텍쳐 다이어그램
 
